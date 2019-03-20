@@ -1,12 +1,20 @@
 import React, { Component } from 'react'
 
-import ExampleComponent from 'osome-kit'
+import { OSCalendar, OSGantt } from 'osome-kit'
 
 export default class App extends Component {
-  render () {
+  constructor(props) {
+    super(props)
+    this.osCalendar = React.createRef()
+  }
+  render() {
     return (
       <div>
-        <ExampleComponent text='Modern React component module' />
+        <OSCalendar style={{width:'100%'}} ref={this.osCalendar} 
+        options={{year:2019,month:3}}
+        onTileDragEnd={(start, end) => {
+            this.osCalendar.current.attachEvent(start, end, { title: 'This is Title', detail: 'This is Detail', color: '#f00' })
+        }} />
       </div>
     )
   }

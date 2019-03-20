@@ -5,7 +5,7 @@ import postcss from 'rollup-plugin-postcss'
 import resolve from 'rollup-plugin-node-resolve'
 import url from 'rollup-plugin-url'
 import svgr from '@svgr/rollup'
-
+import postcssModulesValues from 'postcss-modules-values';
 import pkg from './package.json'
 
 export default {
@@ -24,9 +24,11 @@ export default {
   ],
   plugins: [
     external(),
-    postcss({
-      modules: true
-    }),
+    postcss([
+      require('postcss-modules')({
+        generateScopedName: '[name]__[local]',
+      })
+    ]),
     url(),
     svgr(),
     babel({

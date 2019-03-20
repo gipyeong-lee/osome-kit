@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Osome Grid</title>
+    <link href="node_modules/semantic-ui-css/semantic.min.css" type="text/css" rel="stylesheet" />
+    <link href="./assets/css/style.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="osome-cal-grid" style="position:absolute;width:800px;height:400px;">
+    </div>
+
+    <!-- The Moment.js library -->
+    <script src="node_modules/moment/moment.js"></script>
+
+    <!-- Including our own JavaScript file -->
+    <script src="assets/js/script.js"></script>
+    <script>
+        OsomeGrid.init("osome-cal-grid")
+    </script>
+</body>
+
+</html>
