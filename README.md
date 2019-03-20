@@ -15,12 +15,12 @@ npm install --save osome-kit
 ```jsx
 import React, { Component } from 'react'
 
-import MyComponent from 'osome-kit'
+import {OSCalendar} from 'osome-kit'
 
 class Example extends Component {
   render () {
     return (
-      <MyComponent />
+      <OSCalendar />
     )
   }
 }
