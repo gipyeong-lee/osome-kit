@@ -7,25 +7,23 @@ export class OSCalendar extends PureComponent {
   static propTypes = {
     text: PropTypes.string
   }
-  constructor(props) {
-    super(props)
-
-    this.onTileDragEnd = this.onTileDragEnd.bind(this)
-    this.onClickSchedule = this.onClickSchedule.bind(this)
+  onDragEndTile = (start, end) => {
+    console.log('Please implement `onTileDragEnd` ')
   }
-  onClickSchedule(event, index) {
+  onClickSchedule = (event, index) => {
     console.log('Please implement `onClickSchedule` ')
   }
-  onTileDragEnd(start, end) {
-    console.log('Please implement `onTileDragEnd` ')
-    // ex. Calendar.attachEvent(start, end, { title: 'This is Title', detail: 'This is Detail', color: '#f00' })
+  onChangedSchedule = (event, afterEvent) => {
+    console.log(event, afterEvent)
+  }
+
+  constructor(props) {
+    super(props)
   }
   attachEvent(start, end, option) {
     Calendar.attachEvent(start, end, option)
   }
-  onScheduleChanged(event, afterEvent) {
-    console.log(event, afterEvent)
-  }
+
   createSchedule(start, end, eventOption) {
     Calendar.attachEvent(start, end, eventOption)
   }
@@ -35,23 +33,23 @@ export class OSCalendar extends PureComponent {
   componentDidMount() {
     Calendar.init('osome-calendar', this.props.options)
     Calendar.onClickSchedule = this.props.onClickSchedule || this.onClickSchedule
-    Calendar.onTileDragEnd = this.props.onTileDragEnd || this.onTileDragEnd
-    Calendar.onScheduleChanged = this.props.onScheduleChanged || this.onScheduleChanged
+    Calendar.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile
+    Calendar.onChangedSchedule = this.props.onChangedSchedule || this.onChangedSchedule
   }
 
   render() {
+    const {style, className} = this.props
     return (
-      <div id="osome-calendar" {...this.props} >
+      <div id="osome-calendar" style={style} className={className} >
       </div>
     )
   }
 }
 OSCalendar.propTypes = {
   onClickSchedule: PropTypes.func, // click schedule
-  onTileDragEnd: PropTypes.func,
-  onScheduleChanged: PropTypes.func,
+  onDragEndTile: PropTypes.func,
+  onChangedSchedule: PropTypes.func,
   createSchedule: PropTypes.func,
-  onScheduleChanged: PropTypes.func,
   attachEvent: PropTypes.func,
   options: PropTypes.object
 }

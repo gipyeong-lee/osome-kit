@@ -10,7 +10,7 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <OSCalendar style={{width:'100%'}} ref={this.osCalendar} 
+        <OSCalendar className="hello" ref={this.osCalendar} 
         options={{year:2019,month:3}}
         onTileDragEnd={(start, end) => {
             this.osCalendar.current.attachEvent(start, end, { title: 'This is Title', detail: 'This is Detail', color: '#f00' })

@@ -32,13 +32,11 @@ var Calendar = {
         end: undefined,
         last: undefined
     },
-    onTileDragEnd: function (start, end) {
-        self.attachEvent(start, end, { title: 'This is Title', detail: 'This is Detail' })
+    onDragEndTile: function (start, end) {
     },
     onClickSchedule: function (event, index) {
-        alert('onClick!')
     },
-    onScheduleChanged: function (before, after) {
+    onChangedSchedule: function (before, after) {
 
     },
     //
@@ -51,8 +49,8 @@ var Calendar = {
             grid: {
                 width: 800
             },
-            row:{
-                minHeight:180
+            row: {
+                minHeight: 180
             },
             cellHeader: {
                 height: 20,
@@ -226,7 +224,7 @@ var Calendar = {
     createEventPopup: function (calendarGrid, options) {
 
     },
-    syncGridHeight:function(){
+    syncGridHeight: function () {
         const wrapper = document.getElementById('osome-cal-grid')
         wrapper.parentNode.style.height = wrapper.style.height
     },
@@ -256,7 +254,7 @@ var Calendar = {
             offsetX += width
         })
         _grid.append(_divDays)
-        const targetDateString = `${options.year}-${(options.month.toNumber()-1)}-01`
+        const targetDateString = `${options.year}-${(options.month.toNumber() - 1)}-01`
         const targetDate = moment(targetDateString)
         const prevEndOfMonthDate = moment(targetDateString).subtract(1, 'months').endOf('month').date();
         const startOfMonth = targetDate.startOf('month');
@@ -266,7 +264,7 @@ var Calendar = {
         const startOfDay = startOfMonth.day()
         const currentMonth = options.month
         let endOfMonthDate = endOfMonth.date()
-        
+
         let date = 1;
         let nextDate = 1;
         let uniqueNum = 0
@@ -448,7 +446,7 @@ var Calendar = {
         const beforeEvent = JSON.parse(JSON.stringify(event))
         const endNum = Math.min(startNum + event.total.toNumber() - 1, 34)
         parent.moveSchedule(eventId, startNum, endNum, parent)
-        parent.onScheduleChanged(beforeEvent, event)
+        parent.onChangedSchedule(beforeEvent, event)
         // parent.reorderEventBox()
     },
     moveSchedule(eventId, startNum, endNum) {
@@ -726,7 +724,7 @@ var Calendar = {
                 const startNum = Number(start.getAttribute('week')) * 6 + Number(start.getAttribute('number'))
                 const endNum = Number(end.getAttribute('week')) * 6 + Number(end.getAttribute('number'))
                 if (start !== undefined && end !== undefined && endNum >= startNum) {
-                    self.onTileDragEnd(start, end)
+                    self.onDragEndTile(start, end)
                 }
             }
         }
