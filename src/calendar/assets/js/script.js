@@ -78,7 +78,7 @@ var Calendar = {
     },
     onDragEndTile: function (start, end, renderOption) {
     },
-    onClickSchedule: function (event, index) {
+    onClickSchedule: function (element, event, index) {
     },
     onChangedSchedule: function (before, after) {
     },
@@ -613,7 +613,7 @@ var Calendar = {
             }
             else if (self.focus.type === 'move') {
                 const eventId = targetTag.getAttribute('event-id').toNumber()
-                self.onClickSchedule(self.events[eventId], eventId)
+                self.onClickSchedule(targetTag, self.events[eventId], eventId)
             }
         }
     },

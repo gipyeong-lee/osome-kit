@@ -11,7 +11,7 @@ class OSCalendar extends PureComponent {
     console.log(start, end)
     console.log('Please implement `onDragEndTile` ')
   }
-  onClickSchedule = (event, index) => {
+  onClickSchedule = (element, event, index) => {
     console.log('Please implement `onClickSchedule` ')
   }
   onChangedSchedule = (event, afterEvent) => {
