@@ -2,8 +2,10 @@
 Extension Class
 */
 'use strict'
-import moment from 'moment'
+
 import './../css/style.css'
+import PropTypes from 'prop-types'
+
 String.prototype.toNumber = function () {
     return Number(this)
 }
@@ -17,10 +19,52 @@ HTMLElement.prototype.remove = function () {
     this.parentNode.removeChild(this)
     return this
 }
+Date.prototype.getPrevMonth = function () {
+    let prevMonth = new Date()
+    prevMonth.setFullYear(this.getFullYear())
+    prevMonth.setMonth(this.getMonth() - 1)
+    return prevMonth
+}
+Date.prototype.getNextMonth = function () {
+    let nextMonth = new Date()
+    nextMonth.setFullYear(this.getFullYear())
+    nextMonth.setMonth(this.getMonth() + 1)
+    return nextMonth
+}
+Date.prototype.getLastDate = function () {
+    let nextMonth = new Date()
+    nextMonth.setFullYear(this.getFullYear())
+    nextMonth.setMonth(this.getMonth() + 1)
+    nextMonth.setDate(0)
+    return nextMonth.getDate()
+}
+Date.prototype.startOfDay = function () {
+    let copyMonth = new Date()
+    copyMonth.setFullYear(this.getFullYear())
+    copyMonth.setMonth(this.getMonth())
+    copyMonth.setDate(1)
+    return copyMonth.getDay()
+}
+Date.prototype.endOfDay = function () {
+    let copyMonth = new Date()
+    copyMonth.setFullYear(this.getFullYear())
+    copyMonth.setMonth(this.getMonth() + 1)
+    copyMonth.setDate(0)
+    return copyMonth.getDay()
+}
 
 String.prototype.numOfPercent = function () {
     return Number(this.replace('%', ''))
 }
+
+Number.prototype.pad = function (len) {
+    let s = this.toString();
+    if (s.length < len) {
+        s = ('0000000000' + s).slice(-len);
+    }
+    return s;
+}
+
 //
 var Calendar = {
     events: [],
@@ -32,12 +76,11 @@ var Calendar = {
         end: undefined,
         last: undefined
     },
-    onDragEndTile: function (start, end) {
+    onDragEndTile: function (start, end, renderOption) {
     },
     onClickSchedule: function (event, index) {
     },
     onChangedSchedule: function (before, after) {
-
     },
     //
     eventOption: {
@@ -59,9 +102,9 @@ var Calendar = {
         },
         country: 'ko',
         days: { ko: ['일', '월', '화', '수', '목', '금', '토'] },
-        today: moment(),
-        year: moment().year(),
-        month: moment().month(),
+        today: new Date(),
+        year: new Date().getFullYear(),
+        month: new Date().getMonth(),
         eventPopup: { html: 'test' }
     },
     init: function (id = 'osome-cal-calendar', opt = {}) {
@@ -86,12 +129,12 @@ var Calendar = {
         self.focus.current = undefined
         self.clearSelectedBlock()
     },
-    attachEvent: function (startDate, endDate, eventOption) {
+    attachEvent: function (startNum, endNum, eventOption) {
         let self = this
         const tilePrefix = 'osome-cal-grid-day-tile-'
         let _eventOption = Object.assign({}, self.eventOption, eventOption)
-        let startTile = document.getElementById(`${tilePrefix}${startDate.getAttribute('number')}`)
-        let endTile = document.getElementById(`${tilePrefix}${endDate.getAttribute('number')}`)
+        let startTile = document.getElementById(`${tilePrefix}${startNum}`)
+        let endTile = document.getElementById(`${tilePrefix}${endNum}`)
         if (startTile == null || endTile == null) {
             return
         }
@@ -254,16 +297,24 @@ var Calendar = {
             offsetX += width
         })
         _grid.append(_divDays)
-        const targetDateString = `${options.year}-${(options.month.toNumber() - 1)}-01`
-        const targetDate = moment(targetDateString)
-        const prevEndOfMonthDate = moment(targetDateString).subtract(1, 'months').endOf('month').date();
-        const startOfMonth = targetDate.startOf('month');
-        const endOfMonth = targetDate.endOf('month');
-        const prevMonth = moment(targetDateString).subtract(1, 'months').month()
-        const nextMonth = moment(targetDateString).add(1, 'months').month()
-        const startOfDay = startOfMonth.day()
+
+        const targetDate = new Date(options.year, options.month - 1, 1)
+        console.log(targetDate.getMonth())
+        const prevMonthObj = targetDate.getPrevMonth()
+        console.log(prevMonthObj.getMonth())
+        const nextMonthObj = targetDate.getNextMonth()
+        console.log(nextMonthObj.getMonth())
+        const prevEndOfMonthDate = prevMonthObj.getLastDate()
+
+        const prevYear = prevMonthObj.getFullYear()
+        const prevMonth = prevMonthObj.getMonth() + 1
+        const nextYear = nextMonthObj.getFullYear()
+        const nextMonth = nextMonthObj.getMonth() + 1
+
+        const startOfDay = targetDate.startOfDay();
+        console.log(startOfDay)
         const currentMonth = options.month
-        let endOfMonthDate = endOfMonth.date()
+        let endOfMonthDate = targetDate.getLastDate()
 
         let date = 1;
         let nextDate = 1;
@@ -310,10 +361,11 @@ var Calendar = {
                 cellHeader.style.display = 'block'
                 let cellText = document.createTextNode("");
                 row.setAttribute('endNumber', uniqueNum)
-                if (i === 0 && j <= startOfDay) {
+                if (i === 0 && j < startOfDay) {
                     cell.className = "tile prev"
+                    cell.setAttribute('year', prevYear)
                     cell.setAttribute('month', prevMonth)
-                    cell.setAttribute('date', prevEndOfMonthDate - (startOfDay - j))
+                    cell.setAttribute('date', prevEndOfMonthDate - (startOfDay - j) + 1)
                     cell.setAttribute('dayNum', j)
                     cell.setAttribute('week', i)
                     cell.id = `osome-cal-grid-day-tile-${uniqueNum}`
@@ -321,10 +373,11 @@ var Calendar = {
                     cell.style.width = `${width}%`
                     cell.style.left = `${offsetX}%`
                     cell.style.display = `inline-block`
-                    cellText.textContent = `${prevEndOfMonthDate - (startOfDay - j)}`;
+                    cellText.textContent = `${prevEndOfMonthDate - (startOfDay - j) + 1}`;
                 }
                 else if (date > endOfMonthDate) {
                     cell.className = "tile next"
+                    cell.setAttribute('year', nextYear)
                     cell.setAttribute('month', nextMonth)
                     cell.setAttribute('date', nextDate)
                     cell.setAttribute('dayNum', j)
@@ -339,6 +392,7 @@ var Calendar = {
                 }
                 else {
                     cell.className = "tile"
+                    cell.setAttribute('year', options.year)
                     cell.setAttribute('month', currentMonth)
                     cell.setAttribute('date', date)
                     cell.setAttribute('dayNum', j)
@@ -724,11 +778,28 @@ var Calendar = {
                 const startNum = Number(start.getAttribute('week')) * 6 + Number(start.getAttribute('number'))
                 const endNum = Number(end.getAttribute('week')) * 6 + Number(end.getAttribute('number'))
                 if (start !== undefined && end !== undefined && endNum >= startNum) {
-                    self.onDragEndTile(start, end)
+                    const startYear = start.getAttribute('year')
+                    const startMonth = start.getAttribute('month').toNumber() - 1
+                    const startDate = start.getAttribute('date')
+                    const endYear = end.getAttribute('year')
+                    const endMonth = end.getAttribute('month').toNumber() - 1
+                    const endDate = end.getAttribute('date')
+                    const _start = new Date(startYear, startMonth, startDate)
+                    const _end = new Date(endYear, endMonth, endDate)
+                    const renderOption = { startTileNumber: start.getAttribute('number'), endTileNumber: end.getAttribute('number') }
+                    
+                    self.onDragEndTile(_start, _end, renderOption)
                 }
             }
         }
     }
 }
-
+/**
+ * onDragEndTile: function (start, end, renderOption) {
+    },
+    onClickSchedule: function (event, index) {
+    },
+    onChangedSchedule: function (before, after) {
+    },
+ */
 export default Calendar

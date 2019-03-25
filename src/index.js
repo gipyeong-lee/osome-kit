@@ -3,12 +3,13 @@ import PropTypes from 'prop-types'
 import Calendar from './calendar/assets/js/script'
 import './calendar/assets/css/style.css'
 
-export class OSCalendar extends PureComponent {
+class OSCalendar extends PureComponent {
   static propTypes = {
     text: PropTypes.string
   }
   onDragEndTile = (start, end) => {
-    console.log('Please implement `onTileDragEnd` ')
+    console.log(start, end)
+    console.log('Please implement `onDragEndTile` ')
   }
   onClickSchedule = (event, index) => {
     console.log('Please implement `onClickSchedule` ')
@@ -38,7 +39,7 @@ export class OSCalendar extends PureComponent {
   }
 
   render() {
-    const {style, className} = this.props
+    const { style, className } = this.props
     return (
       <div id="osome-calendar" style={style} className={className} >
       </div>
@@ -53,3 +54,5 @@ OSCalendar.propTypes = {
   attachEvent: PropTypes.func,
   options: PropTypes.object
 }
+
+export { OSCalendar }
