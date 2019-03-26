@@ -180,20 +180,6 @@ var Calendar = {
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
         _eventText.innerText = eventOption.title
-        if(eventOption.style){
-            if(eventOption.style.fontWeight){
-                _eventText.style.fontWeight = eventOption.style.fontWeight
-            }
-            if(eventOption.style.fontSize){
-                _eventText.style.fontSize = eventOption.style.fontSize
-            }
-            if(eventOption.style.fontWeight){
-                _eventText.style.fontWeight = eventOption.style.fontWeight
-            }
-            if(eventOption.style.font){
-                _eventText.style.font = eventOption.style.font
-            }
-        }
         _eventText.setAttribute('event-id', eventOption.index)
         _eventBlock.append(_eventText)
         return _eventBlock

@@ -29,7 +29,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-left: 3px;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
