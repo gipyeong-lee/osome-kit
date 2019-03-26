@@ -7,11 +7,13 @@ class OSCalendar extends PureComponent {
   static propTypes = {
     text: PropTypes.string
   }
-  onDragEndTile = (start, end) => {
+  onDragEndTile = (start, end, renderOption) => {
     console.log(start, end)
     console.log('Please implement `onDragEndTile` ')
+    Calendar.attachEvent(renderOption.startTileNumber,renderOption.endTileNumber)
   }
   onClickSchedule = (element, event, index) => {
+    console.log(event)
     console.log('Please implement `onClickSchedule` ')
   }
   onChangedSchedule = (event, afterEvent) => {
@@ -20,6 +22,7 @@ class OSCalendar extends PureComponent {
 
   constructor(props) {
     super(props)
+    this.onClickSchedule = this.onClickSchedule.bind(this)
   }
   attachEvent(start, end, option) {
     Calendar.attachEvent(start, end, option)
@@ -52,7 +55,8 @@ OSCalendar.propTypes = {
   onChangedSchedule: PropTypes.func,
   createSchedule: PropTypes.func,
   attachEvent: PropTypes.func,
-  options: PropTypes.object
+  options: PropTypes.object,
+  onClickScheduleContent: PropTypes.element
 }
 
 export { OSCalendar }

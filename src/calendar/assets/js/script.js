@@ -4,7 +4,6 @@ Extension Class
 'use strict'
 
 import './../css/style.css'
-import PropTypes from 'prop-types'
 
 String.prototype.toNumber = function () {
     return Number(this)
@@ -84,7 +83,9 @@ var Calendar = {
     },
     //
     eventOption: {
-        height: 20
+        style:{
+            height: 20
+        }
     },
     //
     options: {
@@ -164,8 +165,11 @@ var Calendar = {
         _eventBlock.id = `event-block-${eventOption.index}-${week}`
         _eventBlock.setAttribute('index', eventOption.index)
         _eventBlock.className = `event-block event-block-${eventOption.index}`
-        _eventBlock.style.backgroundColor = eventOption.color
-        _eventBlock.style.height = `${eventOption.height}px`
+        if(eventOption.style !== undefined){
+            for (const [key, value] of Object.entries(eventOption.style)) {
+                _eventBlock.style[key] = value
+            }
+        }
         _eventBlock.setAttribute('event-id', eventOption.index)
         _eventBlock.setAttribute('week', week)
         _eventBlock.setAttribute('startNum', startNum)
@@ -207,7 +211,7 @@ var Calendar = {
             _eventBlock.append(_eventHandler)
             const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
             const _weekEl = document.getElementById(`${weekPrefix}${i}`)
-            _weekEl.style.height = `${eventOption.height * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+            _weekEl.style.height = `${eventOption.style.height * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
             const swNumber = _weekScheduleEl.getAttribute('startNumber')
             const ewNumber = _weekScheduleEl.getAttribute('endNumber')
 
@@ -299,11 +303,8 @@ var Calendar = {
         _grid.append(_divDays)
 
         const targetDate = new Date(options.year, options.month - 1, 1)
-        console.log(targetDate.getMonth())
         const prevMonthObj = targetDate.getPrevMonth()
-        console.log(prevMonthObj.getMonth())
         const nextMonthObj = targetDate.getNextMonth()
-        console.log(nextMonthObj.getMonth())
         const prevEndOfMonthDate = prevMonthObj.getLastDate()
 
         const prevYear = prevMonthObj.getFullYear()
@@ -312,7 +313,7 @@ var Calendar = {
         const nextMonth = nextMonthObj.getMonth() + 1
 
         const startOfDay = targetDate.startOfDay();
-        console.log(startOfDay)
+        
         const currentMonth = options.month
         let endOfMonthDate = targetDate.getLastDate()
 
@@ -362,6 +363,7 @@ var Calendar = {
                 let cellText = document.createTextNode("");
                 row.setAttribute('endNumber', uniqueNum)
                 if (i === 0 && j < startOfDay) {
+                    cellHeader.setAttribute('month',prevMonth)
                     cell.className = "tile prev"
                     cell.setAttribute('year', prevYear)
                     cell.setAttribute('month', prevMonth)
@@ -376,6 +378,7 @@ var Calendar = {
                     cellText.textContent = `${prevEndOfMonthDate - (startOfDay - j) + 1}`;
                 }
                 else if (date > endOfMonthDate) {
+                    cellHeader.setAttribute('month',nextMonth)
                     cell.className = "tile next"
                     cell.setAttribute('year', nextYear)
                     cell.setAttribute('month', nextMonth)
@@ -391,6 +394,7 @@ var Calendar = {
                     nextDate++;
                 }
                 else {
+                    cellHeader.setAttribute('month',currentMonth)
                     cell.className = "tile"
                     cell.setAttribute('year', options.year)
                     cell.setAttribute('month', currentMonth)
@@ -571,7 +575,7 @@ var Calendar = {
                     scheduleWrapper.appendChild(reordedChild)
                 })
                 const _weekEl = document.getElementById(`${weekPrefix}${scheduleWrapper.getAttribute('week')}`)
-                _weekEl.style.height = `${self.eventOption.height * (children.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+                _weekEl.style.height = `${self.eventOption.style.height * (children.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
             }
         }
     },
@@ -787,7 +791,7 @@ var Calendar = {
                     const _start = new Date(startYear, startMonth, startDate)
                     const _end = new Date(endYear, endMonth, endDate)
                     const renderOption = { startTileNumber: start.getAttribute('number'), endTileNumber: end.getAttribute('number') }
-                    
+
                     self.onDragEndTile(_start, _end, renderOption)
                 }
             }
