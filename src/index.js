@@ -1,9 +1,9 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Calendar from './calendar/assets/js/script'
 import './calendar/assets/css/style.css'
 
-class OSCalendar extends PureComponent {
+class OSCalendar extends Component {
   static propTypes = {
     text: PropTypes.string
   }
@@ -34,7 +34,16 @@ class OSCalendar extends PureComponent {
   moveSchedule(eventId, startDay, endDay) {
 
   }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if(this.props.options !== nextProps.options){
+      Calendar.init('osome-calendar', nextProps.options)  
+      return true
+    }
+    return false
+  }
   componentDidMount() {
+    console.log(this.props.options)
     Calendar.init('osome-calendar', this.props.options)
     Calendar.onClickSchedule = this.props.onClickSchedule || this.onClickSchedule
     Calendar.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile

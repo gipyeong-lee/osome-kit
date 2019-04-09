@@ -66,6 +66,7 @@ Number.prototype.pad = function (len) {
 
 //
 var Calendar = {
+    endNum: 34,
     events: [],
     focus: {
         // start,end,last is unique number of tiles.
@@ -83,7 +84,7 @@ var Calendar = {
     },
     //
     eventOption: {
-        style:{
+        style: {
             height: 20
         }
     },
@@ -97,8 +98,19 @@ var Calendar = {
                 minHeight: 180
             },
             cellHeader: {
-                height: 20,
+                height: 30,
+                fontSize: '0.8em',
                 gap: 10
+            },
+            todayHeader: {
+                backgroundColor: 'red',
+                numberColor: 'white',
+                titleColor: 'red'
+            },
+            holidayHeader: {
+                backgroundColor: '',
+                numberColor: 'white',
+                titleColor: 'red'
             }
         },
         country: 'ko',
@@ -112,6 +124,7 @@ var Calendar = {
         let self = this
         let _options = Object.assign({}, this.options, opt)
         let _calendarGrid = document.getElementById(id)
+        self.clear(_calendarGrid)
         self.createGrid(_calendarGrid, _options)
         self.attachGridEvent(_calendarGrid)
         self.createEventPopup(_calendarGrid, _options)
@@ -134,6 +147,7 @@ var Calendar = {
         let self = this
         const tilePrefix = 'osome-cal-grid-day-tile-'
         let _eventOption = Object.assign({}, self.eventOption, eventOption)
+        _eventOption.style = Object.assign({}, self.eventOption.style || {}, eventOption.style || {})
         let startTile = document.getElementById(`${tilePrefix}${startNum}`)
         let endTile = document.getElementById(`${tilePrefix}${endNum}`)
         if (startTile == null || endTile == null) {
@@ -165,7 +179,7 @@ var Calendar = {
         _eventBlock.id = `event-block-${eventOption.index}-${week}`
         _eventBlock.setAttribute('index', eventOption.index)
         _eventBlock.className = `event-block event-block-${eventOption.index}`
-        if(eventOption.style !== undefined){
+        if (eventOption.style !== undefined) {
             for (const [key, value] of Object.entries(eventOption.style)) {
                 _eventBlock.style[key] = value
             }
@@ -212,8 +226,6 @@ var Calendar = {
             const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
             const _weekEl = document.getElementById(`${weekPrefix}${i}`)
             _weekEl.style.height = `${eventOption.style.height * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
-            const swNumber = _weekScheduleEl.getAttribute('startNumber')
-            const ewNumber = _weekScheduleEl.getAttribute('endNumber')
 
             if (i === _startWeek) {
                 const left = startTile.style.left
@@ -275,6 +287,48 @@ var Calendar = {
         const wrapper = document.getElementById('osome-cal-grid')
         wrapper.parentNode.style.height = wrapper.style.height
     },
+    createCellHeader: function (week, uniqueNum) {
+        let cellHeader = document.createElement('div')
+        cellHeader.setAttribute('week', week)
+        cellHeader.setAttribute('number', uniqueNum)
+        cellHeader.style.width = '100%'
+        cellHeader.style.display = 'block'
+        return cellHeader
+    },
+    setCellHeaderNumber(cellHeader, textNode, options) {
+        const self = this
+        let cellNumber = document.createElement('span')
+        cellNumber.style.height = `${self.options.style.cellHeader.height}px`
+        cellNumber.style.width = `${self.options.style.cellHeader.height}px`
+        cellNumber.style.backgroundColor = options.backgroundColor || ''
+        cellNumber.style.borderRadius = `50%`
+        cellNumber.style.display = 'inline-block'
+        cellNumber.style.backgroundColor = options.backgroundColor
+        cellNumber.style.textAlign = 'center'
+        cellNumber.style.lineHeight = `${self.options.style.cellHeader.height}px`
+        cellNumber.style.fontSize = options.fontSize || '0.9em'
+        cellNumber.style.color = options.numberColor
+        cellNumber.append(textNode)
+        cellHeader.append(cellNumber)
+    },
+    setCellHeaderTitle(cellHeader, title, options) {
+        const self = this
+
+        let cellSubTitle = document.createElement('span')
+        cellSubTitle.style.paddingLeft = '10px'
+        cellSubTitle.style.marginRight = 'auto'
+        cellSubTitle.style.marginLeft = 'auto'
+        cellSubTitle.style.color = options.titleColor
+        cellSubTitle.style.height = `${self.options.style.cellHeader.height}px`
+
+        let subText = document.createTextNode("");
+        subText.textContent = title
+        cellSubTitle.append(subText)
+        cellHeader.append(cellSubTitle)
+    },
+    setAttributeToHeader(cellHeader, number, subTitle, options) {
+
+    },
     createGrid: function (calendarGrid, options) {
         let self = this
         let width = 100 / 7
@@ -313,13 +367,17 @@ var Calendar = {
         const nextMonth = nextMonthObj.getMonth() + 1
 
         const startOfDay = targetDate.startOfDay();
-        
+
         const currentMonth = options.month
         let endOfMonthDate = targetDate.getLastDate()
 
         let date = 1;
         let nextDate = 1;
         let uniqueNum = 0
+
+        const todayYear = options.today.getFullYear()
+        const todayMonth = options.today.getMonth() + 1
+        const todayDate = options.today.getDate()
 
         for (let i = 0; i < 6; i++) {
             // creates a table row
@@ -355,15 +413,21 @@ var Calendar = {
                 cell.ondrop = function (event) {
                     self.onScheduleDrop(event, self)
                 }
-                let cellHeader = document.createElement('span')
-                cellHeader.setAttribute('week', i)
-                cellHeader.setAttribute('number', uniqueNum)
-                cellHeader.style.width = '100%'
-                cellHeader.style.display = 'block'
                 let cellText = document.createTextNode("");
+                let cellHeader = self.createCellHeader(i, uniqueNum)
+                
+                if (todayYear === options.year && todayMonth === options.month && todayDate === date) {
+                    self.setCellHeaderNumber(cellHeader,cellText,self.options.style.todayHeader)
+                    self.setCellHeaderTitle(cellHeader, "오늘", self.options.style.todayHeader)
+                } 
+                else {
+                    self.setCellHeaderNumber(cellHeader,cellText,self.options.style.cellHeader)
+                    self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
+                }
+                
                 row.setAttribute('endNumber', uniqueNum)
                 if (i === 0 && j < startOfDay) {
-                    cellHeader.setAttribute('month',prevMonth)
+                    cellHeader.setAttribute('month', prevMonth)
                     cell.className = "tile prev"
                     cell.setAttribute('year', prevYear)
                     cell.setAttribute('month', prevMonth)
@@ -378,7 +442,7 @@ var Calendar = {
                     cellText.textContent = `${prevEndOfMonthDate - (startOfDay - j) + 1}`;
                 }
                 else if (date > endOfMonthDate) {
-                    cellHeader.setAttribute('month',nextMonth)
+                    cellHeader.setAttribute('month', nextMonth)
                     cell.className = "tile next"
                     cell.setAttribute('year', nextYear)
                     cell.setAttribute('month', nextMonth)
@@ -394,7 +458,7 @@ var Calendar = {
                     nextDate++;
                 }
                 else {
-                    cellHeader.setAttribute('month',currentMonth)
+                    cellHeader.setAttribute('month', currentMonth)
                     cell.className = "tile"
                     cell.setAttribute('year', options.year)
                     cell.setAttribute('month', currentMonth)
@@ -416,7 +480,7 @@ var Calendar = {
                 else if (j === 6) {
                     cell.className += " text-blue"
                 }
-                cellHeader.append(cellText)
+                // cellHeader.append(cellText)
                 cell.appendChild(cellHeader);
                 _rowGrid.appendChild(cell);
             }
@@ -424,6 +488,7 @@ var Calendar = {
             row.append(_rowSchedule)
             _grid.appendChild(row); // appending each row into calendar body.
         }
+        self.endNum = uniqueNum
         self.focus.last = uniqueNum
         calendarGrid.append(_grid)
     },
@@ -497,12 +562,16 @@ var Calendar = {
         event.target.classList.remove('dragOver')
     },
     onScheduleDrop(e, parent) {
+        if(e.target.getAttribute('number') === null){
+            return
+        }
         e.target.classList.remove('dragOver')
         const eventId = e.dataTransfer.getData('index').toNumber()
         const startNum = e.target.getAttribute('number').toNumber()
         const event = parent.events[eventId]
         const beforeEvent = JSON.parse(JSON.stringify(event))
-        const endNum = Math.min(startNum + event.total.toNumber() - 1, 34)
+        const endNum = Math.min(startNum + event.total.toNumber() - 1, parent.endNum - 1)
+
         parent.moveSchedule(eventId, startNum, endNum, parent)
         parent.onChangedSchedule(beforeEvent, event)
         // parent.reorderEventBox()
@@ -525,6 +594,9 @@ var Calendar = {
     },
     isEventBlock(targetTag) {
         return targetTag.classList.contains('title')
+    },
+    isTileBlock(targetTag){
+        return targetTag.getAttribute('month') !== null
     },
     cleanNodes(parentNode) {
         while (parentNode.firstChild) {
@@ -590,7 +662,7 @@ var Calendar = {
             else if (self.isEventBlock(targetTag)) {
                 self.focus.type = 'move'
             }
-            else {
+            else if(self.isTileBlock(targetTag)){
                 self.focus.type = 'create'
                 self.attachEventCreate.onMouseDown(self, targetTag)
             }
