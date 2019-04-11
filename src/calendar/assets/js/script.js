@@ -120,14 +120,16 @@ var Calendar = {
         month: new Date().getMonth(),
         eventPopup: { html: 'test' }
     },
-    init: function (id = 'osome-cal-calendar', opt = {}) {
+    init: function (id = 'osome-cal-calendar', opt = {}, events = []) {
         let self = this
         let _options = Object.assign({}, this.options, opt)
+
         let _calendarGrid = document.getElementById(id)
+        self.events = events
         self.clear(_calendarGrid)
         self.createGrid(_calendarGrid, _options)
         self.attachGridEvent(_calendarGrid)
-        self.createEventPopup(_calendarGrid, _options)
+        self.createEvents(_options)
     },
     randomColor: function () {
         return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
@@ -197,6 +199,77 @@ var Calendar = {
         _eventText.setAttribute('event-id', eventOption.index)
         _eventBlock.append(_eventText)
         return _eventBlock
+    },
+    renderEventBlock(startTile, endTile, eventOption) {
+        const self = this
+        const tileWidth = 100 / 7
+        const weekPrefix = 'osome-cal-grid-week-'
+        const weekSchedulePrefix = 'osome-cal-grid-week-schedule-'
+        const _startNum = startTile.getAttribute('number').toNumber()
+        const _startDayNum = startTile.getAttribute('dayNum').toNumber()
+        const _startWeek = startTile.getAttribute('week').toNumber()
+        const _endNum = endTile.getAttribute('number').toNumber()
+        const _endWeek = endTile.getAttribute('week').toNumber()
+        const _endDayNum = endTile.getAttribute('dayNum').toNumber()
+        // full date
+
+        // week schedule.
+        const totalDays = _endNum - _startNum + 1
+        const idx = eventOption.index
+
+        let _event = Object.assign({}, { scheduleId: `${idx}`, index: idx }, eventOption)
+        _event.start = _startNum
+        _event.total = totalDays
+        self.events[idx] = _event
+        for (var i = _startWeek; i <= _endWeek; i++) {
+            const _eventBlock = self.createBlock(i, i * 7, (i + 1) * 7 - 1, _event)
+            const _eventHandler = self.createHandler(i, _startNum, _endNum, _event)
+            _eventBlock.append(_eventHandler)
+            const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
+            const _weekEl = document.getElementById(`${weekPrefix}${i}`)
+            _weekEl.style.height = `${eventOption.style.height * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+
+            if (i === _startWeek) {
+                const left = startTile.style.left
+                let size = _endDayNum - _startDayNum + 1
+                if (_startWeek !== _endWeek) {
+                    size = 7 - _startDayNum
+                }
+                const width = `${(tileWidth * (size))}%`
+                _eventBlock.style.left = left
+                _eventBlock.style.width = width
+                if (_startWeek !== _endWeek) {
+                    _eventBlock.className += " block-right"
+                }
+                _eventBlock.setAttribute('startNum', _startNum)
+                _eventBlock.setAttribute('startDayNum', _startDayNum)
+                if (_startWeek === _endWeek) {
+                    _eventBlock.setAttribute('endNum', _endNum)
+                    _eventBlock.setAttribute('endDayNum', _endDayNum)
+                }
+                _weekScheduleEl.append(_eventBlock)
+            }
+            else if (i === _endWeek) {
+                const left = 0
+                let size = _endDayNum + 1
+                const width = `${(tileWidth * (size))}%`
+                _eventBlock.style.left = left
+                _eventBlock.style.width = width
+                _eventBlock.setAttribute('endNum', _endNum)
+                _eventBlock.setAttribute('endDayNum', _endDayNum)
+                _weekScheduleEl.append(_eventBlock)
+            }
+            else {
+                const left = 0
+                let size = 7
+                const width = `${(tileWidth * (size))}%`
+                _eventBlock.style.left = left
+                _eventBlock.style.width = width
+                _eventBlock.className += " block-right"
+                _weekScheduleEl.append(_eventBlock)
+            }
+        }
+        // self.syncGridHeight()
     },
     createEventBlock(startTile, endTile, eventOption) {
         const self = this
@@ -280,8 +353,80 @@ var Calendar = {
             }
         }
     },
-    createEventPopup: function (calendarGrid, options) {
+    createEvents: function (options) {
+        const self = this
 
+        const tilePrefix = 'osome-cal-grid-day-tile-'
+        const targetDate = new Date(options.year, options.month - 1, 1)
+
+        const startOfDay = targetDate.startOfDay();
+
+        const currentMonth = options.month
+        let endOfMonthDate = targetDate.getLastDate()
+
+        const firstTile = document.getElementById(`${tilePrefix}0`)
+        const firstTileDate = firstTile.getAttribute('date').toNumber()
+
+        self.events.map((event, idx) => {
+            if (!event.startDate || !event.endDate) {
+                console.log(`event must have start, end by Date format`)
+                return
+            }
+            if (!event.eventId) {
+                event.eventId = idx
+                event.index = idx
+            }
+            let startMonth = event.startDate.getMonth()
+            let endMonth = event.endDate.getMonth()
+
+            let startDate = event.startDate.getDate()
+            let endDate = event.endDate.getDate()
+
+            let indexOfCurrentMonth = currentMonth - 1
+
+            let startNum = Math.max(startDate - firstTileDate, 0)
+            let endNum = Math.min(Number(startOfDay) + endOfMonthDate + endDate - 1, self.endNum)
+
+            if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth + 1) { }
+            else if (startMonth < indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
+                // 전달 ~ 이번달
+                endNum = Math.min(Number(startOfDay) + endDate - 1, self.endNum)
+            }
+            else if (startMonth === indexOfCurrentMonth && endMonth > indexOfCurrentMonth) {
+                // 이번달 ~ 다음달
+                startNum = startOfDay + startDate - 1
+            }
+            else if (startMonth === indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
+                // 이번달
+                startNum = startOfDay + startDate - 1
+                endNum = Math.min(Number(startOfDay) + endDate - 1, self.endNum)
+            }
+            else if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth - 1) {
+                // 둘다 저번달
+
+                endNum = Math.max(endDate - firstTileDate, 0)
+            }
+            else if (startMonth === indexOfCurrentMonth + 1 && endMonth === indexOfCurrentMonth + 1) {
+                // 둘다 다음달
+                startNum = Math.min(Number(startOfDay) + endOfMonthDate + startDate - 1, self.endNum)
+            }
+            else {
+                return
+            }
+            
+            if(Math.abs(startMonth-indexOfCurrentMonth) > 1){
+                startNum = 0
+            }
+            if(Math.abs(endMonth-indexOfCurrentMonth) > 1){
+                endNum = self.endNum
+            }
+
+            let startTile = document.getElementById(`${tilePrefix}${startNum}`)
+            let endTile = document.getElementById(`${tilePrefix}${endNum}`)
+
+
+            self.renderEventBlock(startTile, endTile, event)
+        })
     },
     syncGridHeight: function () {
         const wrapper = document.getElementById('osome-cal-grid')
@@ -326,9 +471,7 @@ var Calendar = {
         cellSubTitle.append(subText)
         cellHeader.append(cellSubTitle)
     },
-    setAttributeToHeader(cellHeader, number, subTitle, options) {
 
-    },
     createGrid: function (calendarGrid, options) {
         let self = this
         let width = 100 / 7
@@ -357,6 +500,7 @@ var Calendar = {
         _grid.append(_divDays)
 
         const targetDate = new Date(options.year, options.month - 1, 1)
+        console.log(options.month, targetDate)
         const prevMonthObj = targetDate.getPrevMonth()
         const nextMonthObj = targetDate.getNextMonth()
         const prevEndOfMonthDate = prevMonthObj.getLastDate()
@@ -415,19 +559,21 @@ var Calendar = {
                 }
                 let cellText = document.createTextNode("");
                 let cellHeader = self.createCellHeader(i, uniqueNum)
-                
+
                 if (todayYear === options.year && todayMonth === options.month && todayDate === date) {
-                    self.setCellHeaderNumber(cellHeader,cellText,self.options.style.todayHeader)
+                    self.setCellHeaderNumber(cellHeader, cellText, self.options.style.todayHeader)
                     self.setCellHeaderTitle(cellHeader, "오늘", self.options.style.todayHeader)
-                } 
+                }
                 else {
-                    self.setCellHeaderNumber(cellHeader,cellText,self.options.style.cellHeader)
+                    self.setCellHeaderNumber(cellHeader, cellText, self.options.style.cellHeader)
                     self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
                 }
-                
+
                 row.setAttribute('endNumber', uniqueNum)
                 if (i === 0 && j < startOfDay) {
+                    cellHeader.setAttribute('year', prevYear)
                     cellHeader.setAttribute('month', prevMonth)
+                    cellHeader.setAttribute('date', prevEndOfMonthDate - (startOfDay - j) + 1)
                     cell.className = "tile prev"
                     cell.setAttribute('year', prevYear)
                     cell.setAttribute('month', prevMonth)
@@ -442,7 +588,9 @@ var Calendar = {
                     cellText.textContent = `${prevEndOfMonthDate - (startOfDay - j) + 1}`;
                 }
                 else if (date > endOfMonthDate) {
+                    cellHeader.setAttribute('year', nextYear)
                     cellHeader.setAttribute('month', nextMonth)
+                    cellHeader.setAttribute('date', nextDate)
                     cell.className = "tile next"
                     cell.setAttribute('year', nextYear)
                     cell.setAttribute('month', nextMonth)
@@ -458,7 +606,9 @@ var Calendar = {
                     nextDate++;
                 }
                 else {
+                    cellHeader.setAttribute('year', options.year)
                     cellHeader.setAttribute('month', currentMonth)
+                    cellHeader.setAttribute('date', date)
                     cell.className = "tile"
                     cell.setAttribute('year', options.year)
                     cell.setAttribute('month', currentMonth)
@@ -488,8 +638,9 @@ var Calendar = {
             row.append(_rowSchedule)
             _grid.appendChild(row); // appending each row into calendar body.
         }
-        self.endNum = uniqueNum
-        self.focus.last = uniqueNum
+
+        self.endNum = uniqueNum - 1
+        self.focus.last = uniqueNum - 1
         calendarGrid.append(_grid)
     },
     renderSelectedBlock() {
@@ -562,7 +713,7 @@ var Calendar = {
         event.target.classList.remove('dragOver')
     },
     onScheduleDrop(e, parent) {
-        if(e.target.getAttribute('number') === null){
+        if (e.target.getAttribute('number') === null) {
             return
         }
         e.target.classList.remove('dragOver')
@@ -595,7 +746,7 @@ var Calendar = {
     isEventBlock(targetTag) {
         return targetTag.classList.contains('title')
     },
-    isTileBlock(targetTag){
+    isTileBlock(targetTag) {
         return targetTag.getAttribute('month') !== null
     },
     cleanNodes(parentNode) {
@@ -662,7 +813,7 @@ var Calendar = {
             else if (self.isEventBlock(targetTag)) {
                 self.focus.type = 'move'
             }
-            else if(self.isTileBlock(targetTag)){
+            else if (self.isTileBlock(targetTag)) {
                 self.focus.type = 'create'
                 self.attachEventCreate.onMouseDown(self, targetTag)
             }
@@ -848,11 +999,14 @@ var Calendar = {
                 self.eventEnd()
                 self.focus.end = targetTag
                 self.focus.current = targetTag
+
                 const start = self.focus.start
                 const end = targetTag
                 self.clearFocus()
+
                 const startNum = Number(start.getAttribute('week')) * 6 + Number(start.getAttribute('number'))
                 const endNum = Number(end.getAttribute('week')) * 6 + Number(end.getAttribute('number'))
+
                 if (start !== undefined && end !== undefined && endNum >= startNum) {
                     const startYear = start.getAttribute('year')
                     const startMonth = start.getAttribute('month').toNumber() - 1
@@ -863,7 +1017,6 @@ var Calendar = {
                     const _start = new Date(startYear, startMonth, startDate)
                     const _end = new Date(endYear, endMonth, endDate)
                     const renderOption = { startTileNumber: start.getAttribute('number'), endTileNumber: end.getAttribute('number') }
-
                     self.onDragEndTile(_start, _end, renderOption)
                 }
             }
