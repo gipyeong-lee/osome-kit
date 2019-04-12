@@ -2,6 +2,7 @@
 Extension Class
 */
 'use strict'
+
 String.prototype.toNumber = function () {
     return Number(this)
 }
@@ -11,19 +12,61 @@ Array.prototype.insert = function (index, item) {
 Number.prototype.toNumber = function () {
     return this
 }
-HTMLElement.prototype.remove = function () {
-    this.parentNode.removeChild(this)
-    return this
+Number.prototype.pad = function (len) {
+    let s = this.toString();
+    if (s.length < len) {
+        s = ('0000000000' + s).slice(-len);
+    }
+    return s;
 }
-
 String.prototype.numOfPercent = function () {
     return Number(this.replace('%', ''))
 }
 String.prototype.numOfPixel = function () {
     return Number(this.replace('px', ''))
 }
+HTMLElement.prototype.remove = function () {
+    this.parentNode.removeChild(this)
+    return this
+}
+Date.prototype.getPrevMonth = function () {
+    let prevMonth = new Date()
+    prevMonth.setFullYear(this.getFullYear())
+    prevMonth.setMonth(this.getMonth() - 1)
+    return prevMonth
+}
+Date.prototype.getNextMonth = function () {
+    let nextMonth = new Date()
+    nextMonth.setFullYear(this.getFullYear())
+    nextMonth.setMonth(this.getMonth() + 1)
+    return nextMonth
+}
+Date.prototype.getLastDate = function () {
+    let nextMonth = new Date()
+    nextMonth.setFullYear(this.getFullYear())
+    nextMonth.setMonth(this.getMonth() + 1)
+    nextMonth.setDate(0)
+    return nextMonth.getDate()
+}
+Date.prototype.startOfDay = function () {
+    let copyMonth = new Date()
+    copyMonth.setFullYear(this.getFullYear())
+    copyMonth.setMonth(this.getMonth())
+    copyMonth.setDate(1)
+    return copyMonth.getDay()
+}
+Date.prototype.endOfDay = function () {
+    let copyMonth = new Date()
+    copyMonth.setFullYear(this.getFullYear())
+    copyMonth.setMonth(this.getMonth() + 1)
+    copyMonth.setDate(0)
+    return copyMonth.getDay()
+}
+
+
+
 //
-var OsomeGrid = {
+var OsomeGantt = {
     events: [],
     dragging: {
         row: undefined,
@@ -67,7 +110,9 @@ var OsomeGrid = {
         },
         country: 'ko',
         days: { ko: ['일', '월', '화', '수', '목', '금', '토'] },
-        today: moment(),
+        today: new Date(),
+        year: new Date().getFullYear(),
+        month: new Date().getMonth(),
         eventPopup: { html: 'test' }
     },
     init: function (id = 'osome-cal-calendar', opt = {}) {
@@ -97,6 +142,9 @@ var OsomeGrid = {
     attachEvent: function (row, start, end, eventOption) {
         let self = this
         const tilePrefix = 'back-tile'
+        if(start === null || end === null){
+            return
+        }
         let _eventOption = Object.assign({}, self.eventOption, eventOption)
         let startTile = document.getElementById(`${tilePrefix}-${row}-${start}`)
         let endTile = document.getElementById(`${tilePrefix}-${row}-${end}`)
@@ -267,15 +315,21 @@ var OsomeGrid = {
         calendarGrid.appendChild(container)
 
         // 0. create header
-        const targetDate = options.today
+        const targetDate = new Date(options.year, options.month - 1, 1)
+
+        const startOfDay = targetDate.startOfDay();
+
+        const currentMonth = options.month
+        let endOfMonthDate = targetDate.getLastDate()
+
         leftContainer.appendChild(self.createRow('left', 0, options.style.row))
         const daysRow = self.createRow('day', 0, options.style.row)
         rightContainer.appendChild(daysRow)
-        const endOfMonth = targetDate.endOf('month').date()
-        self.focus.last = endOfMonth
+        
+        self.focus.last = endOfMonthDate
 
         let rightContainerWidth = 0
-        for (let i = 0; i < endOfMonth; i++) {
+        for (let i = 0; i < endOfMonthDate; i++) {
             const backTile = self.createBackTile("day", 0, i, options.style.row)
             rightContainerWidth = (backTile.style.left.numOfPixel() + options.style.row.height)
             daysRow.appendChild(backTile)
@@ -285,10 +339,11 @@ var OsomeGrid = {
         // 1. create row
         let i
         let conatinerHeight = 0
+
         for (i = 1; i < 300; i++) {
             leftContainer.appendChild(self.createRow('left', i, options.style.row))
             let _row = self.createRow('right', i, options.style.row)
-            self.createRowTile(_row, i, endOfMonth, options)
+            self.createRowTile(_row, i, endOfMonthDate, options)
             rightContainer.appendChild(_row)
             let _rowSchedule = self.createRow('schedule', i, options.style.row)
             rightContainer.appendChild(_rowSchedule)
@@ -672,3 +727,5 @@ var OsomeGrid = {
         }
     }
 }
+
+export default OsomeGantt

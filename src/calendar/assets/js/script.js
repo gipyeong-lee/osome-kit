@@ -14,6 +14,19 @@ Array.prototype.insert = function (index, item) {
 Number.prototype.toNumber = function () {
     return this
 }
+Number.prototype.pad = function (len) {
+    let s = this.toString();
+    if (s.length < len) {
+        s = ('0000000000' + s).slice(-len);
+    }
+    return s;
+}
+String.prototype.numOfPercent = function () {
+    return Number(this.replace('%', ''))
+}
+String.prototype.numOfPixel = function () {
+    return Number(this.replace('px', ''))
+}
 HTMLElement.prototype.remove = function () {
     this.parentNode.removeChild(this)
     return this
@@ -52,17 +65,6 @@ Date.prototype.endOfDay = function () {
     return copyMonth.getDay()
 }
 
-String.prototype.numOfPercent = function () {
-    return Number(this.replace('%', ''))
-}
-
-Number.prototype.pad = function (len) {
-    let s = this.toString();
-    if (s.length < len) {
-        s = ('0000000000' + s).slice(-len);
-    }
-    return s;
-}
 
 //
 var Calendar = {
@@ -192,7 +194,8 @@ var Calendar = {
         _eventBlock.setAttribute('startDayNum', 0)
         _eventBlock.setAttribute('endNum', endNum)
         _eventBlock.setAttribute('endDayNum', 6)
-
+        _eventBlock.style.height = `${eventOption.style.height || 20}px`
+        _eventBlock.style.marginBottom = `${eventOption.style.marginBottom || 2}px`
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
         _eventText.innerText = eventOption.title
@@ -221,15 +224,15 @@ var Calendar = {
         _event.start = _startNum
         _event.total = totalDays
         self.events[idx] = _event
-
+        const eventBlockHeight = self.eventOption.style.height || 20
+        const eventBlockMargin = eventOption.style.marginBottom || 2
         for (var i = _startWeek; i <= _endWeek; i++) {
             const _eventBlock = self.createBlock(i, i * 7, (i + 1) * 7 - 1, _event)
             const _eventHandler = self.createHandler(i, _startNum, _endNum, _event)
             _eventBlock.append(_eventHandler)
             const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
             const _weekEl = document.getElementById(`${weekPrefix}${i}`)
-            _weekEl.style.height = `${(self.eventOption.style.height && 20) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
-
+            _weekEl.style.height = `${(eventBlockHeight + eventBlockMargin) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
             if (i === _startWeek) {
                 const left = startTile.style.left
                 let size = _endDayNum - _startDayNum + 1
@@ -288,6 +291,8 @@ var Calendar = {
         // week schedule.
         const totalDays = _endNum - _startNum + 1
         const idx = eventOption.index || self.events.length
+        const eventBlockHeight = self.eventOption.style.height || 20
+        const eventBlockMargin = eventOption.style.marginBottom || 2
 
         let _event = Object.assign({}, { scheduleId: `${idx}`, index: idx }, eventOption)
         _event.start = _startNum
@@ -300,7 +305,7 @@ var Calendar = {
             const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
             const _weekEl = document.getElementById(`${weekPrefix}${i}`)
 
-            _weekEl.style.height = `${(self.eventOption.style.height && 20) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+            _weekEl.style.height = `${(eventBlockHeight + eventBlockMargin) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
 
             if (i === _startWeek) {
                 const left = startTile.style.left
@@ -379,12 +384,13 @@ var Calendar = {
                 event.eventId = idx
                 event.index = idx
             }
+            let _startDate = new Date(event.startDate)
+            let _endDate = new Date(event.endDate)
+            let startMonth = _startDate.getMonth()
+            let endMonth = _endDate.getMonth()
 
-            let startMonth = event.startDate.getMonth()
-            let endMonth = event.endDate.getMonth()
-
-            let startDate = event.startDate.getDate()
-            let endDate = event.endDate.getDate()
+            let startDate = _startDate.getDate()
+            let endDate = _endDate.getDate()
 
             let indexOfCurrentMonth = currentMonth - 1
 
@@ -1057,9 +1063,9 @@ var Calendar = {
 /**
  * onDragEndTile: function (start, end, renderOption) {
     },
-    onClickSchedule: function (event, index) {
+    onClickSchedule: function (element, event, index) {
     },
     onChangedSchedule: function (before, after) {
     },
  */
-export default Calendar
+export default OsomeCalendar

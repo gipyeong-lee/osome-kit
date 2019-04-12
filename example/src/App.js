@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
-import { OSCalendar } from 'osome-kit'
+import { OSCalendar, OSGantt } from 'osome-kit'
 
 export default class App extends Component {
   state = {
@@ -19,12 +19,36 @@ export default class App extends Component {
   constructor(props) {
     super(props)
     this.osCalendar = React.createRef()
+    this.osGantt = React.createRef()
+    const events = []
+    for(let i=0;i<3000;i++){
+      events.push({
+        "scheduleId": 0,
+        "index": 0,
+        "title": "This is Title",
+        "detail": "This is Detail",
+        "style": {
+          "color": "#fff",
+          "backgroundColor": "#f00"
+        },
+        "startDate": `2019-04-0${(i%10)}T15:00:00.000Z`,
+        "endDate": `2019-04-0${(2+i%10)}T15:00:00.000Z`,
+        "eventId": 0,
+        "start": 2,
+        "total": 2
+      })
+    }
+    this.state.events = events
   }
   componentDidMount() {
 
   }
   render() {
     console.log(this.state)
+    return (<div>
+      <OSGantt className="hello" ref={this.osGantt}/>
+    </div>)
+    
     return (
       <div>
         <div>
