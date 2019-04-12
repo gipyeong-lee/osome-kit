@@ -221,13 +221,14 @@ var Calendar = {
         _event.start = _startNum
         _event.total = totalDays
         self.events[idx] = _event
+
         for (var i = _startWeek; i <= _endWeek; i++) {
             const _eventBlock = self.createBlock(i, i * 7, (i + 1) * 7 - 1, _event)
             const _eventHandler = self.createHandler(i, _startNum, _endNum, _event)
             _eventBlock.append(_eventHandler)
             const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
             const _weekEl = document.getElementById(`${weekPrefix}${i}`)
-            _weekEl.style.height = `${eventOption.style.height * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+            _weekEl.style.height = `${(self.eventOption.style.height && 20) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
 
             if (i === _startWeek) {
                 const left = startTile.style.left
@@ -298,7 +299,8 @@ var Calendar = {
             _eventBlock.append(_eventHandler)
             const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
             const _weekEl = document.getElementById(`${weekPrefix}${i}`)
-            _weekEl.style.height = `${eventOption.style.height * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+
+            _weekEl.style.height = `${(self.eventOption.style.height && 20) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
 
             if (i === _startWeek) {
                 const left = startTile.style.left
@@ -368,14 +370,16 @@ var Calendar = {
         const firstTileDate = firstTile.getAttribute('date').toNumber()
 
         self.events.map((event, idx) => {
-            if (!event.startDate || !event.endDate) {
+            if (event.startDate === undefined || event.endDate === undefined) {
                 console.log(`event must have start, end by Date format`)
                 return
             }
             if (!event.eventId) {
+                event.scheduleId = idx
                 event.eventId = idx
                 event.index = idx
             }
+
             let startMonth = event.startDate.getMonth()
             let endMonth = event.endDate.getMonth()
 
@@ -403,21 +407,25 @@ var Calendar = {
             }
             else if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth - 1) {
                 // 둘다 저번달
-
+                if (endDate - firstTileDate < 0) {
+                    return
+                }
                 endNum = Math.max(endDate - firstTileDate, 0)
             }
             else if (startMonth === indexOfCurrentMonth + 1 && endMonth === indexOfCurrentMonth + 1) {
                 // 둘다 다음달
+                if (Number(startOfDay) + endOfMonthDate + startDate - 1 > self.endNum) {
+                    return
+                }
                 startNum = Math.min(Number(startOfDay) + endOfMonthDate + startDate - 1, self.endNum)
             }
             else {
                 return
             }
-            
-            if(Math.abs(startMonth-indexOfCurrentMonth) > 1){
+            if (Math.abs(startMonth - indexOfCurrentMonth) > 1) {
                 startNum = 0
             }
-            if(Math.abs(endMonth-indexOfCurrentMonth) > 1){
+            if (Math.abs(endMonth - indexOfCurrentMonth) > 1) {
                 endNum = self.endNum
             }
 
@@ -500,7 +508,7 @@ var Calendar = {
         _grid.append(_divDays)
 
         const targetDate = new Date(options.year, options.month - 1, 1)
-        console.log(options.month, targetDate)
+
         const prevMonthObj = targetDate.getPrevMonth()
         const nextMonthObj = targetDate.getNextMonth()
         const prevEndOfMonthDate = prevMonthObj.getLastDate()
@@ -716,40 +724,48 @@ var Calendar = {
         if (e.target.getAttribute('number') === null) {
             return
         }
+
         e.target.classList.remove('dragOver')
         const eventId = e.dataTransfer.getData('index').toNumber()
         const startNum = e.target.getAttribute('number').toNumber()
         const event = parent.events[eventId]
-        const beforeEvent = {...event}
+        const beforeEvent = { ...event }
         const endNum = Math.min(startNum + event.total.toNumber() - 1, parent.endNum - 1)
+        const nextEvent = parent.moveSchedule(eventId, startNum, endNum, parent)
+        parent.onChangedSchedule(beforeEvent, nextEvent)
 
-        parent.moveSchedule(eventId, startNum, endNum, parent)
-        parent.onChangedSchedule(beforeEvent, event)
-      
     },
     moveSchedule(eventId, startNum, endNum) {
         const tilePrefix = 'osome-cal-grid-day-tile-'
-        let event = this.events[eventId]
+        let startTile = document.getElementById(`${tilePrefix}${startNum}`)
+        let endTile = document.getElementById(`${tilePrefix}${endNum}`)
+
         const elements = document.getElementsByClassName(`event-block-${eventId}`)
         while (elements.length > 0) elements[0].remove()
+        const event = this.syncEvent(eventId, startNum, endNum)
+        // this.events.splice(eventId, 1)
+        return event
+    },
+    syncEvent(eventId, startNum, endNum) {
+        const tilePrefix = 'osome-cal-grid-day-tile-'
+        let event = this.events[eventId]
+
         let startTile = document.getElementById(`${tilePrefix}${startNum}`)
         let endTile = document.getElementById(`${tilePrefix}${endNum}`)
         const sYear = startTile.getAttribute('year')
-        const sMonth = startTile.getAttribute('month')
+        const sMonth = Math.max(Number(startTile.getAttribute('month')) - 1, 0)
         const sDate = startTile.getAttribute('date')
 
         const eYear = endTile.getAttribute('year')
-        const eMonth = endTile.getAttribute('month')
+        const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
         const eDate = endTile.getAttribute('date')
-
-        this.events.splice(eventId, 1)
         event.start = startNum
-        event.startDate = new Date(sYear,sMonth,sDate)
-        event.endDate = new Date(eYear,eMonth,eDate)
+        event.startDate = new Date(sYear, sMonth, sDate)
+        event.endDate = new Date(eYear, eMonth, eDate)
+        return { ...event }
 
-        this.createEventBlock(startTile, endTile, event)
     },
-    
+
     // Drag And Drop
     isHandler(targetTag) {
         return targetTag.classList.contains('handler-y')
@@ -809,7 +825,7 @@ var Calendar = {
                     scheduleWrapper.appendChild(reordedChild)
                 })
                 const _weekEl = document.getElementById(`${weekPrefix}${scheduleWrapper.getAttribute('week')}`)
-                _weekEl.style.height = `${self.eventOption.style.height * (children.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+                _weekEl.style.height = `${(self.eventOption.style.height && 20) * (children.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
             }
         }
     },
@@ -948,6 +964,7 @@ var Calendar = {
         },
         onMouseMove: function (self, targetTag) {
             const eventId = self.focus.start.getAttribute('event-id')
+            const _startNum = self.focus.start.getAttribute('startNum')
             const currentNumber = targetTag.getAttribute('number').toNumber()
             const startWeek = Math.floor(self.focus.start.getAttribute('startNum').toNumber() / 7)
             const prevWeek = self.focus.current.getAttribute('week').toNumber()
@@ -964,6 +981,7 @@ var Calendar = {
                 }
                 const startNum = eventBlock.getAttribute('startNum').toNumber()
                 if (startNum <= currentNumber) {
+                    self.syncEvent(eventId, _startNum, currentNumber)
                     self.resizeEventBlock(eventBlock, targetTag)
                 }
             }
@@ -984,6 +1002,8 @@ var Calendar = {
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag) {
+            const eventId = self.focus.start.getAttribute('event-id')
+            self.onChangedSchedule(self.events[eventId], self.events[eventId])
             self.eventEnd()
             self.clearFocus()
             self.reorderEventBox()

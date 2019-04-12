@@ -11,6 +11,7 @@ export default class App extends Component {
     events: []
   }
   onChangedSchedule = (before, after) => {
+    console.log(before,after)
     this.setState(update(this.state, { events: { [before.index]: { $set: after } } }),()=>{
       console.log(`onChangedSchedule`,this.state)
     })
