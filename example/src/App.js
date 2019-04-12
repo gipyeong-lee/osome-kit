@@ -10,8 +10,10 @@ export default class App extends Component {
     },
     events: []
   }
-  onScheduleChange = (before, after) => {
-    console.log(before, after)
+  onChangedSchedule = (before, after) => {
+    this.setState(update(this.state, { events: { [before.index]: { $set: after } } }),()=>{
+      console.log(`onChangedSchedule`,this.state)
+    })
   }
   constructor(props) {
     super(props)
@@ -38,7 +40,7 @@ export default class App extends Component {
         <OSCalendar className="hello" ref={this.osCalendar}
           options={this.state.options}
           events={this.state.events}
-          onScheduleChange={this.onScheduleChange}
+          onChangedSchedule={this.onChangedSchedule}
           onDragEndTile={(start, end, renderOption) => {
             // console.log('push', { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, start: start, end: end })
             const data = { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, startDate: start, endDate: end }
