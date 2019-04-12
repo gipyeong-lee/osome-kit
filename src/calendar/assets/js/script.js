@@ -720,25 +720,36 @@ var Calendar = {
         const eventId = e.dataTransfer.getData('index').toNumber()
         const startNum = e.target.getAttribute('number').toNumber()
         const event = parent.events[eventId]
-        const beforeEvent = JSON.parse(JSON.stringify(event))
+        const beforeEvent = {...event}
         const endNum = Math.min(startNum + event.total.toNumber() - 1, parent.endNum - 1)
 
         parent.moveSchedule(eventId, startNum, endNum, parent)
         parent.onChangedSchedule(beforeEvent, event)
-        // parent.reorderEventBox()
+      
     },
     moveSchedule(eventId, startNum, endNum) {
         const tilePrefix = 'osome-cal-grid-day-tile-'
-        const event = this.events[eventId]
+        let event = this.events[eventId]
         const elements = document.getElementsByClassName(`event-block-${eventId}`)
         while (elements.length > 0) elements[0].remove()
         let startTile = document.getElementById(`${tilePrefix}${startNum}`)
         let endTile = document.getElementById(`${tilePrefix}${endNum}`)
+        const sYear = startTile.getAttribute('year')
+        const sMonth = startTile.getAttribute('month')
+        const sDate = startTile.getAttribute('date')
+
+        const eYear = endTile.getAttribute('year')
+        const eMonth = endTile.getAttribute('month')
+        const eDate = endTile.getAttribute('date')
+
         this.events.splice(eventId, 1)
         event.start = startNum
-        this.createEventBlock(startTile, endTile, event)
+        event.startDate = new Date(sYear,sMonth,sDate)
+        event.endDate = new Date(eYear,eMonth,eDate)
 
+        this.createEventBlock(startTile, endTile, event)
     },
+    
     // Drag And Drop
     isHandler(targetTag) {
         return targetTag.classList.contains('handler-y')
