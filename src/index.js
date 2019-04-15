@@ -6,8 +6,20 @@ import './calendar/assets/css/style.css'
 import './gantt/assets/css/style.css'
 
 class OSGantt extends Component {
-  componentDidMount() {
+  shouldComponentUpdate(nextProps, nextState) {
+    if(this.props.options !== nextProps.options){
+      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.events)
+      return false
+    }
     
+    if(this.props.events !== nextProps.events){
+      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.events)
+      return false
+    }
+    return false
+  }
+
+  componentDidMount() {
     OsomeGantt.init('osome-gantt', this.props.options, this.props.events)
     OsomeGantt.onClickSchedule = this.props.onClickSchedule || this.onClickSchedule
     OsomeGantt.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile
@@ -17,10 +29,25 @@ class OSGantt extends Component {
   render() {
     const { style, className } = this.props
     return (
-      <div id="osome-gantt" style={style} className={className} >
+      <div id="osome-gantt" style={{width:'100%'}} className={className} >
       </div>
     )
   }
+}
+
+OSGantt.defaultProps = {
+  events : []
+}
+
+OSGantt.propTypes = {
+  onClickSchedule: PropTypes.func, // click schedule
+  onDragEndTile: PropTypes.func,
+  onChangedSchedule: PropTypes.func,
+  createSchedule: PropTypes.func,
+  attachEvent: PropTypes.func,
+  options: PropTypes.object,
+  events: PropTypes.array,
+  onClickScheduleContent: PropTypes.element
 }
 
 class OSCalendar extends Component {

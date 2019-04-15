@@ -364,11 +364,14 @@ var OsomeCalendar = {
         const self = this
 
         const tilePrefix = 'osome-cal-grid-day-tile-'
-        const targetDate = new Date(options.year, options.month - 1, 1)
+        const currentMonth = options.month
+        
+        const indexOfCurrentMonth = currentMonth - 1
+        const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
 
         const startOfDay = targetDate.startOfDay();
 
-        const currentMonth = options.month
+        
         let endOfMonthDate = targetDate.getLastDate()
 
         const firstTile = document.getElementById(`${tilePrefix}0`)
@@ -392,7 +395,7 @@ var OsomeCalendar = {
             let startDate = _startDate.getDate()
             let endDate = _endDate.getDate()
 
-            let indexOfCurrentMonth = currentMonth - 1
+            
 
             let startNum = Math.max(startDate - firstTileDate, 0)
             let endNum = Math.min(Number(startOfDay) + endOfMonthDate + endDate - 1, self.endNum)
