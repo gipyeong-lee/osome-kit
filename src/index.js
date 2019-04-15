@@ -38,13 +38,13 @@ class OSCalendar extends Component {
     super(props)
   }
   attachEvent(start, end, option) {
-    Calendar.attachEvent(start, end, option)
+    OsomeCalendar.attachEvent(start, end, option)
   }
   resetEvent(){
-    Calendar.init('osome-calendar', options)  
+    OsomeCalendar.init('osome-calendar', options)  
   }
   createSchedule(start, end, eventOption) {
-    Calendar.attachEvent(start, end, eventOption)
+    OsomeCalendar.attachEvent(start, end, eventOption)
   }
   moveSchedule(eventId, startDay, endDay) {
 
@@ -52,12 +52,12 @@ class OSCalendar extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if(this.props.options !== nextProps.options){
-      Calendar.init('osome-calendar', nextProps.options, nextProps.events)  
+      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.events)  
       return false
     }
     
     if(this.props.events !== nextProps.events){
-      Calendar.init('osome-calendar', nextProps.options, nextProps.events)  
+      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.events)  
       return false
     }
     return false

@@ -115,7 +115,7 @@ var OsomeGantt = {
         month: new Date().getMonth(),
         eventPopup: { html: 'test' }
     },
-    init: function (id = 'osome-cal-calendar', opt = {}) {
+    init: function (id = 'osome-gantt-calendar', opt = {}) {
         let self = this
         let _options = Object.assign({}, this.options, opt)
         let _calendarGrid = document.getElementById(id)

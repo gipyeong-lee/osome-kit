@@ -24,7 +24,7 @@
     display:block;
     cursor: move;
 }
-.event-block .title {
+.osome-cal-grid .event-block .title {
     display: block;
     white-space: nowrap;
     overflow: hidden;

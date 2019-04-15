@@ -21,7 +21,7 @@ export default class App extends Component {
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const events = []
-    for(let i=0;i<3000;i++){
+    for(let i=0;i<20;i++){
       events.push({
         "scheduleId": 0,
         "index": 0,
@@ -45,9 +45,9 @@ export default class App extends Component {
   }
   render() {
     console.log(this.state)
-    return (<div>
-      <OSGantt className="hello" ref={this.osGantt}/>
-    </div>)
+    // return (<div>
+    //   <OSGantt className="hello" ref={this.osGantt}/>
+    // </div>)
     
     return (
       <div>

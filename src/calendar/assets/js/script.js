@@ -803,6 +803,9 @@ var OsomeCalendar = {
         const weekPrefix = 'osome-cal-grid-week-'
         const scheduleWrappers = document.getElementsByClassName('osome-cal-grid-week-schedule')
         self.resetAllEventTotal()
+        const eventBlockHeight = self.eventOption.style.height || 20
+        const eventBlockMargin = self.eventOption.style.marginBottom || 2
+
         for (var scheduleWrapper of scheduleWrappers) {
             let sortArray = []
             const children = scheduleWrapper.children
@@ -831,7 +834,7 @@ var OsomeCalendar = {
                     scheduleWrapper.appendChild(reordedChild)
                 })
                 const _weekEl = document.getElementById(`${weekPrefix}${scheduleWrapper.getAttribute('week')}`)
-                _weekEl.style.height = `${(self.eventOption.style.height && 20) * (children.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+                _weekEl.style.height = `${(eventBlockHeight + eventBlockMargin) * (children.length) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
             }
         }
     },
