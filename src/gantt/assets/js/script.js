@@ -340,7 +340,7 @@ var OsomeGantt = {
         let i
         let conatinerHeight = 0
 
-        for (i = 1; i < 300; i++) {
+        for (i = 1; i < 250; i++) {
             leftContainer.appendChild(self.createRow('left', i, options.style.row))
             let _row = self.createRow('right', i, options.style.row)
             self.createRowTile(_row, i, endOfMonthDate, options)

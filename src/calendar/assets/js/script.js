@@ -67,7 +67,7 @@ Date.prototype.endOfDay = function () {
 
 
 //
-var Calendar = {
+var OsomeCalendar = {
     endNum: 34,
     events: [],
     focus: {
