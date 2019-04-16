@@ -1,12 +1,13 @@
 body {
     width:100%;
     height:100%;
-    overflow:hidden;
+}
+* {
+    user-select: none;
 }
 /* GRID */
 .osome-gantt-grid-container {
     position: absolute;
-    overflow:hidden;
     width:100%;
     height:100%;
 }
@@ -57,26 +58,6 @@ body {
     padding-top:20px;
 }
 
-.osome-gantt-grid-week-schedule .event-block {
-    position: absolute;
-    z-index:11;
-    display:block;
-    cursor: move;
-}
-.osome-gantt-grid .event-block .title {
-    display: block;
-    background-color:transparent;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-left: 3px;
-    font-weight: 700;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -o-user-select: none;
-}
 .block-right .resize-handle {
     display:none;
 }
@@ -101,6 +82,17 @@ body {
 .osome-gantt-grid-schedule-row {
     background-color:transparent;
     position: absolute;
+}
+
+.osome-gantt-grid-schedule-row .event-block {
+    position: absolute;
+    z-index:11;
+    box-shadow: 3px 4px 2px 0px rgba(0,0,0,0.09);
+    display:block;
+    cursor: move;
+}
+.osome-gantt-grid-row {
+    border-right:1px solid #eaeaea;
 }
 .osome-gantt-grid-row .tile {
     -moz-user-select: none;

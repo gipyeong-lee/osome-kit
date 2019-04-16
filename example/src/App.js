@@ -9,20 +9,35 @@ export default class App extends Component {
       year: new Date().getFullYear(),
       month: new Date().getMonth() + 1
     },
+    categories:[],
     events: []
   }
+  randomColor = ()=> {
+    return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
+  }
   onChangedSchedule = (before, after) => {
-    console.log(before, after)
     this.setState(update(this.state, { events: { [before.index]: { $set: after } } }), () => {
       console.log(`onChangedSchedule`, this.state)
     })
   }
   constructor(props) {
     super(props)
+    const self = this
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const events = []
+    const categories = []
     for (let i = 0; i < 20; i++) {
+      categories.push({
+        content: {
+          title:`캘린더 ${i}`,
+          type:i%2 ? 'main':'sub',
+          style:{
+            color:self.randomColor(),
+            padding:'5px'
+          }
+        },
+      })
       events.push({
         "scheduleId": 0,
         "index": 0,
@@ -39,6 +54,7 @@ export default class App extends Component {
         "total": 2
       })
     }
+    this.state.categories = categories
     this.state.events = events
   }
   componentDidMount() {
@@ -64,7 +80,14 @@ export default class App extends Component {
           this.setState(update(this.state, { calendarType: { $set: 'calendar' } }))
         }}>Calendar</div>
       </div>
-      {this.state.calendarType === 'gantt' ? <OSGantt ref={this.osGantt} events={this.state.events} options={this.state.options}
+      {this.state.calendarType === 'gantt' ? <OSGantt ref={this.osGantt} categories={this.state.categories} events={this.state.events} options={this.state.options}
+      onChangedSchedule={this.onChangedSchedule}
+      onDragEndTile={(start, end, renderOption) => {
+        // console.log('push', { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, start: start, end: end })
+        const data = { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, startDate: start, endDate: end }
+        this.setState(update(this.state, { events: { $push: [data] } }))
+        // this.osCalendar.current.attachEvent(renderOption.startTileNumber, renderOption.endTileNumber, { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' } })
+      }}
       /> :
         <OSCalendar className="hello" ref={this.osCalendar}
           options={this.state.options}

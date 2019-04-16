@@ -6,21 +6,40 @@ import './calendar/assets/css/style.css'
 import './gantt/assets/css/style.css'
 
 class OSGantt extends Component {
+  onDragEndTile = (start, end, renderOption) => {
+    console.log(start, end)
+    console.log('Please implement `onDragEndTile` ')
+    // Calendar.attachEvent(renderOption.startTileNumber,renderOption.endTileNumber)
+  }
+  onClickSchedule = (element, event, index) => {
+  }
+  onChangedSchedule = (event, afterEvent) => {
+  }
+  attachEvent(start, end, option) {
+    OsomeGantt.attachEvent(start, end, option)
+  }
+  resetEvent() {
+    OsomeGantt.init('osome-calendar', options)
+  }
+  createSchedule(start, end, eventOption) {
+    OsomeGantt.attachEvent(start, end, eventOption)
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
-    if(this.props.options !== nextProps.options){
-      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.events)
+    if (this.props.options !== nextProps.options) {
+      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.events, nextProps.categories)
       return false
     }
-    
-    if(this.props.events !== nextProps.events){
-      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.events)
+
+    if (this.props.events !== nextProps.events) {
+      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.events, nextProps.categories)
       return false
     }
     return false
   }
 
   componentDidMount() {
-    OsomeGantt.init('osome-gantt', this.props.options, this.props.events)
+    OsomeGantt.init('osome-gantt', this.props.options, this.props.events, this.props.categories)
     OsomeGantt.onClickSchedule = this.props.onClickSchedule || this.onClickSchedule
     OsomeGantt.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile
     OsomeGantt.onChangedSchedule = this.props.onChangedSchedule || this.onChangedSchedule
@@ -29,14 +48,15 @@ class OSGantt extends Component {
   render() {
     const { style, className } = this.props
     return (
-      <div id="osome-gantt" style={{width:'100%'}} className={className} >
+      <div id="osome-gantt" style={{ width: '100%' }} className={className} >
       </div>
     )
   }
 }
 
 OSGantt.defaultProps = {
-  events : []
+  events: [],
+  categories: []
 }
 
 OSGantt.propTypes = {
@@ -46,6 +66,7 @@ OSGantt.propTypes = {
   createSchedule: PropTypes.func,
   attachEvent: PropTypes.func,
   options: PropTypes.object,
+  categories: PropTypes.array,
   events: PropTypes.array,
   onClickScheduleContent: PropTypes.element
 }
@@ -67,8 +88,8 @@ class OSCalendar extends Component {
   attachEvent(start, end, option) {
     OsomeCalendar.attachEvent(start, end, option)
   }
-  resetEvent(){
-    OsomeCalendar.init('osome-calendar', options)  
+  resetEvent() {
+    OsomeCalendar.init('osome-calendar', options)
   }
   createSchedule(start, end, eventOption) {
     OsomeCalendar.attachEvent(start, end, eventOption)
@@ -78,13 +99,13 @@ class OSCalendar extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if(this.props.options !== nextProps.options){
-      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.events)  
+    if (this.props.options !== nextProps.options) {
+      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.events)
       return false
     }
-    
-    if(this.props.events !== nextProps.events){
-      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.events)  
+
+    if (this.props.events !== nextProps.events) {
+      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.events)
       return false
     }
     return false
@@ -106,7 +127,7 @@ class OSCalendar extends Component {
 }
 
 OSCalendar.defaultProps = {
-  events : []
+  events: []
 }
 
 OSCalendar.propTypes = {
