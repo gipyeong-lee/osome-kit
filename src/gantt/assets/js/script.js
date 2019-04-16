@@ -189,13 +189,13 @@ var OsomeGantt = {
 
         const tilePrefix = 'back-tile'
         const currentMonth = options.month
-        
+
         const indexOfCurrentMonth = currentMonth - 1
         const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
 
         const startOfDay = targetDate.startOfDay();
 
-        
+
         let endOfMonthDate = targetDate.getLastDate()
 
         const firstTileDate = 1
@@ -218,7 +218,7 @@ var OsomeGantt = {
             let startDate = _startDate.getDate()
             let endDate = _endDate.getDate()
 
-            
+
 
             let startNum = Math.max(startDate - firstTileDate, 0)
             let endNum = Math.min(Number(startOfDay) + endOfMonthDate + endDate - 1, self.endNum)
@@ -313,6 +313,9 @@ var OsomeGantt = {
         if (type === 'schedule') {
             rowContainer.className = `osome-gantt-grid-schedule-row`
         }
+        else if (type === 'left') {
+            rowContainer.className = `row osome-gantt-grid-category-row`
+        }
         else {
             rowContainer.className = `row osome-gantt-grid-row`
         }
@@ -332,8 +335,8 @@ var OsomeGantt = {
             bullet.style.float = 'left'
             bullet.style.marginTop = `${self.options.style.row.height / 4}px`
             bullet.style.height = `${self.options.style.row.height / 2}px`
-            bullet.style.width = type === 'main'  ? `${self.options.style.row.height / 2}px` : `${self.options.style.row.height / 5}px`
-            bullet.style.borderRadius = type === 'main'  ? `${self.options.style.row.height / 4}px` : 0
+            bullet.style.width = type === 'main' ? `${self.options.style.row.height / 2}px` : `${self.options.style.row.height / 5}px`
+            bullet.style.borderRadius = type === 'main' ? `${self.options.style.row.height / 4}px` : 0
             bullet.style.backgroundColor = content.style.color
             const text = document.createElement('span')
             text.style.paddingLeft = '10px'
@@ -506,6 +509,17 @@ var OsomeGantt = {
             block.style.zIndex = opacity === 1 ? 11 : 9
         }
     },
+    draggingCategoryStart(self, row) {
+        self.dragging = {
+            row: row
+        }
+    },
+    draggingCategoryEnd(self) {
+        if (document.getElementById(`dragImage-category-${self.dragging.row}`) !== null) {
+            document.getElementById(`dragImage-category-${self.dragging.row}`).remove()
+        }
+        return self
+    },
     draggingStart(self, eventData) {
         const days = eventData.endNum - eventData.startNum
         self.dragging = {
@@ -575,7 +589,31 @@ var OsomeGantt = {
 
         document.body.append(canvas)
     },
+    onCategoryDragStart(rowEl, self, e) {
+        const _row = rowEl.getAttribute('row')
+        console.log(_row)
+        self.draggingCategoryStart(self, _row)
+
+        let canvas = document.createElement('canvas')
+        let context = canvas.getContext('2d')
+        canvas.id = `dragImage-category-${_row}`
+        canvas.className = 'dragImage'
+        canvas.width = rowEl.offsetWidth
+        canvas.height = self.options.style.row.height
+        canvas.style.left = `${e.clientX}px`
+        canvas.style.top = `${e.clientY}px`
+        context.fillStyle = `#eaeaea`
+        context.fillRect(0, 0, canvas.width, canvas.height)
+
+        document.body.append(canvas)
+    },
+    onCategoryDragEnd(self) {
+        self.draggingCategoryEnd(self)
+    },
     // Drag And Drop
+    isCategoryRow(targetTag) {
+        return targetTag.classList.contains('osome-gantt-grid-category-row')
+    },
     isRightTile(targetTag) {
         return targetTag.classList.contains('tile')
     },
@@ -626,6 +664,10 @@ var OsomeGantt = {
                 self.focus.type = 'create'
                 self.attachEventCreate.onMouseDown(self, targetTag)
             }
+            else if (self.isCategoryRow(targetTag)) {
+                self.focus.type = 'reorder'
+                self.attachDragAndDropCategory.onMouseDown(self, targetTag, e)
+            }
         }
         calendarGrid.onmousemove = function (e) {
             if (self.focus.type === undefined) {
@@ -645,6 +687,9 @@ var OsomeGantt = {
                 if (targetTag.getAttribute('number')) {
                     self.attachResizeEvent.onMouseMove(self, targetTag)
                 }
+            }
+            else if (self.focus.type === 'reorder') {
+                self.attachDragAndDropCategory.onMouseMove(self, targetTag, e)
             }
 
         }
@@ -670,6 +715,11 @@ var OsomeGantt = {
             else if (self.focus.type === 'container-resize') {
                 self.attachContainerHandleBarEvent.onMouseUp(self, targetTag, e)
             }
+            else if (self.focus.type === 'reorder') {
+                console.log('reorder !')
+                self.attachDragAndDropCategory.onMouseUp(self, targetTag, e)
+            }
+
             self.clearFocus()
         }
     },
@@ -755,6 +805,38 @@ var OsomeGantt = {
         rightContainer.style.width = `${rightWidth / containerWidth * 100}%`
         self.state.leftWidth = `${leftWidth / containerWidth * 100}%`
     },
+    attachDragAndDropCategory: {
+        onMouseDown: function (self, targetTag, e) {
+            self.focus.start = targetTag
+            self.focus.current = targetTag
+            self.onCategoryDragStart(targetTag, self, e)
+        },
+        onMouseMove: function (self, targetTag, e) {
+            const _row = self.dragging.row
+            const _tRow = targetTag.getAttribute('row')
+            let dragImg = document.getElementById(`dragImage-category-${_row}`)
+            dragImg.style.left = `${e.clientX}px`
+            dragImg.style.top = `${e.clientY}px`
+            if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
+                return
+            }
+
+            if (self.focus.current === targetTag) {
+                return
+            }
+
+            if (!targetTag.classList.contains('dragOver')) {
+                targetTag.classList.add('dragOver')
+                self.focus.current.classList.remove('dragOver')
+            }
+            self.focus.current = targetTag
+        },
+        onMouseUp: function (self, targetTag) {
+            self.focus.current.classList.remove('dragOver')
+            self.onCategoryDragEnd(self)
+        }
+    },
+
     attachDragAndDropEvent: {
         onMouseDown: function (self, targetTag, e) {
             self.focus.start = targetTag
@@ -841,6 +923,16 @@ var OsomeGantt = {
             self.eventEnd(row)
             self.clearSelectedBlock(row)
             self.reorderEventBox()
+        }
+    },
+    attachMoveRow: {
+        onMouseDown: function (self, targetTag) {
+        },
+        onMouseMove: function (self, targetTag) {
+
+        },
+        onMouseUp: function (self, targetTag) {
+
         }
     },
     attachEventCreate: {

@@ -79,6 +79,13 @@ body {
 }   
 
 /* */
+.osome-gantt-grid-category-row {
+    background-color:transparent;
+}
+
+.osome-gantt-grid-category-row.dragOver {
+    background-color:rgba(223, 230, 233,0.5);
+}
 .osome-gantt-grid-schedule-row {
     background-color:transparent;
     position: absolute;
