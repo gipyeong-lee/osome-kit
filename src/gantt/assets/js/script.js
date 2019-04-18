@@ -323,7 +323,7 @@ var OsomeGantt = {
         rowContainer.style.width = '100%'
         rowContainer.style.lineHeight = `${style.height}px`
         rowContainer.style.height = `${style.height}px`
-        rowContainer.style.top = `${row * height}px`
+        rowContainer.style.top = `${row * (height + 0.4)}px`
         rowContainer.setAttribute(`row`, row)
         rowContainer.setAttribute(`type`, type)
         if (content !== undefined) {
@@ -412,6 +412,7 @@ var OsomeGantt = {
         leftContainer.className = 'osome-gantt-grid-inner-container'
         leftContainer.style.left = 0
         leftContainer.style.borderRight = ``
+        leftContainer.style.backgroundColor = `transparent`
         leftContainer.style.width = `${self.state.leftWidth}`
 
         let handleBar = document.createElement('div')
@@ -568,6 +569,27 @@ var OsomeGantt = {
 
         self.draggingEnd(self)
     },
+    htmlToImg(element, callback) {
+        const self = this
+        const WIDTH = element.offsetWidth
+        var HEIGHT = element.offsetHeight
+        var data =
+            "<svg xmlns='http://www.w3.org/2000/svg' width='" + WIDTH + "px' height='" + HEIGHT + "px'>" +
+            "<foreignObject width='100%' height='100%'>" +
+            `<div xmlns='http://www.w3.org/1999/xhtml' style='${element.style.cssText};background-color:white;'>` +
+            element.innerHTML +
+            "</div>" +
+            "</foreignObject>" +
+            "</svg>"
+        const img = new Image();
+        const svg = new Blob([data], { type: "image/svg+xml;charset=utf-8" });
+        const url = window.URL.createObjectURL(svg)
+        img.addEventListener("load", function () {
+            window.URL.revokeObjectURL(url);
+            callback(img)
+        })
+        img.src = url;
+    },
     onBlockDragStart(eventBlock, self, e) {
 
         const _index = eventBlock.getAttribute('event-id').toNumber()
@@ -591,7 +613,6 @@ var OsomeGantt = {
     },
     onCategoryDragStart(rowEl, self, e) {
         const _row = rowEl.getAttribute('row')
-        console.log(_row)
         self.draggingCategoryStart(self, _row)
 
         let canvas = document.createElement('canvas')
@@ -600,14 +621,24 @@ var OsomeGantt = {
         canvas.className = 'dragImage'
         canvas.width = rowEl.offsetWidth
         canvas.height = self.options.style.row.height
-        canvas.style.left = `${e.clientX}px`
-        canvas.style.top = `${e.clientY}px`
-        context.fillStyle = `#eaeaea`
-        context.fillRect(0, 0, canvas.width, canvas.height)
-        canvas.onmouseup = ()=>{ self.onCategoryDragEnd(self) }
-        document.body.append(canvas)
+        canvas.style.boxShadow = '3px 4px 2px 0px rgba(0,0,0,0.09)'
+        canvas.style.left = `${e.clientX + 5}px`
+        canvas.style.top = `${e.clientY + 5}px`
+        self.htmlToImg(rowEl, (img) => {
+            if (self.focus.type === 'reorder') {
+                context.drawImage(img, 0, 0)
+                document.body.append(canvas)
+            }
+        })
+
+        if (!self.focus.start.classList.contains('dragOver')) {
+            self.focus.start.classList.add('dragOver')
+        }
     },
     onCategoryDragEnd(self) {
+        self.focus.current.classList.remove('dragOverUp')
+        self.focus.current.classList.remove('dragOverDown')
+        self.focus.start.classList.remove('dragOver')
         self.clearFocus()
         self.draggingCategoryEnd(self)
     },
@@ -696,6 +727,7 @@ var OsomeGantt = {
         }
         calendarGrid.onmouseup = function (e) {
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
+        
             if (self.focus.type === 'create') {
                 self.attachEventCreate.onMouseUp(self, targetTag)
             }
@@ -815,24 +847,48 @@ var OsomeGantt = {
             const _row = self.dragging.row
             const _tRow = targetTag.getAttribute('row')
             let dragImg = document.getElementById(`dragImage-category-${_row}`)
-            dragImg.style.left = `${e.clientX}px`
-            dragImg.style.top = `${e.clientY}px`
+            if (dragImg === null || dragImg === undefined) {
+                return
+            }
+            dragImg.style.left = `${e.clientX + 5}px`
+            dragImg.style.top = `${e.pageY + 5}px`
+        
             if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
                 return
+            }
+            const targetRect = targetTag.getBoundingClientRect()    
+            const offsetY = e.clientY - targetRect.top
+            const height = targetTag.offsetHeight
+
+            if(offsetY < height / 2){
+                if(targetTag.classList.contains('dragOverDown')){
+                    targetTag.classList.remove('dragOverDown')
+                }
+                if(!targetTag.classList.contains('dragOverUp')){
+                    targetTag.classList.add('dragOverUp')
+                }
+            
+            } else {
+                if(targetTag.classList.contains('dragOverUp')){
+                    self.focus.current.classList.remove('dragOverUp')
+                }
+                if(!targetTag.classList.contains('dragOverDown')){
+                    targetTag.classList.add('dragOverDown')
+                }  
             }
 
             if (self.focus.current === targetTag) {
                 return
             }
-
-            if (!targetTag.classList.contains('dragOver')) {
-                targetTag.classList.add('dragOver')
-                self.focus.current.classList.remove('dragOver')
+            else {
+                self.focus.current.classList.remove('dragOverUp')
+                self.focus.current.classList.remove('dragOverDown')
             }
+
+
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag) {
-            self.focus.current.classList.remove('dragOver')
             self.onCategoryDragEnd(self)
         }
     },
