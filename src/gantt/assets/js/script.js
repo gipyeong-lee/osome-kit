@@ -635,10 +635,44 @@ var OsomeGantt = {
             self.focus.start.classList.add('dragOver')
         }
     },
-    onCategoryDragEnd(self) {
+    moveRow(self, e){
+        if(self.focus.start === undefined){
+            return
+        }
+        console.log('move!')
+        const _parentId = 'osome-gantt-grid-left-container'
+        const _parent = document.getElementById(_parentId)
+        const _sourceRowEl = self.focus.start
+        const _sRow = _sourceRowEl.getAttribute('row')
+        const _targetRowEl = self.focus.current
+        let _tRow = _targetRowEl.getAttribute('row').toNumber() - 1
+
+        const sourceCategoryId = `left-row-${_sRow}`
+        const sourceScheduleId = `schedule-row-${_sRow}` 
+        const _sourceCategoryEl = document.getElementById(sourceCategoryId)
+
+        // trow
+        if(offsetY < height / 2){
+            _tRow -= 1
+        } 
+
+        let targetCategoryId = `left-row-${_tRow}`
+        let targetScheduleId = `schedule-row-${_tRow}`
+
+        const targetRect = _targetRowEl.getBoundingClientRect()    
+        const offsetY = e.clientY - targetRect.top
+        const height = _targetRowEl.offsetHeight
+        console.log(_sourceCategoryEl,_parent.children[_tRow])
+        _parent.insertBefore(_sourceCategoryEl,_parent.children[_tRow])
+        if(_tRow < self.categories.length / 2){
+            
+        }
+    },
+    onCategoryDragEnd(self, e) {
         self.focus.current.classList.remove('dragOverUp')
         self.focus.current.classList.remove('dragOverDown')
         self.focus.start.classList.remove('dragOver')
+        self.moveRow(self, e)
         self.clearFocus()
         self.draggingCategoryEnd(self)
     },
@@ -888,8 +922,8 @@ var OsomeGantt = {
 
             self.focus.current = targetTag
         },
-        onMouseUp: function (self, targetTag) {
-            self.onCategoryDragEnd(self)
+        onMouseUp: function (self, targetTag, e) {
+            self.onCategoryDragEnd(self, e)
         }
     },
 
@@ -979,16 +1013,6 @@ var OsomeGantt = {
             self.eventEnd(row)
             self.clearSelectedBlock(row)
             self.reorderEventBox()
-        }
-    },
-    attachMoveRow: {
-        onMouseDown: function (self, targetTag) {
-        },
-        onMouseMove: function (self, targetTag) {
-
-        },
-        onMouseUp: function (self, targetTag) {
-
         }
     },
     attachEventCreate: {
