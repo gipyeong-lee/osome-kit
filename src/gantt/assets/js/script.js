@@ -604,10 +604,11 @@ var OsomeGantt = {
         canvas.style.top = `${e.clientY}px`
         context.fillStyle = `#eaeaea`
         context.fillRect(0, 0, canvas.width, canvas.height)
-
+        canvas.onmouseup = ()=>{ self.onCategoryDragEnd(self) }
         document.body.append(canvas)
     },
     onCategoryDragEnd(self) {
+        self.clearFocus()
         self.draggingCategoryEnd(self)
     },
     // Drag And Drop
@@ -716,7 +717,6 @@ var OsomeGantt = {
                 self.attachContainerHandleBarEvent.onMouseUp(self, targetTag, e)
             }
             else if (self.focus.type === 'reorder') {
-                console.log('reorder !')
                 self.attachDragAndDropCategory.onMouseUp(self, targetTag, e)
             }
 
