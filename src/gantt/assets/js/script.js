@@ -643,27 +643,43 @@ var OsomeGantt = {
         const _parentId = 'osome-gantt-grid-left-container'
         const _parent = document.getElementById(_parentId)
         const _sourceRowEl = self.focus.start
-        const _sRow = _sourceRowEl.getAttribute('row')
+        const _sRow = _sourceRowEl.getAttribute('row').toNumber()
         const _targetRowEl = self.focus.current
-        let _tRow = _targetRowEl.getAttribute('row').toNumber() - 1
+        let _tRow = _targetRowEl.getAttribute('row').toNumber()
 
         const sourceCategoryId = `left-row-${_sRow}`
         const sourceScheduleId = `schedule-row-${_sRow}` 
         const _sourceCategoryEl = document.getElementById(sourceCategoryId)
 
         // trow
+        const targetRect = _targetRowEl.getBoundingClientRect()    
+        const offsetY = e.clientY - targetRect.top
+        const height = _targetRowEl.offsetHeight
+
         if(offsetY < height / 2){
             _tRow -= 1
-        } 
+        }
 
         let targetCategoryId = `left-row-${_tRow}`
         let targetScheduleId = `schedule-row-${_tRow}`
 
-        const targetRect = _targetRowEl.getBoundingClientRect()    
-        const offsetY = e.clientY - targetRect.top
-        const height = _targetRowEl.offsetHeight
-        console.log(_sourceCategoryEl,_parent.children[_tRow])
-        _parent.insertBefore(_sourceCategoryEl,_parent.children[_tRow])
+        const _targetCategoryEl = document.getElementById(targetCategoryId)
+        
+        const children = _parent.children
+        if(_sRow < _tRow){
+            const _tRowStyle = _targetCategoryEl.style.cssText
+            for(let i=_tRow;i>_sRow;i--){
+                const nextRow = children[i]
+                const beforeRow = children[i-1]
+                nextRow.setAttribute('row',i-1)
+                nextRow.style.cssText = beforeRow.style.cssText
+            }
+            _sourceCategoryEl.style.cssText = _tRowStyle
+        }
+        
+        
+        // _parent.insertBefore(_sourceCategoryEl, _targetCategoryEl)
+        
         if(_tRow < self.categories.length / 2){
             
         }
