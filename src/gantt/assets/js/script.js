@@ -462,7 +462,7 @@ var OsomeGantt = {
             let _rowSchedule = self.createRow('schedule', idx, options.style.row)
             rightContainer.appendChild(_rowSchedule)
         }
-        conatinerHeight = i * options.style.row.height
+        conatinerHeight = i * (options.style.row.height + 0.4)
 
         rightContainer.style.height = `${conatinerHeight}px`
         leftContainer.style.height = `${conatinerHeight}px`
@@ -645,7 +645,7 @@ var OsomeGantt = {
         const _sourceRowEl = self.focus.start
         const _sRow = _sourceRowEl.getAttribute('row').toNumber()
         const _targetRowEl = self.focus.current
-        let _tRow  = _targetRowEl.getAttribute('row').toNumber()
+        let _tRow = _targetRowEl.getAttribute('row').toNumber()
 
         const sourceCategoryId = `left-row-${_sRow}`
         const sourceScheduleId = `schedule-row-${_sRow}`
@@ -660,29 +660,29 @@ var OsomeGantt = {
             if (offsetY < height / 2) {
                 _tRow -= 1
             }
-    
+
             let targetCategoryId = `left-row-${_tRow}`
             let targetScheduleId = `schedule-row-${_tRow}`
             const _targetCategoryEl = document.getElementById(targetCategoryId)
             const _targetScheduleEl = document.getElementById(targetScheduleId)
             const _sourceHtml = _sourceCategoryEl.innerHTML
             const _sourceScheduleHtml = _sourceScheduleEl.innerHTML
-            const _source = self.categories[_sRow-1]
+            const _source = self.categories[_sRow - 1]
             for (let i = _sRow; i < _tRow; i++) {
-                const nextRow = document.getElementById(`left-row-${i+1}`)
+                const nextRow = document.getElementById(`left-row-${i + 1}`)
                 const beforeRow = document.getElementById(`left-row-${i}`)
                 beforeRow.innerHTML = nextRow.innerHTML
-                self.categories[i-1] = self.categories[i]
-                const nextSchedule = document.getElementById(`schedule-row-${i+1}`)
+                self.categories[i - 1] = self.categories[i]
+                const nextSchedule = document.getElementById(`schedule-row-${i + 1}`)
                 const beforeSchedule = document.getElementById(`schedule-row-${i}`)
                 beforeSchedule.innerHTML = nextSchedule.innerHTML
             }
             _targetScheduleEl.innerHTML = _sourceScheduleHtml
             _targetCategoryEl.innerHTML = _sourceHtml
-            self.categories[_tRow-1] = _source
-            
+            self.categories[_tRow - 1] = _source
+
         }
-        else if(_sRow > _tRow) {
+        else if (_sRow > _tRow) {
             if (offsetY > height / 2) {
                 _tRow += 1
             }
@@ -692,26 +692,20 @@ var OsomeGantt = {
             const _targetScheduleEl = document.getElementById(targetScheduleId)
             const _sourceHtml = _sourceCategoryEl.innerHTML
             const _sourceScheduleHtml = _sourceScheduleEl.innerHTML
-            const _source = self.categories[_sRow-1]
-            for (let i = _sRow; i > _tRow;i--) {
+            const _source = self.categories[_sRow - 1]
+            for (let i = _sRow; i > _tRow; i--) {
                 const nextRow = document.getElementById(`left-row-${i}`)
-                const beforeRow = document.getElementById(`left-row-${i-1}`)
+                const beforeRow = document.getElementById(`left-row-${i - 1}`)
                 nextRow.innerHTML = beforeRow.innerHTML
-                self.categories[i-1] = self.categories[i-2]
+                self.categories[i - 1] = self.categories[i - 2]
                 const nextSchedule = document.getElementById(`schedule-row-${i}`)
-                const beforeSchedule = document.getElementById(`schedule-row-${i-1}`)
+                const beforeSchedule = document.getElementById(`schedule-row-${i - 1}`)
                 nextSchedule.innerHTML = beforeSchedule.innerHTML
             }
-    
+
             _targetCategoryEl.innerHTML = _sourceHtml
             _targetScheduleEl.innerHTML = _sourceScheduleHtml
-            self.categories[_tRow-1] = _source
-        }
-
-        // _parent.insertBefore(_sourceCategoryEl, _targetCategoryEl)
-
-        if (_tRow < self.categories.length / 2) {
-
+            self.categories[_tRow - 1] = _source
         }
     },
     onCategoryDragEnd(self, e) {
