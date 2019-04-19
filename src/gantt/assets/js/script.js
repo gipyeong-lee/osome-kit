@@ -635,8 +635,8 @@ var OsomeGantt = {
             self.focus.start.classList.add('dragOver')
         }
     },
-    moveRow(self, e){
-        if(self.focus.start === undefined){
+    moveRow(self, e) {
+        if (self.focus.start === undefined) {
             return
         }
         console.log('move!')
@@ -645,43 +645,73 @@ var OsomeGantt = {
         const _sourceRowEl = self.focus.start
         const _sRow = _sourceRowEl.getAttribute('row').toNumber()
         const _targetRowEl = self.focus.current
-        let _tRow = _targetRowEl.getAttribute('row').toNumber()
+        let _tRow  = _targetRowEl.getAttribute('row').toNumber()
 
         const sourceCategoryId = `left-row-${_sRow}`
-        const sourceScheduleId = `schedule-row-${_sRow}` 
+        const sourceScheduleId = `schedule-row-${_sRow}`
         const _sourceCategoryEl = document.getElementById(sourceCategoryId)
-
+        const _sourceScheduleEl = document.getElementById(sourceScheduleId)
         // trow
-        const targetRect = _targetRowEl.getBoundingClientRect()    
+        const targetRect = _targetRowEl.getBoundingClientRect()
         const offsetY = e.clientY - targetRect.top
         const height = _targetRowEl.offsetHeight
 
-        if(offsetY < height / 2){
-            _tRow -= 1
-        }
-
-        let targetCategoryId = `left-row-${_tRow}`
-        let targetScheduleId = `schedule-row-${_tRow}`
-
-        const _targetCategoryEl = document.getElementById(targetCategoryId)
-        
-        const children = _parent.children
-        if(_sRow < _tRow){
-            const _tRowStyle = _targetCategoryEl.style.cssText
-            for(let i=_tRow;i>_sRow;i--){
-                const nextRow = children[i]
-                const beforeRow = children[i-1]
-                nextRow.setAttribute('row',i-1)
-                nextRow.style.cssText = beforeRow.style.cssText
+        if (_sRow < _tRow) {
+            if (offsetY < height / 2) {
+                _tRow -= 1
             }
-            _sourceCategoryEl.style.cssText = _tRowStyle
-        }
-        
-        
-        // _parent.insertBefore(_sourceCategoryEl, _targetCategoryEl)
-        
-        if(_tRow < self.categories.length / 2){
+    
+            let targetCategoryId = `left-row-${_tRow}`
+            let targetScheduleId = `schedule-row-${_tRow}`
+            const _targetCategoryEl = document.getElementById(targetCategoryId)
+            const _targetScheduleEl = document.getElementById(targetScheduleId)
+            const _sourceHtml = _sourceCategoryEl.innerHTML
+            const _sourceScheduleHtml = _sourceScheduleEl.innerHTML
+            const _source = self.categories[_sRow-1]
+            for (let i = _sRow; i < _tRow; i++) {
+                const nextRow = document.getElementById(`left-row-${i+1}`)
+                const beforeRow = document.getElementById(`left-row-${i}`)
+                beforeRow.innerHTML = nextRow.innerHTML
+                self.categories[i-1] = self.categories[i]
+                const nextSchedule = document.getElementById(`schedule-row-${i+1}`)
+                const beforeSchedule = document.getElementById(`schedule-row-${i}`)
+                beforeSchedule.innerHTML = nextSchedule.innerHTML
+            }
+            _targetScheduleEl.innerHTML = _sourceScheduleHtml
+            _targetCategoryEl.innerHTML = _sourceHtml
+            self.categories[_tRow-1] = _source
             
+        }
+        else if(_sRow > _tRow) {
+            if (offsetY > height / 2) {
+                _tRow += 1
+            }
+            let targetCategoryId = `left-row-${_tRow}`
+            let targetScheduleId = `schedule-row-${_tRow}`
+            const _targetCategoryEl = document.getElementById(targetCategoryId)
+            const _targetScheduleEl = document.getElementById(targetScheduleId)
+            const _sourceHtml = _sourceCategoryEl.innerHTML
+            const _sourceScheduleHtml = _sourceScheduleEl.innerHTML
+            const _source = self.categories[_sRow-1]
+            for (let i = _sRow; i > _tRow;i--) {
+                const nextRow = document.getElementById(`left-row-${i}`)
+                const beforeRow = document.getElementById(`left-row-${i-1}`)
+                nextRow.innerHTML = beforeRow.innerHTML
+                self.categories[i-1] = self.categories[i-2]
+                const nextSchedule = document.getElementById(`schedule-row-${i}`)
+                const beforeSchedule = document.getElementById(`schedule-row-${i-1}`)
+                nextSchedule.innerHTML = beforeSchedule.innerHTML
+            }
+    
+            _targetCategoryEl.innerHTML = _sourceHtml
+            _targetScheduleEl.innerHTML = _sourceScheduleHtml
+            self.categories[_tRow-1] = _source
+        }
+
+        // _parent.insertBefore(_sourceCategoryEl, _targetCategoryEl)
+
+        if (_tRow < self.categories.length / 2) {
+
         }
     },
     onCategoryDragEnd(self, e) {
@@ -777,7 +807,7 @@ var OsomeGantt = {
         }
         calendarGrid.onmouseup = function (e) {
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
-        
+
             if (self.focus.type === 'create') {
                 self.attachEventCreate.onMouseUp(self, targetTag)
             }
@@ -902,29 +932,29 @@ var OsomeGantt = {
             }
             dragImg.style.left = `${e.clientX + 5}px`
             dragImg.style.top = `${e.pageY + 5}px`
-        
+
             if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
                 return
             }
-            const targetRect = targetTag.getBoundingClientRect()    
+            const targetRect = targetTag.getBoundingClientRect()
             const offsetY = e.clientY - targetRect.top
             const height = targetTag.offsetHeight
 
-            if(offsetY < height / 2){
-                if(targetTag.classList.contains('dragOverDown')){
+            if (offsetY < height / 2) {
+                if (targetTag.classList.contains('dragOverDown')) {
                     targetTag.classList.remove('dragOverDown')
                 }
-                if(!targetTag.classList.contains('dragOverUp')){
+                if (!targetTag.classList.contains('dragOverUp')) {
                     targetTag.classList.add('dragOverUp')
                 }
-            
+
             } else {
-                if(targetTag.classList.contains('dragOverUp')){
+                if (targetTag.classList.contains('dragOverUp')) {
                     self.focus.current.classList.remove('dragOverUp')
                 }
-                if(!targetTag.classList.contains('dragOverDown')){
+                if (!targetTag.classList.contains('dragOverDown')) {
                     targetTag.classList.add('dragOverDown')
-                }  
+                }
             }
 
             if (self.focus.current === targetTag) {
