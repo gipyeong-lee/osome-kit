@@ -310,6 +310,7 @@ var OsomeGantt = {
         let height = style.height
 
         let rowContainer = document.createElement('div')
+        rowContainer.oncontextmenu = () => { return false }
         if (type === 'schedule') {
             rowContainer.className = `osome-gantt-grid-schedule-row`
         }
@@ -615,21 +616,21 @@ var OsomeGantt = {
         const _row = rowEl.getAttribute('row')
         self.draggingCategoryStart(self, _row)
 
-        let canvas = document.createElement('canvas')
-        let context = canvas.getContext('2d')
-        canvas.id = `dragImage-category-${_row}`
-        canvas.className = 'dragImage'
-        canvas.width = rowEl.offsetWidth
-        canvas.height = self.options.style.row.height
-        canvas.style.boxShadow = '3px 4px 2px 0px rgba(0,0,0,0.09)'
-        canvas.style.left = `${e.clientX + 5}px`
-        canvas.style.top = `${e.clientY + 5}px`
-        self.htmlToImg(rowEl, (img) => {
-            if (self.focus.type === 'reorder') {
-                context.drawImage(img, 0, 0)
-                document.body.append(canvas)
-            }
-        })
+        // let canvas = document.createElement('canvas')
+        // let context = canvas.getContext('2d')
+        // canvas.id = `dragImage-category-${_row}`
+        // canvas.className = 'dragImage'
+        // canvas.width = rowEl.offsetWidth
+        // canvas.height = self.options.style.row.height
+        // canvas.style.boxShadow = '3px 4px 2px 0px rgba(0,0,0,0.09)'
+        // canvas.style.left = `${e.clientX + 5}px`
+        // canvas.style.top = `${e.clientY + 5}px`
+        // self.htmlToImg(rowEl, (img) => {
+        //     if (self.focus.type === 'reorder') {
+        //         context.drawImage(img, 0, 0)
+        //         document.body.append(canvas)
+        //     }
+        // })
 
         if (!self.focus.start.classList.contains('dragOver')) {
             self.focus.start.classList.add('dragOver')
@@ -754,7 +755,15 @@ var OsomeGantt = {
     attachGridEvent: function (calendarGrid) {
         let self = this
         calendarGrid.onmousedown = function (e) {
+            
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
+            if (e.which === 3) {
+                if (self.isCategoryRow(targetTag)) {
+                    self.onMouseRightClick(targetTag, e)
+                }
+                return
+            }
+
             if (self.isHandler(targetTag)) {
                 self.focus.type = 'resize'
                 self.attachResizeEvent.onMouseDown(self, targetTag)
@@ -920,12 +929,12 @@ var OsomeGantt = {
         onMouseMove: function (self, targetTag, e) {
             const _row = self.dragging.row
             const _tRow = targetTag.getAttribute('row')
-            let dragImg = document.getElementById(`dragImage-category-${_row}`)
-            if (dragImg === null || dragImg === undefined) {
-                return
-            }
-            dragImg.style.left = `${e.clientX + 5}px`
-            dragImg.style.top = `${e.pageY + 5}px`
+            // let dragImg = document.getElementById(`dragImage-category-${_row}`)
+            // if (dragImg === null || dragImg === undefined) {
+            //     return
+            // }
+            // dragImg.style.left = `${e.clientX + 5}px`
+            // dragImg.style.top = `${e.pageY + 5}px`
 
             if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
                 return

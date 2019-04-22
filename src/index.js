@@ -15,6 +15,9 @@ class OSGantt extends Component {
   }
   onChangedSchedule = (event, afterEvent) => {
   }
+  onMouseRightClick = (element, event) => {
+    console.log(`Mouse Right Button Clicked ${element.getAttribute('row')}`)
+  }
   attachEvent(start, end, option) {
     OsomeGantt.attachEvent(start, end, option)
   }
@@ -41,6 +44,7 @@ class OSGantt extends Component {
   componentDidMount() {
     OsomeGantt.init('osome-gantt', this.props.options, this.props.events, this.props.categories)
     OsomeGantt.onClickSchedule = this.props.onClickSchedule || this.onClickSchedule
+    OsomeGantt.onMouseRightClick = this.props.onMouseRightClick || this.onMouseRightClick
     OsomeGantt.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile
     OsomeGantt.onChangedSchedule = this.props.onChangedSchedule || this.onChangedSchedule
   }
@@ -48,7 +52,7 @@ class OSGantt extends Component {
   render() {
     const { style, className } = this.props
     return (
-      <div id="osome-gantt" style={{ width: '100%' }} className={className} >
+      <div id="osome-gantt" style={{ width: '100%' }} className={className}>
       </div>
     )
   }
@@ -61,6 +65,7 @@ OSGantt.defaultProps = {
 
 OSGantt.propTypes = {
   onClickSchedule: PropTypes.func, // click schedule
+  onMouseRightClick: PropTypes.func,
   onDragEndTile: PropTypes.func,
   onChangedSchedule: PropTypes.func,
   createSchedule: PropTypes.func,
