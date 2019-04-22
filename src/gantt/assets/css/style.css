@@ -31,7 +31,7 @@ body {
     border-bottom: solid 0.2px #e0e0e0;
 }
 .osome-gantt-grid-container .tile{
-    border-right: solid 0.1px #e0e0e0;
+    border-left: solid 0.1px #e0e0e0;
 }
 
 .osome-gantt-grid-container .col{

@@ -154,6 +154,36 @@ var OsomeGantt = {
         }
         self.createEventBlock(row, startTile, endTile, _eventOption)
     },
+    insertRow(row){
+        const emptyEvents = {
+            "scheduleId": 0,
+            "index": 0,
+            "title": "This is Title",
+            "detail": "This is Detail",
+            "style": {
+                "color": "#fff",
+                "backgroundColor": "#f00"
+            },
+            "startDate": `2019-04-0${(i % 10)}T15:00:00.000Z`,
+            "endDate": `2019-04-0${(2 + i % 10)}T15:00:00.000Z`,
+            "eventId": 0,
+            "start": 2,
+            "total": 2
+        }
+        const emptyCategory = {
+            content: {
+              title:``,
+              type:'empty',
+              style:{
+                color:self.randomColor(),
+                padding:'5px'
+              }
+            }
+          }
+    },
+    deleteRow(row){
+
+    },
     createHandler(row, startNum, endNum, eventOption) {
         let _eventHandler = document.createElement('span')
         _eventHandler.className = `event-block-handler-${eventOption.index} resize-handle handler-y`
@@ -269,13 +299,12 @@ var OsomeGantt = {
         // full date
         // week schedule.
         const totalDays = _endNum - _startNum + 1
-        const idx = eventOption.index ||
-            self.events.length
+        const idx = eventOption.index || self.categories[row].events.length
         let _event = Object.assign({}, { scheduleId: `${idx}`, index: idx, row: row, startNum: _startNum, endNum: _endNum }, eventOption)
 
         _event.total = totalDays
 
-        self.events.insert(idx, _event)
+        self.categories[row].events.insert(idx, _event)
         const _rowEl = document.getElementById(rowTileId)
         const _eventBlock = self.createBlock(row, _startNum, _endNum, _event)
         const _eventHandler = self.createHandler(row, _startNum, _endNum, _event)
@@ -539,7 +568,6 @@ var OsomeGantt = {
         self.changeAllEventBlockOpacity(1)
         return self
     },
-
     onBlockDragEnd(self) {
         const _row = self.dragging.row
         const _eventId = self.dragging.eventId
