@@ -56,7 +56,7 @@ export default class App extends Component {
             "backgroundColor": "#f00"
           },
           "startDate": `2019-04-0${(i % 10)}T15:00:00.000Z`,
-          "endDate": `2019-04-0${(2 + i % 10)}T15:00:00.000Z`,
+          "endDate": `2019-04-0${(2 + i % 10) + 1}T15:00:00.000Z`,
           "eventId": j * 10 + i,
           "start": 2,
           "total": 2
