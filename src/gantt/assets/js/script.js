@@ -123,7 +123,7 @@ var OsomeGantt = {
         self.categories = categories
         self.clear(_ganttGrid)
         self.createGrid(_ganttGrid, _options)
-        // self.renderEventBlocks()
+        self.renderEventBlocks()
         self.attachGridEvent(_ganttGrid)
         // self.createEvents(_options)
     },

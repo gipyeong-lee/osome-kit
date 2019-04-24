@@ -61,8 +61,8 @@ export default class App extends Component {
           "start": 2,
           "total": 2
         })
-        categories[j].events = events
       }
+      categories[j].events = events
     }
     console.log(categories)
     this.state.categories = categories
