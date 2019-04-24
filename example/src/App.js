@@ -28,25 +28,26 @@ export default class App extends Component {
     const categories = []
     for (let i = 0; i < 200; i++) {
       categories.push({
-        events:[],
         content: {
           title: `캘린더 ${i}`,
           type: i % 2 ? 'main' : 'sub',
+          enable: true,
+          order: i,
           style: {
             color: self.randomColor(),
             padding: '5px'
           }
         },
       })
-      
+
     }
     const length = categories.length
     for (let j = 0; j < length; j++) {
-      const randomLength = Math.round((Math.random()*10))
+      const randomLength = Math.round((Math.random() * 4))
       const events = []
-      for(let i =0;i< randomLength;i++){
+      for (let i = 0; i < randomLength; i++) {
         events.push({
-          "scheduleId": j*10+i,
+          "scheduleId": j * 10 + i,
           "index": i,
           "title": "This is Title",
           "detail": "This is Detail",
@@ -56,7 +57,7 @@ export default class App extends Component {
           },
           "startDate": `2019-04-0${(i % 10)}T15:00:00.000Z`,
           "endDate": `2019-04-0${(2 + i % 10)}T15:00:00.000Z`,
-          "eventId": j*10+i,
+          "eventId": j * 10 + i,
           "start": 2,
           "total": 2
         })
@@ -65,7 +66,6 @@ export default class App extends Component {
     }
     console.log(categories)
     this.state.categories = categories
-    this.state.events = []
   }
   componentDidMount() {
 
@@ -90,7 +90,7 @@ export default class App extends Component {
           this.setState(update(this.state, { calendarType: { $set: 'calendar' } }))
         }}>Calendar</div>
       </div>
-      {this.state.calendarType === 'gantt' ? <OSGantt ref={this.osGantt} categories={this.state.categories} events={this.state.events} options={this.state.options}
+      {this.state.calendarType === 'gantt' ? <OSGantt ref={this.osGantt} categories={this.state.categories} options={this.state.options}
         onChangedSchedule={this.onChangedSchedule}
         onDragEndTile={(start, end, renderOption) => {
           // console.log('push', { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, start: start, end: end })
@@ -101,7 +101,7 @@ export default class App extends Component {
       /> :
         <OSCalendar className="hello" ref={this.osCalendar}
           options={this.state.options}
-          events={this.state.events}
+          categories={this.state.categories}
           onChangedSchedule={this.onChangedSchedule}
           onDragEndTile={(start, end, renderOption) => {
             // console.log('push', { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, start: start, end: end })

@@ -42,7 +42,7 @@ class OSGantt extends Component {
   }
 
   componentDidMount() {
-    OsomeGantt.init('osome-gantt', this.props.options, this.props.events, this.props.categories)
+    OsomeGantt.init('osome-gantt', this.props.options, this.props.categories)
     OsomeGantt.onClickSchedule = this.props.onClickSchedule || this.onClickSchedule
     OsomeGantt.onMouseRightClick = this.props.onMouseRightClick || this.onMouseRightClick
     OsomeGantt.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile
