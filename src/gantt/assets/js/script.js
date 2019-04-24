@@ -622,6 +622,7 @@ var OsomeGantt = {
             for (let i = _sRow; i < _tRow; i++) {
                 const nextRow = document.getElementById(`left-row-${i + 1}`)
                 const beforeRow = document.getElementById(`left-row-${i}`)
+                const childNode = nextRow.firstChild
                 beforeRow.innerHTML = nextRow.innerHTML
                 self.categories[i] = self.categories[i + 1]
                 const nextSchedule = document.getElementById(`schedule-row-${i + 1}`)
@@ -647,7 +648,7 @@ var OsomeGantt = {
             for (let i = _sRow; i > _tRow; i--) {
                 const nextRow = document.getElementById(`left-row-${i}`)
                 const beforeRow = document.getElementById(`left-row-${i - 1}`)
-                nextRow.innerHTML = beforeRow.innerHTML
+                nextRow.firstChild = beforeRow.firstChild
                 self.categories[i] = self.categories[i - 1]
                 const nextSchedule = document.getElementById(`schedule-row-${i}`)
                 const beforeSchedule = document.getElementById(`schedule-row-${i - 1}`)
@@ -658,29 +659,10 @@ var OsomeGantt = {
             _targetScheduleEl.innerHTML = _sourceScheduleHtml
             self.categories[_tRow] = _source
         }
-        self.syncOrder(_sRow, _tRow)
-        console.log(self.categories)
+        
+      
     },
-    syncOrder(sRow, tRow) {
-        const self = this
-        const _prefix = 'event-block-'
-        const start = Math.min(sRow, tRow)
-        const end = Math.max(sRow, tRow)
-        self.categories.map((category, idx) => {
-            if (idx < start || idx > end) {
-                return true
-            }
-            const _events = category.events
-            const _oldRow = category.content.order
-            _events.map((event) => {
-                const _eventBlock = document.getElementById(`${_prefix}${_oldRow}-${event.index}`)
-                _eventBlock.setAttribute('id', `${_prefix}${idx}-${event.index}`)
-                _eventBlock.setAttribute('row', idx)
-            })
-            category.content.order = idx
-            return category
-        })
-    },
+    
     onCategoryDragEnd(self, e) {
         self.focus.current.classList.remove('dragOverUp')
         self.focus.current.classList.remove('dragOverDown')
