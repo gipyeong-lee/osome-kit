@@ -68,8 +68,6 @@ const utils = {
         let startDate = _startDate.getDate()
         let endDate = _endDate.getDate()
 
-
-
         let startNum = Math.max(startDate - firstTileDate, 0)
         let endNum = Math.min(Number(startOfDay) + endOfMonthDate + endDate - 1, eNum)
 

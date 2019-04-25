@@ -23,7 +23,7 @@ export default class App extends Component {
     return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
   }
   onChangedSchedule = (before, after) => {
-    console.log(`update ::: ${before.order} , ${before.index}`)
+    console.log(before, after)
     this.setState(update(this.state, { categories: { [before.order]: { events: { [before.index]: { $set: after } } } } }), () => {
       console.log(`onChangedSchedule`, this.state)
     })
@@ -69,11 +69,9 @@ export default class App extends Component {
             "color": "#fff",
             "backgroundColor": content.style.color
           },
-          "startDate": `2019-04-${Math.min(sDate, eDate).pad(2)}T15:00:00.000Z`,
-          "endDate": `2019-04-${Math.max(sDate, eDate).pad(2)}T15:00:00.000Z`,
-          "eventId": j * 10 + i,
-          "start": 2,
-          "total": 2
+          "startDate": `2019-04-${Math.min(sDate, eDate).pad(2)}T00:00:00.000Z`,
+          "endDate": `2019-04-${Math.max(sDate, eDate).pad(2)}T00:00:00.000Z`,
+          "eventId": j * 10 + i
         })
       }
       categories[j].events = events

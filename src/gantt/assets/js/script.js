@@ -184,8 +184,8 @@ var OsomeGantt = {
                     return
                 }
                 
-                const startTile = document.getElementById(`${tilePrefix}-${_row}-${num.startNum}`)
-                const endTile = document.getElementById(`${tilePrefix}-${_row}-${num.endNum}`)
+                const startTile = document.getElementById(`${tilePrefix}-${_row}-${num.startNum-1}`)
+                const endTile = document.getElementById(`${tilePrefix}-${_row}-${num.endNum-1}`)
 
                 event.color = _content.style.color
                 self.renderEventBlock(_row, startTile, endTile, event)
@@ -536,6 +536,7 @@ var OsomeGantt = {
         event.total = _total
 
         self.draggingEnd(self)
+        self.onChangedSchedule(event, event)
     },
     htmlToImg(element, callback) {
         const self = this
@@ -987,6 +988,7 @@ var OsomeGantt = {
         onMouseUp: function (self, targetTag) {
             self.focus.current.classList.remove('dragOver')
             self.onBlockDragEnd(self)
+
         }
     },
     attachContainerHandleBarEvent: {

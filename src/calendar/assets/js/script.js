@@ -321,7 +321,7 @@ var OsomeCalendar = {
 
         const firstTile = document.getElementById(`${tilePrefix}0`)
         const firstTileDate = firstTile.getAttribute('date').toNumber()
-        
+
         self.categories.map((category) => {
             const events = category.events
             events.map((event, idx) => {
@@ -335,6 +335,7 @@ var OsomeCalendar = {
                     return
                 }
 
+                console.log(num)
                 let startTile = document.getElementById(`${tilePrefix}${num.startNum}`)
                 let endTile = document.getElementById(`${tilePrefix}${num.endNum}`)
 
@@ -640,39 +641,39 @@ var OsomeCalendar = {
         const startNum = e.target.getAttribute('number').toNumber()
         const week = e.target.getAttribute('week').toNumber()
         const event = parent.categories[order].events[index]
-        const beforeEvent = { ...event }
+        const beforeEvent = new Object() 
+        Object.keys(event).map((key)=>{
+            beforeEvent[key] = event[key]
+        })
         const endNum = Math.min(startNum + event.total.toNumber() - 1, parent.endNum - 1)
         const nextEvent = parent.moveSchedule(week, order, index, startNum, endNum, parent)
         parent.onChangedSchedule(beforeEvent, nextEvent)
 
     },
-    moveSchedule(week, order, index, startNum, endNum) {
-        
+    moveSchedule(week, order, index, startNum, endNum, parent) {
         const eventBlock = document.getElementById(`event-block-${order}-${index}-${week}`)
-        
-        if(eventBlock) eventBlock.remove()
-        const event = this.syncEvent(order, index, startNum, endNum)
+        if (eventBlock) eventBlock.remove()
+        const event = parent.syncEvent(order, index, startNum, endNum)
         return event
     },
     syncEvent(order, index, startNum, endNum) {
         const self = this
         const tilePrefix = 'osome-cal-grid-day-tile-'
-        let event = self.categories[order].events[index]
+        let event = JSON.parse(JSON.stringify(self.categories[order].events[index]))
 
         let startTile = document.getElementById(`${tilePrefix}${startNum}`)
         let endTile = document.getElementById(`${tilePrefix}${endNum}`)
-        const sYear = startTile.getAttribute('year')
+        const sYear = startTile.getAttribute('year').toNumber()
         const sMonth = Math.max(Number(startTile.getAttribute('month')) - 1, 0)
-        const sDate = startTile.getAttribute('date')
+        const sDate = startTile.getAttribute('date').toNumber()
 
-        const eYear = endTile.getAttribute('year')
+        const eYear = endTile.getAttribute('year').toNumber()
         const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
-        const eDate = endTile.getAttribute('date')
+        const eDate = endTile.getAttribute('date').toNumber()
         event.start = startNum
         event.startDate = new Date(sYear, sMonth, sDate)
         event.endDate = new Date(eYear, eMonth, eDate)
-        return { ...event }
-
+        return event
     },
 
     // Drag And Drop
@@ -695,10 +696,10 @@ var OsomeCalendar = {
         self.categories[order].events.map(event => { return event.total = 0 })
     },
     increaseEventTotal(order, index, increaseTotal) {
-        
+
         const self = this
         const event = self.categories[order].events[index]
-        
+
         event.total += increaseTotal
         self.categories[order].events[index] = event
     },
@@ -892,7 +893,7 @@ var OsomeCalendar = {
             if (nextNumber === null || nextWeek == null || (startWeek > nextWeek)) {
                 return
             }
-            
+
             if (prevWeek === nextWeek) {
                 // 날짜 비교만
                 const eventBlock = document.getElementById(`${this.prefix}${_order}-${_index}-${prevWeek}`)
@@ -901,7 +902,7 @@ var OsomeCalendar = {
                 }
                 const startNum = eventBlock.getAttribute('startNum').toNumber()
                 if (startNum <= currentNumber) {
-                    self.syncEvent(_order, _index, _startNum, currentNumber)
+                    self.categories[_order].events[_index] = self.syncEvent(_order, _index, _startNum, currentNumber)
                     self.resizeEventBlock(eventBlock, targetTag)
                 }
             }
@@ -924,6 +925,7 @@ var OsomeCalendar = {
         onMouseUp: function (self, targetTag) {
             const _index = self.focus.start.getAttribute('index')
             const _order = self.focus.start.getAttribute('order')
+            
             self.onChangedSchedule(self.categories[_order].events[_index], self.categories[_order].events[_index])
             self.eventEnd()
             self.clearFocus()
