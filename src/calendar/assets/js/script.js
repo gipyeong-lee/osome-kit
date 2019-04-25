@@ -321,7 +321,7 @@ var OsomeCalendar = {
 
         const firstTile = document.getElementById(`${tilePrefix}0`)
         const firstTileDate = firstTile.getAttribute('date').toNumber()
-        console.log(self.categories)
+        
         self.categories.map((category) => {
             const events = category.events
             events.map((event, idx) => {
@@ -647,9 +647,9 @@ var OsomeCalendar = {
 
     },
     moveSchedule(week, order, index, startNum, endNum) {
-        console.log(`${order} ${index} ${week}`)
+        
         const eventBlock = document.getElementById(`event-block-${order}-${index}-${week}`)
-        console.log(eventBlock)
+        
         if(eventBlock) eventBlock.remove()
         const event = this.syncEvent(order, index, startNum, endNum)
         return event
@@ -695,7 +695,7 @@ var OsomeCalendar = {
         self.categories[order].events.map(event => { return event.total = 0 })
     },
     increaseEventTotal(order, index, increaseTotal) {
-        console.log(order,index)
+        
         const self = this
         const event = self.categories[order].events[index]
         
@@ -892,7 +892,7 @@ var OsomeCalendar = {
             if (nextNumber === null || nextWeek == null || (startWeek > nextWeek)) {
                 return
             }
-            console.log(`order ${_order}`,`index ${_index}`)
+            
             if (prevWeek === nextWeek) {
                 // 날짜 비교만
                 const eventBlock = document.getElementById(`${this.prefix}${_order}-${_index}-${prevWeek}`)
