@@ -4,14 +4,14 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 Number.prototype.pad = function (len) {
   let s = this.toString();
   if (s.length < len) {
-      s = ('0000000000' + s).slice(-len);
+    s = ('0000000000' + s).slice(-len);
   }
   return s;
 }
 
 export default class App extends Component {
   state = {
-    calendarType: 'gantt',
+    calendarType: 'calendar',
     options: {
       year: new Date().getFullYear(),
       month: new Date().getMonth() + 1
@@ -23,7 +23,8 @@ export default class App extends Component {
     return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
   }
   onChangedSchedule = (before, after) => {
-    this.setState(update(this.state, { events: { [before.index]: { $set: after } } }), () => {
+    console.log(`update ::: ${before.order} , ${before.index}`)
+    this.setState(update(this.state, { categories: { [before.order]: { events: { [before.index]: { $set: after } } } } }), () => {
       console.log(`onChangedSchedule`, this.state)
     })
   }
@@ -33,7 +34,7 @@ export default class App extends Component {
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const categories = []
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 5; i++) {
       categories.push({
         content: {
           title: `캘린더 ${i}`,
@@ -55,20 +56,21 @@ export default class App extends Component {
       const content = categories[j].content
 
       for (let i = 0; i < randomLength; i++) {
-        const sDate = Math.round((Math.random() * 25))+1
-        const eDate = Math.round((Math.random() * 25))+1
-        
+        const sDate = Math.round((Math.random() * 10)) + 1
+        const eDate = Math.round((Math.random() * 10)) + 1
+
         events.push({
+          order: content.order,
           "scheduleId": j * 10 + i,
           "index": i,
-          "title": "This is Title",
+          "title": `${content.title}-${i}`,
           "detail": "This is Detail",
           "style": {
             "color": "#fff",
             "backgroundColor": content.style.color
           },
-          "startDate": `2019-04-${Math.min(sDate,eDate).pad(2)}T15:00:00.000Z`,
-          "endDate": `2019-04-${Math.max(sDate,eDate).pad(2)}T15:00:00.000Z`,
+          "startDate": `2019-04-${Math.min(sDate, eDate).pad(2)}T15:00:00.000Z`,
+          "endDate": `2019-04-${Math.max(sDate, eDate).pad(2)}T15:00:00.000Z`,
           "eventId": j * 10 + i,
           "start": 2,
           "total": 2

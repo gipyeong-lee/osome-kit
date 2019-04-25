@@ -179,11 +179,14 @@ var OsomeGantt = {
 
             const _row = _content.order.toNumber()
             _events.map((event, idx) => {
-                const { startNum, endNum } = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, endOfMonthDate)
-                console.log(startNum,endNum)
-                const startTile = document.getElementById(`${tilePrefix}-${_row}-${startNum}`)
-                const endTile = document.getElementById(`${tilePrefix}-${_row}-${endNum}`)
+                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, endOfMonthDate)
+                if (num === undefined) {
+                    return
+                }
                 
+                const startTile = document.getElementById(`${tilePrefix}-${_row}-${num.startNum}`)
+                const endTile = document.getElementById(`${tilePrefix}-${_row}-${num.endNum}`)
+
                 event.color = _content.style.color
                 self.renderEventBlock(_row, startTile, endTile, event)
             })

@@ -30,12 +30,12 @@ class OSGantt extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.options !== nextProps.options) {
-      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.events, nextProps.categories)
+      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return false
     }
 
-    if (this.props.events !== nextProps.events) {
-      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.events, nextProps.categories)
+    if (this.props.categories !== nextProps.categories) {
+      OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return false
     }
     return false
@@ -105,12 +105,12 @@ class OSCalendar extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.options !== nextProps.options) {
-      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.events)
+      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.categories)
       return false
     }
 
-    if (this.props.events !== nextProps.events) {
-      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.events)
+    if (this.props.categories !== nextProps.categories) {
+      OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.categories)
       return false
     }
     return false
