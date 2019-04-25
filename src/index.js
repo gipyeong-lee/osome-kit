@@ -116,7 +116,7 @@ class OSCalendar extends Component {
     return false
   }
   componentDidMount() {
-    OsomeCalendar.init('osome-calendar', this.props.options, this.props.events)
+    OsomeCalendar.init('osome-calendar', this.props.options, this.props.categories)
     OsomeCalendar.onClickSchedule = this.props.onClickSchedule || this.onClickSchedule
     OsomeCalendar.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile
     OsomeCalendar.onChangedSchedule = this.props.onChangedSchedule || this.onChangedSchedule
@@ -132,7 +132,7 @@ class OSCalendar extends Component {
 }
 
 OSCalendar.defaultProps = {
-  events: []
+  categories: []
 }
 
 OSCalendar.propTypes = {
@@ -142,7 +142,7 @@ OSCalendar.propTypes = {
   createSchedule: PropTypes.func,
   attachEvent: PropTypes.func,
   options: PropTypes.object,
-  events: PropTypes.array,
+  categories: PropTypes.array,
   onClickScheduleContent: PropTypes.element
 }
 

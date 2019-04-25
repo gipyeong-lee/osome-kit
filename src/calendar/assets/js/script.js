@@ -4,7 +4,7 @@ Extension Class
 'use strict'
 
 import './../css/style.css'
-import './../../../common/util'
+import utils from './../../../common/util'
 
 //
 var OsomeCalendar = {
@@ -62,12 +62,17 @@ var OsomeCalendar = {
         month: new Date().getMonth(),
         eventPopup: { html: 'test' }
     },
-    init: function (id = 'osome-cal-calendar', opt = {}, events = []) {
+    init: function (id = 'osome-cal-calendar', opt = {}, categories = []) {
         let self = this
         let _options = Object.assign({}, this.options, opt)
 
         let _calendarGrid = document.getElementById(id)
-        self.events = events
+        self.events = []
+        categories.map((category) => {
+            console.log(category)
+            self.events = self.events.concat(category.events)
+        })
+
         self.clear(_calendarGrid)
         self.createGrid(_calendarGrid, _options)
         self.attachGridEvent(_calendarGrid)
@@ -305,13 +310,13 @@ var OsomeCalendar = {
 
         const tilePrefix = 'osome-cal-grid-day-tile-'
         const currentMonth = options.month
-        
+
         const indexOfCurrentMonth = currentMonth - 1
         const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
 
         const startOfDay = targetDate.startOfDay();
 
-        
+
         let endOfMonthDate = targetDate.getLastDate()
 
         const firstTile = document.getElementById(`${tilePrefix}0`)
@@ -327,56 +332,8 @@ var OsomeCalendar = {
                 event.eventId = idx
                 event.index = idx
             }
-            let _startDate = new Date(event.startDate)
-            let _endDate = new Date(event.endDate)
-            let startMonth = _startDate.getMonth()
-            let endMonth = _endDate.getMonth()
 
-            let startDate = _startDate.getDate()
-            let endDate = _endDate.getDate()
-
-            
-
-            let startNum = Math.max(startDate - firstTileDate, 0)
-            let endNum = Math.min(Number(startOfDay) + endOfMonthDate + endDate - 1, self.endNum)
-
-            if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth + 1) { }
-            else if (startMonth < indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
-                // 전달 ~ 이번달
-                endNum = Math.min(Number(startOfDay) + endDate - 1, self.endNum)
-            }
-            else if (startMonth === indexOfCurrentMonth && endMonth > indexOfCurrentMonth) {
-                // 이번달 ~ 다음달
-                startNum = startOfDay + startDate - 1
-            }
-            else if (startMonth === indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
-                // 이번달
-                startNum = startOfDay + startDate - 1
-                endNum = Math.min(Number(startOfDay) + endDate - 1, self.endNum)
-            }
-            else if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth - 1) {
-                // 둘다 저번달
-                if (endDate - firstTileDate < 0) {
-                    return
-                }
-                endNum = Math.max(endDate - firstTileDate, 0)
-            }
-            else if (startMonth === indexOfCurrentMonth + 1 && endMonth === indexOfCurrentMonth + 1) {
-                // 둘다 다음달
-                if (Number(startOfDay) + endOfMonthDate + startDate - 1 > self.endNum) {
-                    return
-                }
-                startNum = Math.min(Number(startOfDay) + endOfMonthDate + startDate - 1, self.endNum)
-            }
-            else {
-                return
-            }
-            if (Math.abs(startMonth - indexOfCurrentMonth) > 1) {
-                startNum = 0
-            }
-            if (Math.abs(endMonth - indexOfCurrentMonth) > 1) {
-                endNum = self.endNum
-            }
+            const { startNum, endNum } = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, self.endNum)
 
             let startTile = document.getElementById(`${tilePrefix}${startNum}`)
             let endTile = document.getElementById(`${tilePrefix}${endNum}`)

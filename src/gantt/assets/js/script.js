@@ -2,7 +2,7 @@
 Extension Class
 */
 'use strict'
-import './../../../common/util'
+import utils from './../../../common/util'
 
 var OsomeGantt = {
     events: [],
@@ -62,7 +62,7 @@ var OsomeGantt = {
         self.categories = categories
         self.clear(_ganttGrid)
         self.createGrid(_ganttGrid, _options)
-        self.renderEventBlocks()
+        self.renderEventBlocks(_options)
         self.attachGridEvent(_ganttGrid)
         // self.createEvents(_options)
     },
@@ -154,21 +154,36 @@ var OsomeGantt = {
 
         return _eventBlock
     },
-    renderEventBlocks() {
+    renderEventBlocks(options) {
         const self = this
         const tilePrefix = 'back-tile'
         const _categories = self.categories
         const _length = _categories.length
+
+        const currentMonth = options.month
+
+        const indexOfCurrentMonth = currentMonth - 1
+        const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
+
+        const startOfDay = targetDate.startOfDay();
+
+
+        let endOfMonthDate = targetDate.getLastDate()
+
+        const firstTileDate = 1
+
         for (let i = 0; i < _length; i++) {
             const _category = _categories[i]
             const _content = _category.content
             const _events = _category.events || []
-            
+
             const _row = _content.order.toNumber()
             _events.map((event, idx) => {
-            
-                const startTile = document.getElementById(`${tilePrefix}-${_row}-0`)
-                const endTile = document.getElementById(`${tilePrefix}-${_row}-1`)
+                const { startNum, endNum } = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, endOfMonthDate)
+                console.log(startNum,endNum)
+                const startTile = document.getElementById(`${tilePrefix}-${_row}-${startNum}`)
+                const endTile = document.getElementById(`${tilePrefix}-${_row}-${endNum}`)
+                
                 event.color = _content.style.color
                 self.renderEventBlock(_row, startTile, endTile, event)
             })
@@ -178,7 +193,7 @@ var OsomeGantt = {
         const self = this
 
         const rowTileId = `schedule-row-${row}`
-        
+
         const _startNum = startTile.getAttribute('number').toNumber()
         const _endNum = endTile.getAttribute('number').toNumber()
         // full date
@@ -188,7 +203,7 @@ var OsomeGantt = {
             self.events.length
         let _event = Object.assign({}, { scheduleId: `${idx}`, index: idx, row: row, startNum: _startNum, endNum: _endNum }, eventOption)
         _event.total = totalDays
-
+        self.categories[row].events[idx] = _event
         const _rowEl = document.getElementById(rowTileId)
         const _eventBlock = self.createBlock(row, _startNum, _endNum, _event)
         const _eventHandler = self.createHandler(row, _startNum, _endNum, _event)
@@ -545,7 +560,7 @@ var OsomeGantt = {
         const _index = eventBlock.getAttribute('index').toNumber()
         const _row = eventBlock.getAttribute('row')
         let _eventData = self.categories[_row].events[_index]
-        
+
         _eventData.row = _row
         self.draggingStart(self, _eventData)
         let width = 100 / 7
@@ -631,16 +646,16 @@ var OsomeGantt = {
                 let nextScheduleHtml = nextSchedule.innerHTML
                 nextScheduleHtml = nextScheduleHtml.replace(idRegex, `div id="$1-$2-${i}-$4"`)
                 nextScheduleHtml = nextScheduleHtml.replace(rowRegex, `row="${i}"`)
-                nextScheduleHtml = nextScheduleHtml.replace(classRegex,`class="event-block event-block-${i}"`)
+                nextScheduleHtml = nextScheduleHtml.replace(classRegex, `class="event-block event-block-${i}"`)
                 beforeSchedule.innerHTML = nextScheduleHtml
             }
-            
+
             _sourceScheduleHtml = _sourceScheduleHtml.replace(idRegex, `div id="$1-$2-${_tRow}-$4"`)
             _sourceScheduleHtml = _sourceScheduleHtml.replace(rowRegex, `row="${_tRow}"`)
-            _sourceScheduleHtml = _sourceScheduleHtml.replace(classRegex,`class="event-block event-block-${_tRow}"`)
+            _sourceScheduleHtml = _sourceScheduleHtml.replace(classRegex, `class="event-block event-block-${_tRow}"`)
             _targetScheduleEl.innerHTML = _sourceScheduleHtml
             _targetCategoryEl.innerHTML = _sourceHtml
-            
+
             self.categories[_tRow] = _source
 
         }
@@ -666,19 +681,19 @@ var OsomeGantt = {
                 let beforeScheduleHtml = beforeSchedule.innerHTML
                 beforeScheduleHtml = beforeScheduleHtml.replace(idRegex, `div id="$1-$2-${i}-$4"`)
                 beforeScheduleHtml = beforeScheduleHtml.replace(rowRegex, `row="${i}"`)
-                beforeScheduleHtml = beforeScheduleHtml.replace(classRegex,`class="event-block event-block-${i}"`)
+                beforeScheduleHtml = beforeScheduleHtml.replace(classRegex, `class="event-block event-block-${i}"`)
                 nextSchedule.innerHTML = beforeScheduleHtml
             }
             _sourceScheduleHtml = _sourceScheduleHtml.replace(idRegex, `div id="$1-$2-${_tRow}-$4"`)
             _sourceScheduleHtml = _sourceScheduleHtml.replace(rowRegex, `row="${_tRow}"`)
-            _sourceScheduleHtml = _sourceScheduleHtml.replace(classRegex,`class="event-block event-block-${_tRow}"`)
+            _sourceScheduleHtml = _sourceScheduleHtml.replace(classRegex, `class="event-block event-block-${_tRow}"`)
             _targetScheduleEl.innerHTML = _sourceScheduleHtml
             _targetCategoryEl.innerHTML = _sourceHtml
-            
+
             self.categories[_tRow] = _source
         }
     },
- 
+
     onCategoryDragEnd(self, e) {
         self.focus.current.classList.remove('dragOverUp')
         self.focus.current.classList.remove('dragOverDown')

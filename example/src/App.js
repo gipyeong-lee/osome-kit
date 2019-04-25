@@ -1,6 +1,13 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
 import { OSCalendar, OSGantt } from 'osome-kit'
+Number.prototype.pad = function (len) {
+  let s = this.toString();
+  if (s.length < len) {
+      s = ('0000000000' + s).slice(-len);
+  }
+  return s;
+}
 
 export default class App extends Component {
   state = {
@@ -26,7 +33,7 @@ export default class App extends Component {
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const categories = []
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 25; i++) {
       categories.push({
         content: {
           title: `캘린더 ${i}`,
@@ -45,7 +52,12 @@ export default class App extends Component {
     for (let j = 0; j < length; j++) {
       const randomLength = Math.round((Math.random() * 4))
       const events = []
+      const content = categories[j].content
+
       for (let i = 0; i < randomLength; i++) {
+        const sDate = Math.round((Math.random() * 25))+1
+        const eDate = Math.round((Math.random() * 25))+1
+        
         events.push({
           "scheduleId": j * 10 + i,
           "index": i,
@@ -53,10 +65,10 @@ export default class App extends Component {
           "detail": "This is Detail",
           "style": {
             "color": "#fff",
-            "backgroundColor": "#f00"
+            "backgroundColor": content.style.color
           },
-          "startDate": `2019-04-0${(i % 10)}T15:00:00.000Z`,
-          "endDate": `2019-04-0${(2 + i % 10) + 1}T15:00:00.000Z`,
+          "startDate": `2019-04-${Math.min(sDate,eDate).pad(2)}T15:00:00.000Z`,
+          "endDate": `2019-04-${Math.max(sDate,eDate).pad(2)}T15:00:00.000Z`,
           "eventId": j * 10 + i,
           "start": 2,
           "total": 2
