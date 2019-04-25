@@ -163,10 +163,10 @@ var OsomeGantt = {
             const _category = _categories[i]
             const _content = _category.content
             const _events = _category.events || []
-            console.log(_content)
+            
             const _row = _content.order.toNumber()
             _events.map((event, idx) => {
-                console.log(`${tilePrefix}-${_row}-0`)
+            
                 const startTile = document.getElementById(`${tilePrefix}-${_row}-0`)
                 const endTile = document.getElementById(`${tilePrefix}-${_row}-1`)
                 event.color = _content.style.color
@@ -178,7 +178,7 @@ var OsomeGantt = {
         const self = this
 
         const rowTileId = `schedule-row-${row}`
-        console.log(row)
+        
         const _startNum = startTile.getAttribute('number').toNumber()
         const _endNum = endTile.getAttribute('number').toNumber()
         // full date
@@ -545,7 +545,7 @@ var OsomeGantt = {
         const _index = eventBlock.getAttribute('index').toNumber()
         const _row = eventBlock.getAttribute('row')
         let _eventData = self.categories[_row].events[_index]
-        console.log(_index, _eventData)
+        
         _eventData.row = _row
         self.draggingStart(self, _eventData)
         let width = 100 / 7
@@ -606,7 +606,9 @@ var OsomeGantt = {
         const targetRect = _targetRowEl.getBoundingClientRect()
         const offsetY = e.clientY - targetRect.top
         const height = _targetRowEl.offsetHeight
-
+        const idRegex = /div id="(.*?)-(.*?)-(.*?)-(.*?)"/g
+        const rowRegex = /row="(.*?)"/g
+        const classRegex = /class="event-block event-block-(.*?)"/g
         if (_sRow < _tRow) {
             if (offsetY < height / 2) {
                 _tRow -= 1
@@ -617,20 +619,28 @@ var OsomeGantt = {
             const _targetCategoryEl = document.getElementById(targetCategoryId)
             const _targetScheduleEl = document.getElementById(targetScheduleId)
             const _sourceHtml = _sourceCategoryEl.innerHTML
-            const _sourceScheduleHtml = _sourceScheduleEl.innerHTML
+            let _sourceScheduleHtml = _sourceScheduleEl.innerHTML
             const _source = self.categories[_sRow]
             for (let i = _sRow; i < _tRow; i++) {
                 const nextRow = document.getElementById(`left-row-${i + 1}`)
                 const beforeRow = document.getElementById(`left-row-${i}`)
-                const childNode = nextRow.firstChild
                 beforeRow.innerHTML = nextRow.innerHTML
                 self.categories[i] = self.categories[i + 1]
                 const nextSchedule = document.getElementById(`schedule-row-${i + 1}`)
                 const beforeSchedule = document.getElementById(`schedule-row-${i}`)
-                beforeSchedule.innerHTML = nextSchedule.innerHTML
+                let nextScheduleHtml = nextSchedule.innerHTML
+                nextScheduleHtml = nextScheduleHtml.replace(idRegex, `div id="$1-$2-${i}-$4"`)
+                nextScheduleHtml = nextScheduleHtml.replace(rowRegex, `row="${i}"`)
+                nextScheduleHtml = nextScheduleHtml.replace(classRegex,`class="event-block event-block-${i}"`)
+                beforeSchedule.innerHTML = nextScheduleHtml
             }
+            
+            _sourceScheduleHtml = _sourceScheduleHtml.replace(idRegex, `div id="$1-$2-${_tRow}-$4"`)
+            _sourceScheduleHtml = _sourceScheduleHtml.replace(rowRegex, `row="${_tRow}"`)
+            _sourceScheduleHtml = _sourceScheduleHtml.replace(classRegex,`class="event-block event-block-${_tRow}"`)
             _targetScheduleEl.innerHTML = _sourceScheduleHtml
             _targetCategoryEl.innerHTML = _sourceHtml
+            
             self.categories[_tRow] = _source
 
         }
@@ -643,26 +653,32 @@ var OsomeGantt = {
             const _targetCategoryEl = document.getElementById(targetCategoryId)
             const _targetScheduleEl = document.getElementById(targetScheduleId)
             const _sourceHtml = _sourceCategoryEl.innerHTML
-            const _sourceScheduleHtml = _sourceScheduleEl.innerHTML
+            let _sourceScheduleHtml = _sourceScheduleEl.innerHTML
             const _source = self.categories[_sRow]
             for (let i = _sRow; i > _tRow; i--) {
                 const nextRow = document.getElementById(`left-row-${i}`)
                 const beforeRow = document.getElementById(`left-row-${i - 1}`)
-                nextRow.firstChild = beforeRow.firstChild
+                nextRow.innerHTML = beforeRow.innerHTML
                 self.categories[i] = self.categories[i - 1]
                 const nextSchedule = document.getElementById(`schedule-row-${i}`)
                 const beforeSchedule = document.getElementById(`schedule-row-${i - 1}`)
-                nextSchedule.innerHTML = beforeSchedule.innerHTML
-            }
 
-            _targetCategoryEl.innerHTML = _sourceHtml
+                let beforeScheduleHtml = beforeSchedule.innerHTML
+                beforeScheduleHtml = beforeScheduleHtml.replace(idRegex, `div id="$1-$2-${i}-$4"`)
+                beforeScheduleHtml = beforeScheduleHtml.replace(rowRegex, `row="${i}"`)
+                beforeScheduleHtml = beforeScheduleHtml.replace(classRegex,`class="event-block event-block-${i}"`)
+                nextSchedule.innerHTML = beforeScheduleHtml
+            }
+            _sourceScheduleHtml = _sourceScheduleHtml.replace(idRegex, `div id="$1-$2-${_tRow}-$4"`)
+            _sourceScheduleHtml = _sourceScheduleHtml.replace(rowRegex, `row="${_tRow}"`)
+            _sourceScheduleHtml = _sourceScheduleHtml.replace(classRegex,`class="event-block event-block-${_tRow}"`)
             _targetScheduleEl.innerHTML = _sourceScheduleHtml
+            _targetCategoryEl.innerHTML = _sourceHtml
+            
             self.categories[_tRow] = _source
         }
-        
-      
     },
-    
+ 
     onCategoryDragEnd(self, e) {
         self.focus.current.classList.remove('dragOverUp')
         self.focus.current.classList.remove('dragOverDown')
