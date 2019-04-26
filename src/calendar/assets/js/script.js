@@ -330,7 +330,7 @@ var OsomeCalendar = {
                     return
                 }
 
-                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, self.endNum)
+                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, 0, self.endNum)
                 if (num === undefined) {
                     return
                 }
@@ -698,7 +698,7 @@ var OsomeCalendar = {
     increaseEventTotal(order, index, increaseTotal) {
         const self = this
         const event = self.categories[order].events[index]
-        if(event === undefined) return
+        if (event === undefined) return
         event.total += increaseTotal
         self.categories[order].events[index] = event
     },

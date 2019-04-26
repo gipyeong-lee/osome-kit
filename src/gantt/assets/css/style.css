@@ -61,6 +61,7 @@ body {
 .block-right .resize-handle {
     display:none;
 }
+
 .event-block .resize-handle {
     position: absolute;
     top: 0;
@@ -75,7 +76,6 @@ body {
     width: 6px;
     height:100%;
     border:solid 1px #acacac;
-    
 }   
 
 /* */
@@ -105,6 +105,7 @@ body {
     box-shadow: 3px 4px 2px 0px rgba(0,0,0,0.09);
     display:block;
     cursor: move;
+    transition: all 0.1s ease-in-out;
 }
 .osome-gantt-grid-row {
     border-right:1px solid #eaeaea;
@@ -118,11 +119,11 @@ body {
 }
 
 .osome-gantt-grid-row .tile.resizing {
-    border:none
+    border:none;
 }
 
 .osome-gantt-grid-row .tile.dragOver {
-    background-color: rgba(223, 230, 233,0.5)
+    background-color: rgba(223, 230, 233,0.5);
 }
 
 .osome-gantt-grid-row .tile.active {

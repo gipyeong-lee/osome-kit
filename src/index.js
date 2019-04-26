@@ -24,7 +24,7 @@ class OSGantt extends Component {
     OsomeGantt.attachEvent(start, end, option)
   }
   resetEvent() {
-    OsomeGantt.init('osome-calendar', options)
+    OsomeGantt.init('osome-gantt', options)
   }
   createSchedule(start, end, eventOption) {
     OsomeGantt.attachEvent(start, end, eventOption)

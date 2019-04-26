@@ -64,13 +64,13 @@ const utils = {
         let _endDate = new Date(eDate)
         let startMonth = _startDate.getMonth()
         let endMonth = _endDate.getMonth()
-
         let startDate = _startDate.getDate()
         let endDate = _endDate.getDate()
 
         let startNum = Math.max(startDate - firstTileDate, 0)
         let endNum = Math.min(Number(startOfDay) + endOfMonthDate + endDate - 1, eNum)
-
+        console.log(indexOfCurrentMonth)
+        console.log(startMonth,endMonth)
         if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth + 1) { }
         else if (startMonth < indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
             // 전달 ~ 이번달
@@ -108,7 +108,7 @@ const utils = {
         if (Math.abs(endMonth - indexOfCurrentMonth) > 1) {
             endNum = endNum
         }
-
+        
         return { startNum: startNum, endNum: endNum }
     }
 }

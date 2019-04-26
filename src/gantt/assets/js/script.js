@@ -11,7 +11,8 @@ var OsomeGantt = {
         row: undefined,
         index: undefined,
         startNum: undefined,
-        days: undefined
+        days: undefined,
+        status: undefined
     },
     focus: {
         // start,end,last is unique number of tiles.
@@ -55,7 +56,7 @@ var OsomeGantt = {
         month: new Date().getMonth(),
         eventPopup: { html: 'test' }
     },
-    init: function (id = 'osome-gantt-calendar', opt = {}, categories = []) {
+    init: function (id = 'osome-gantt', opt = {}, categories = []) {
         let self = this
         let _options = Object.assign({}, this.options, opt)
         let _ganttGrid = document.getElementById(id)
@@ -165,13 +166,12 @@ var OsomeGantt = {
 
         const indexOfCurrentMonth = currentMonth - 1
         const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
-
+        const prevMonthObj = targetDate.getPrevMonth()
+        const prevEndOfMonthDate = prevMonthObj.getLastDate()
         const startOfDay = targetDate.startOfDay();
 
 
         let endOfMonthDate = targetDate.getLastDate()
-
-        const firstTileDate = 1
 
         for (let i = 0; i < _length; i++) {
             const _category = _categories[i]
@@ -180,16 +180,18 @@ var OsomeGantt = {
 
             const _row = _content.order.toNumber()
             _events.map((event, idx) => {
-                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, endOfMonthDate)
+                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, prevEndOfMonthDate, endOfMonthDate, endOfMonthDate)
                 if (num === undefined) {
                     return
                 }
-
                 const startTile = document.getElementById(`${tilePrefix}-${_row}-${num.startNum - 1}`)
                 const endTile = document.getElementById(`${tilePrefix}-${_row}-${num.endNum - 1}`)
 
                 event.color = _content.style.color
-                self.renderEventBlock(_row, startTile, endTile, event)
+                if (startTile !== null && endTile !== null) {
+                    self.renderEventBlock(_row, startTile, endTile, event)
+                }
+
             })
         }
     },
@@ -499,19 +501,20 @@ var OsomeGantt = {
         const days = eventData.endNum - eventData.startNum
 
         self.dragging = {
+            event: eventData,
             row: eventData.row,
             index: eventData.index,
             startNum: `${eventData.startNum}`,
-            days: days
+            days: days,
+            status: 0
         }
-        self.changeAllEventBlockOpacity(eventData.row, 0.5)
     },
     draggingEnd(self) {
         if (document.getElementById(`dragImage-${self.dragging.row}-${self.dragging.index}`) !== null) {
             document.getElementById(`dragImage-${self.dragging.row}-${self.dragging.index}`).remove()
         }
-        
         self.changeAllEventBlockOpacity(self.dragging.row, 1)
+
         return self
     },
     onBlockDragEnd(self) {
@@ -540,10 +543,16 @@ var OsomeGantt = {
         _eventBlock.style.left = `${_left}%`
         _eventBlock.setAttribute('startNum', _number)
         _eventBlock.style.width = `${_width}%`
-        console.log(_startNum, _endNum)
-        const newEvent = self.syncEvent(_row, _index, _startNum, _endNum, _total)
-        self.draggingEnd(self)
 
+        const newEvent = self.syncEvent(_row, _index, _startNum, _endNum, _total)
+
+        self.dragging = {
+            row: undefined,
+            index: undefined,
+            startNum: undefined,
+            days: undefined,
+            status: undefined
+        }
         self.onChangedSchedule(_row, event, newEvent)
     },
     syncEvent(order, index, startNum, endNum, total) {
@@ -717,6 +726,7 @@ var OsomeGantt = {
     },
     attachGridEvent: function (calendarGrid) {
         let self = this
+
         calendarGrid.onmousedown = function (e) {
 
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
@@ -805,10 +815,10 @@ var OsomeGantt = {
     increaseEventTotal(order, index, startNum, endNum, increaseTotal) {
         const self = this
         const event = self.categories[order].events[index]
-        
+
         if (event === undefined) return
         event.total = increaseTotal
-        console.log(endNum)
+
         event.startDate = new Date(event.startDate).setDate(startNum + 1)
         event.endDate = new Date(event.endDate).setDate(endNum + 1)
         self.categories[order].events[index] = event
@@ -841,7 +851,7 @@ var OsomeGantt = {
             handler.setAttribute('endNum', endNum)
         }
     },
-    eventStart(row, startNum, endNum) {
+    eventStart(row) {
         const self = this
         const elements = document.getElementsByClassName(`event-block-${row}`)
         for (let element of elements) {
@@ -859,7 +869,7 @@ var OsomeGantt = {
             })
         }
     },
-    eventModify(row, startNum, endNum) {
+    eventModify(row) {
         const self = this
         if (row !== undefined) {
             const elements = document.getElementsByClassName(`back-tile-${row}`)
@@ -966,8 +976,10 @@ var OsomeGantt = {
             self.focus.start = targetTag
             self.focus.current = targetTag
             self.onBlockDragStart(targetTag, self, e)
+            // self.eventStart(row)
         },
         onMouseMove: function (self, targetTag, e) {
+
             const _bNumber = self.focus.current.getAttribute('number')
             const _number = targetTag.getAttribute('number')
 
@@ -979,10 +991,19 @@ var OsomeGantt = {
             if (_tRow !== _row) {
                 return
             }
+
+            //
+            if (self.dragging.status === 0) {
+                const eventBlock = document.getElementById(`event-block-${self.dragging.row}-${self.dragging.index}`)
+                self.changeAllEventBlockOpacity(self.dragging.row, 0.2)
+                eventBlock.style.opacity = 1
+                self.dragging.status = 1
+            }
+
+            //
+            self.eventModify(_row)
             const _index = self.dragging.index
-            let dragImg = document.getElementById(`dragImage-${_row}-${_index}`)
-            dragImg.style.left = `${e.clientX}px`
-            dragImg.style.top = `${e.clientY}px`
+
             if (!targetTag.classList.contains('dragOver')) {
                 targetTag.classList.add('dragOver')
                 self.focus.current.classList.remove('dragOver')
@@ -1041,7 +1062,7 @@ var OsomeGantt = {
             if (startNum <= nextNum) {
                 self.resizeEventBlock(eventBlock, targetTag)
             }
-            self.eventModify(row, startNum, nextNum)
+            self.eventModify(row)
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag) {

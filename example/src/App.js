@@ -111,7 +111,6 @@ export default class App extends Component {
         onChangedSchedule={this.onChangedSchedule}
         onChangedCategory={this.onChangedCategory}
         onDragEndTile={(row, start, end, renderOption) => {
-          console.log(start, end)
           const category = this.state.categories[row]
           const data = { title: category.content.title, detail: 'This is Detail', style: { color: '#fff', backgroundColor: category.content.style.color }, order: row, startDate: start, endDate: end, index: category.events.length }
           this.setState(update(this.state, { categories: { [row]: { events: { $push: [data] } } } }))
