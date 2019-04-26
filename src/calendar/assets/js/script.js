@@ -330,12 +330,11 @@ var OsomeCalendar = {
                     return
                 }
 
-                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, 0, self.endNum)
+                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, self.endNum)
                 if (num === undefined) {
                     return
                 }
 
-                console.log(num)
                 let startTile = document.getElementById(`${tilePrefix}${num.startNum}`)
                 let endTile = document.getElementById(`${tilePrefix}${num.endNum}`)
 
@@ -646,8 +645,8 @@ var OsomeCalendar = {
             beforeEvent[key] = event[key]
         })
         const endNum = Math.min(startNum + event.total.toNumber() - 1, parent.endNum - 1)
-        const newEvent = parent.moveSchedule(week, order, index, startNum, endNum, parent)
-        parent.onChangedSchedule(order, beforeEvent, newEvent)
+        const nextEvent = parent.moveSchedule(week, order, index, startNum, endNum, parent)
+        parent.onChangedSchedule(order, beforeEvent, nextEvent)
 
     },
     moveSchedule(week, order, index, startNum, endNum, parent) {
@@ -698,7 +697,7 @@ var OsomeCalendar = {
     increaseEventTotal(order, index, increaseTotal) {
         const self = this
         const event = self.categories[order].events[index]
-        if (event === undefined) return
+        if(event === undefined) return
         event.total += increaseTotal
         self.categories[order].events[index] = event
     },

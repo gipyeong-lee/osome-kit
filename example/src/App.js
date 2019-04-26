@@ -114,8 +114,6 @@ export default class App extends Component {
           const category = this.state.categories[row]
           const data = { title: category.content.title, detail: 'This is Detail', style: { color: '#fff', backgroundColor: category.content.style.color }, order: row, startDate: start, endDate: end, index: category.events.length }
           this.setState(update(this.state, { categories: { [row]: { events: { $push: [data] } } } }))
-          console.log(this.state.categories)
-          // this.osCalendar.current.attachEvent(renderOption.startTileNumber, renderOption.endTileNumber, { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' } })
         }}
       /> :
         <OSCalendar className="hello" ref={this.osCalendar}
@@ -130,7 +128,6 @@ export default class App extends Component {
               title: category.content.title, detail: '', style: { color: '#fff', backgroundColor: category.content.style.color }, order: order, startDate: start, endDate: end
             }
             this.setState(update(this.state, { categories: { [order]: { events: { $push: [data] } } } }))
-            // this.osCalendar.current.attachEvent(renderOption.startTileNumber, renderOption.endTileNumber, { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' } })
           }} />
 
       }

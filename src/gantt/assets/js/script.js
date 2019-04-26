@@ -5,12 +5,12 @@ Extension Class
 import utils from './../../../common/util'
 
 var OsomeGantt = {
-    events: [],
     categories: [],
     dragging: {
         row: undefined,
         index: undefined,
         startNum: undefined,
+        endNum: undefined,
         days: undefined,
         status: undefined
     },
@@ -65,9 +65,9 @@ var OsomeGantt = {
 
         self.clear(_ganttGrid)
         self.createGrid(_ganttGrid, _options)
-        self.renderEventBlocks(_options)
-        self.attachGridEvent(_ganttGrid)
 
+        self.attachGridEvent(_ganttGrid)
+        self.renderEventBlocks(_options)
         // self.createEvents(_options)
     },
     randomColor: function () {
@@ -170,7 +170,6 @@ var OsomeGantt = {
         const prevEndOfMonthDate = prevMonthObj.getLastDate()
         const startOfDay = targetDate.startOfDay();
 
-
         let endOfMonthDate = targetDate.getLastDate()
 
         for (let i = 0; i < _length; i++) {
@@ -206,8 +205,8 @@ var OsomeGantt = {
         // week schedule.
         const totalDays = _endNum - _startNum + 1
         const idx = eventOption.index ||
-            self.events.length
-        let _event = Object.assign({}, { index: idx, row: row, startNum: _startNum, endNum: _endNum }, eventOption)
+            self.categories[row].events.length
+        let _event = Object.assign({}, eventOption)
         _event.total = totalDays
         self.categories[row].events[idx] = _event
         const _rowEl = document.getElementById(rowTileId)
@@ -260,7 +259,6 @@ var OsomeGantt = {
     clearSelectedBlock: function (row) {
         let self = this
         const tileClass = `back-tile-${row}`
-        const last = self.focus.last
         const tiles = document.getElementsByClassName(tileClass)
         for (const tile of tiles) {
             if (tile.classList.contains('active')) {
@@ -499,12 +497,13 @@ var OsomeGantt = {
     },
     draggingStart(self, eventData) {
         const days = eventData.endNum - eventData.startNum
-
         self.dragging = {
             event: eventData,
             row: eventData.row,
             index: eventData.index,
-            startNum: `${eventData.startNum}`,
+            startNum: eventData.startNum,
+            endNum: eventData.endNum,
+            total: eventData.total,
             days: days,
             status: 0
         }
@@ -544,16 +543,19 @@ var OsomeGantt = {
         _eventBlock.setAttribute('startNum', _number)
         _eventBlock.style.width = `${_width}%`
 
-        const newEvent = self.syncEvent(_row, _index, _startNum, _endNum, _total)
+        self.onChangedSchedule(self.dragging.row, self.dragging.event, self.categories[_row].events[_index])
 
         self.dragging = {
+            event: undefined,
             row: undefined,
             index: undefined,
             startNum: undefined,
+            endNum: undefined,
             days: undefined,
             status: undefined
         }
-        self.onChangedSchedule(_row, event, newEvent)
+
+
     },
     syncEvent(order, index, startNum, endNum, total) {
         const self = this
@@ -878,16 +880,22 @@ var OsomeGantt = {
             }
             const events = self.categories[row].events
             events.map((event) => {
-                const _startNum = event.startNum
-                const _endNum = event.endNum
+                let _startNum = event.startNum
+                let _endNum = event.endNum
+                if (event.index === self.dragging.index) {
+                    _startNum = self.dragging.startNum
+                    _endNum = self.dragging.endNum
+                    console.log(_startNum, _endNum)
+                }
                 for (let i = _startNum; i <= _endNum; i++) {
                     const element = document.getElementById(`back-tile-${row}-${i}`)
                     element.classList.add('resizing')
                 }
+
             })
         }
     },
-    eventEnd(row, startNum, endNum) {
+    eventEnd(row) {
         const elements = document.getElementsByClassName(`event-block`)
         for (let element of elements) {
             element.style.zIndex = 11
@@ -983,7 +991,7 @@ var OsomeGantt = {
             const _bNumber = self.focus.current.getAttribute('number')
             const _number = targetTag.getAttribute('number')
 
-            if (_bNumber === _number) {
+            if (_bNumber === _number || _number === null) {
                 return
             }
             const _row = self.dragging.row
@@ -1003,6 +1011,12 @@ var OsomeGantt = {
             //
             self.eventModify(_row)
             const _index = self.dragging.index
+
+            const _size = self.categories[_row].events[_index].total.toNumber()
+            const _start = _number.toNumber()
+            const _endNum = _start + _size - 1
+
+            self.categories[_row].events[_index] = self.syncEvent(_row, _index, _start, _endNum, _size)
 
             if (!targetTag.classList.contains('dragOver')) {
                 targetTag.classList.add('dragOver')
@@ -1099,6 +1113,8 @@ var OsomeGantt = {
                 const start = self.focus.start
                 const end = targetTag
                 const row = start.getAttribute('row')
+
+
                 self.eventEnd(row)
                 self.clearSelectedBlock(row)
                 if (start !== undefined && end !== undefined) {
@@ -1110,9 +1126,15 @@ var OsomeGantt = {
                     const endDate = end.getAttribute('date')
                     const _start = new Date(startYear, startMonth, startDate)
                     const _end = new Date(endYear, endMonth, endDate)
-                    const renderOption = { startNumber: start.getAttribute('number'), endNumber: end.getAttribute('number') }
+                    const _startNum = start.getAttribute('number').toNumber()
+                    const _endNum = end.getAttribute('number').toNumber()
+                    const renderOption = { startNum: _startNum, endNum: _endNum }
+                    if (_start.getDate() > _end.getDate()) {
+                        return
+                    }
+                    // self.attachEvent(row, _startNum, _endNum, { title: self.categories[row].content.title, color: self.categories[row].content.style.color })
                     self.onDragEndTile(row, _start, _end, renderOption)
-                    // self.attachEvent(row, startNum.toNumber(), endNum.toNumber(), { title: self.categories[row].content.title, detail: 'This is Detail', color: self.categories[row].content.style.color })
+
                 }
             }
         }

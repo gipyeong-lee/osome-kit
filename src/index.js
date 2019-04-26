@@ -32,10 +32,13 @@ class OSGantt extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.options !== nextProps.options) {
+      console.log('re init! options ')
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return false
     }
+    
     if (this.props.categories !== nextProps.categories) {
+      console.log('re init! categories')
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return false
     }
@@ -52,9 +55,9 @@ class OSGantt extends Component {
   }
 
   render() {
-    const { style, className } = this.props
+    const {style} = this.props
     return (
-      <div id="osome-gantt" style={{ width: '100%' }} className={className}>
+      <div id="osome-gantt" style={style} >
       </div>
     )
   }
@@ -125,9 +128,9 @@ class OSCalendar extends Component {
   }
 
   render() {
-    const { style, className } = this.props
+    const { style } = this.props
     return (
-      <div id="osome-calendar" style={style} className={className} >
+      <div id="osome-calendar" style={style} >
       </div>
     )
   }
