@@ -1,17 +1,18 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
 import { OSCalendar, OSGantt } from 'osome-kit'
-Number.prototype.pad = function (len) {
-  let s = this.toString();
-  if (s.length < len) {
-    s = ('0000000000' + s).slice(-len);
-  }
-  return s;
-}
+
+// Number.prototype.pad = function (len) {
+//   let s = this.toString();
+//   if (s.length < len) {
+//     s = ('0000000000' + s).slice(-len);
+//   }
+//   return s;
+// }
 
 export default class App extends Component {
   state = {
-    calendarType: 'calendar',
+    calendarType: 'gantt',
     options: {
       year: new Date().getFullYear(),
       month: new Date().getMonth() + 1
@@ -22,9 +23,15 @@ export default class App extends Component {
   randomColor = () => {
     return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
   }
-  onChangedSchedule = (before, after) => {
+  onChangedCategory = (before, after) => {
     console.log(before, after)
-    this.setState(update(this.state, { categories: { [before.order]: { events: { [before.index]: { $set: after } } } } }), () => {
+    this.setState(update(this.state, { categories: { $set: after } }), () => {
+      console.log(`onChangedCategory`, this.state)
+    })
+  }
+  onChangedSchedule = (order, before, after) => {
+    console.log(before, after)
+    this.setState(update(this.state, { categories: { [order]: { events: { [before.index]: { $set: after } } } } }), () => {
       console.log(`onChangedSchedule`, this.state)
     })
   }
@@ -34,7 +41,7 @@ export default class App extends Component {
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const categories = []
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 30; i++) {
       categories.push({
         content: {
           title: `캘린더 ${i}`,
@@ -61,7 +68,6 @@ export default class App extends Component {
 
         events.push({
           order: content.order,
-          "scheduleId": j * 10 + i,
           "index": i,
           "title": `${content.title}-${i}`,
           "detail": "This is Detail",
@@ -70,21 +76,20 @@ export default class App extends Component {
             "backgroundColor": content.style.color
           },
           "startDate": `2019-04-${Math.min(sDate, eDate).pad(2)}T00:00:00.000Z`,
-          "endDate": `2019-04-${Math.max(sDate, eDate).pad(2)}T00:00:00.000Z`,
-          "eventId": j * 10 + i
+          "endDate": `2019-04-${Math.max(sDate, eDate).pad(2)}T00:00:00.000Z`
         })
       }
       categories[j].events = events
     }
-    console.log(categories)
     this.state.categories = categories
   }
   componentDidMount() {
 
   }
   render() {
+
     return (<div style={{ width: '100%' }}>
-      <div>
+      <div style={{ padding: '10px' }}>
         <div style={{ width: '40px', height: '40px', textAlign: 'center', lineHeight: '40px', display: 'inline-block', cursor: 'pointer', userSelect: 'none' }} onClick={() => {
           const prevMonth = Math.max(Number(this.state.options.month) - 1, 1)
           this.setState(update(this.state, { options: { month: { $set: prevMonth } } }))
@@ -95,19 +100,22 @@ export default class App extends Component {
           this.setState(update(this.state, { options: { month: { $set: nextMonth } } }))
         }}>{'>'}</div>
 
-        <div style={{ float: 'right', display: 'inline-block' }} onClick={() => {
+        <div style={{ float: 'right', display: 'inline-block', marginRight: '10px' }} onClick={() => {
           this.setState(update(this.state, { calendarType: { $set: 'gantt' } }))
         }}>Gantt</div>
-        <div style={{ float: 'right', display: 'inline-block' }} onClick={() => {
+        <div style={{ float: 'right', display: 'inline-block', marginRight: '10px' }} onClick={() => {
           this.setState(update(this.state, { calendarType: { $set: 'calendar' } }))
         }}>Calendar</div>
       </div>
       {this.state.calendarType === 'gantt' ? <OSGantt ref={this.osGantt} categories={this.state.categories} options={this.state.options}
         onChangedSchedule={this.onChangedSchedule}
-        onDragEndTile={(start, end, renderOption) => {
-          // console.log('push', { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, start: start, end: end })
-          const data = { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, startDate: start, endDate: end }
-          this.setState(update(this.state, { events: { $push: [data] } }))
+        onChangedCategory={this.onChangedCategory}
+        onDragEndTile={(row, start, end, renderOption) => {
+          console.log(start, end)
+          const category = this.state.categories[row]
+          const data = { title: category.content.title, detail: 'This is Detail', style: { color: '#fff', backgroundColor: category.content.style.color }, order: row, startDate: start, endDate: end, index: category.events.length }
+          this.setState(update(this.state, { categories: { [row]: { events: { $push: [data] } } } }))
+          console.log(this.state.categories)
           // this.osCalendar.current.attachEvent(renderOption.startTileNumber, renderOption.endTileNumber, { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' } })
         }}
       /> :
@@ -116,9 +124,13 @@ export default class App extends Component {
           categories={this.state.categories}
           onChangedSchedule={this.onChangedSchedule}
           onDragEndTile={(start, end, renderOption) => {
+            const order = Math.round(Math.random() * 10) % (this.state.categories.length || 1)
+            const category = this.state.categories[order]
             // console.log('push', { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, start: start, end: end })
-            const data = { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, startDate: start, endDate: end }
-            this.setState(update(this.state, { events: { $push: [data] } }))
+            const data = (category === undefined) ? { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, order: order, startDate: start, endDate: end } : {
+              title: category.content.title, detail: '', style: { color: '#fff', backgroundColor: category.content.style.color }, order: order, startDate: start, endDate: end
+            }
+            this.setState(update(this.state, { categories: { [order]: { events: { $push: [data] } } } }))
             // this.osCalendar.current.attachEvent(renderOption.startTileNumber, renderOption.endTileNumber, { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' } })
           }} />
 

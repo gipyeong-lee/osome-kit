@@ -117,6 +117,10 @@ body {
     -o-user-select: none;
 }
 
+.osome-gantt-grid-row .tile.resizing {
+    border:none
+}
+
 .osome-gantt-grid-row .tile.dragOver {
     background-color: rgba(223, 230, 233,0.5)
 }

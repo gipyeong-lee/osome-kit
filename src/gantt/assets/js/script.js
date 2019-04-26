@@ -9,12 +9,13 @@ var OsomeGantt = {
     categories: [],
     dragging: {
         row: undefined,
-        eventId: undefined,
+        index: undefined,
         startNum: undefined,
         days: undefined
     },
     focus: {
         // start,end,last is unique number of tiles.
+        event: undefined,
         current: undefined,
         type: undefined, // create, resize, move
         start: 0,
@@ -60,10 +61,12 @@ var OsomeGantt = {
         let _ganttGrid = document.getElementById(id)
 
         self.categories = categories
+
         self.clear(_ganttGrid)
         self.createGrid(_ganttGrid, _options)
         self.renderEventBlocks(_options)
         self.attachGridEvent(_ganttGrid)
+
         // self.createEvents(_options)
     },
     randomColor: function () {
@@ -74,6 +77,7 @@ var OsomeGantt = {
     },
     clearFocus: function () {
         let self = this
+        self.focus.event = undefined
         self.focus.type = undefined
         self.focus.end = undefined
         self.focus.start = undefined
@@ -96,7 +100,6 @@ var OsomeGantt = {
     },
     insertRow(row) {
         const emptyEvents = {
-            "scheduleId": 0,
             "index": 0,
             "title": "This is Title",
             "detail": "This is Detail",
@@ -106,7 +109,6 @@ var OsomeGantt = {
             },
             "startDate": `2019-04-0${(i % 10)}T15:00:00.000Z`,
             "endDate": `2019-04-0${(2 + i % 10)}T15:00:00.000Z`,
-            "eventId": 0,
             "start": 2,
             "total": 2
         }
@@ -128,7 +130,7 @@ var OsomeGantt = {
         let _eventHandler = document.createElement('span')
         _eventHandler.className = `event-block-handler-${eventOption.index} resize-handle handler-y`
         _eventHandler.innerHTML = '&nbsp;'
-        _eventHandler.setAttribute('event-id', eventOption.index)
+        _eventHandler.setAttribute('index', eventOption.index)
         _eventHandler.setAttribute('row', row)
         _eventHandler.setAttribute('startNum', startNum)
         _eventHandler.setAttribute('endNum', endNum)
@@ -142,12 +144,11 @@ var OsomeGantt = {
         const delta = self.options.style.row.height
 
         _eventBlock.id = `event-block-${row}-${eventOption.index}`
-        _eventBlock.setAttribute('index', eventOption.index)
         _eventBlock.className = `event-block event-block-${row}`
         _eventBlock.style.backgroundColor = eventOption.color
         _eventBlock.style.height = `${delta}px`
         _eventBlock.style.zIndex = 11
-        _eventBlock.setAttribute('event-id', eventOption.index)
+        _eventBlock.setAttribute('index', eventOption.index)
         _eventBlock.setAttribute('row', row)
         _eventBlock.setAttribute('startNum', startNum)
         _eventBlock.setAttribute('endNum', endNum)
@@ -183,9 +184,9 @@ var OsomeGantt = {
                 if (num === undefined) {
                     return
                 }
-                
-                const startTile = document.getElementById(`${tilePrefix}-${_row}-${num.startNum-1}`)
-                const endTile = document.getElementById(`${tilePrefix}-${_row}-${num.endNum-1}`)
+
+                const startTile = document.getElementById(`${tilePrefix}-${_row}-${num.startNum - 1}`)
+                const endTile = document.getElementById(`${tilePrefix}-${_row}-${num.endNum - 1}`)
 
                 event.color = _content.style.color
                 self.renderEventBlock(_row, startTile, endTile, event)
@@ -204,7 +205,7 @@ var OsomeGantt = {
         const totalDays = _endNum - _startNum + 1
         const idx = eventOption.index ||
             self.events.length
-        let _event = Object.assign({}, { scheduleId: `${idx}`, index: idx, row: row, startNum: _startNum, endNum: _endNum }, eventOption)
+        let _event = Object.assign({}, { index: idx, row: row, startNum: _startNum, endNum: _endNum }, eventOption)
         _event.total = totalDays
         self.categories[row].events[idx] = _event
         const _rowEl = document.getElementById(rowTileId)
@@ -232,8 +233,9 @@ var OsomeGantt = {
         // full date
         // week schedule.
         const totalDays = _endNum - _startNum + 1
+
         const idx = eventOption.index || self.categories[row].events.length
-        let _event = Object.assign({}, { scheduleId: `${idx}`, index: idx, row: row, startNum: _startNum, endNum: _endNum }, eventOption)
+        let _event = Object.assign({}, { index: idx, row: row, startNum: _startNum, endNum: _endNum }, eventOption)
 
         _event.total = totalDays
 
@@ -319,26 +321,29 @@ var OsomeGantt = {
     createRowTile: function (rowTile, row, days, options) {
         let self = this
         for (let i = 0; i < days; i++) {
-            const backTile = self.createBackTile("back", row, i, options.style.row)
+            const backTile = self.createBackTile("back", row, i, options)
             rowTile.appendChild(backTile)
         }
 
     },
-    createBackTile: function (type, row, col, style) {
+    createBackTile: function (type, row, col, options) {
         const self = this
         let tile = document.createElement('div')
-        const offset = col * (100 / self.options.endOfMonthDate)
+        const offset = col * (100 / options.endOfMonthDate)
         tile.classList = `tile ${type}-tile ${type}-tile-${row}`
         tile.id = `${type}-tile-${row}-${col}`
         tile.style.position = 'absolute'
         tile.style.display = 'block'
         tile.style.zIndex = 10
-        tile.style.width = `${100 / self.options.endOfMonthDate}%`
-        tile.style.height = `${style.height}px`
+        tile.style.width = `${100 / options.endOfMonthDate}%`
+        tile.style.height = `${options.style.row.height}px`
         tile.style.left = `${offset}%`
         tile.setAttribute('row', row)
         tile.setAttribute('col', col)
         tile.setAttribute('dayNum', (col + 1))
+        tile.setAttribute('year', options.year)
+        tile.setAttribute('month', options.month + 1)
+        tile.setAttribute('date', col + 1)
         tile.setAttribute('number', col)
         if (type === 'day') {
             tile.style.textAlign = 'center'
@@ -364,7 +369,7 @@ var OsomeGantt = {
 
         let tileWidth = Math.ceil(rightWidth / endOfMonthDate)
 
-        options.style.row.height = tileWidth
+        self.options.style.row.height = tileWidth
 
         // 
         // 0. create container
@@ -411,7 +416,7 @@ var OsomeGantt = {
         self.focus.last = endOfMonthDate
 
         for (let i = 0; i < endOfMonthDate; i++) {
-            const backTile = self.createBackTile("day", 0, i, options.style.row)
+            const backTile = self.createBackTile("day", 0, i, self.options)
             daysRow.appendChild(backTile)
         }
 
@@ -426,7 +431,7 @@ var OsomeGantt = {
             }
             leftContainer.appendChild(self.createRow('left', i, options.style.row, category.content))
             let _row = self.createRow('right', i, options.style.row)
-            self.createRowTile(_row, i, endOfMonthDate, options)
+            self.createRowTile(_row, i, endOfMonthDate, self.options)
             rightContainer.appendChild(_row)
             let _rowSchedule = self.createRow('schedule', i, options.style.row)
             rightContainer.appendChild(_rowSchedule)
@@ -472,8 +477,8 @@ var OsomeGantt = {
         }
     },
     // Drag And Drop
-    changeAllEventBlockOpacity(opacity) {
-        const blocks = document.getElementsByClassName('event-block')
+    changeAllEventBlockOpacity(row, opacity) {
+        const blocks = document.getElementsByClassName(`event-block-${row}`)
         for (let block of blocks) {
             block.style.opacity = opacity
             block.style.zIndex = opacity === 1 ? 11 : 9
@@ -492,24 +497,26 @@ var OsomeGantt = {
     },
     draggingStart(self, eventData) {
         const days = eventData.endNum - eventData.startNum
+
         self.dragging = {
             row: eventData.row,
-            eventId: eventData.index,
+            index: eventData.index,
             startNum: `${eventData.startNum}`,
             days: days
         }
-        self.changeAllEventBlockOpacity(0.5)
+        self.changeAllEventBlockOpacity(eventData.row, 0.5)
     },
     draggingEnd(self) {
-        if (document.getElementById(`dragImage-${self.dragging.row}-${self.dragging.eventId}`) !== null) {
-            document.getElementById(`dragImage-${self.dragging.row}-${self.dragging.eventId}`).remove()
+        if (document.getElementById(`dragImage-${self.dragging.row}-${self.dragging.index}`) !== null) {
+            document.getElementById(`dragImage-${self.dragging.row}-${self.dragging.index}`).remove()
         }
-        self.changeAllEventBlockOpacity(1)
+        
+        self.changeAllEventBlockOpacity(self.dragging.row, 1)
         return self
     },
     onBlockDragEnd(self) {
         const _row = self.dragging.row
-        const _eventId = self.dragging.eventId
+        const _index = self.dragging.index
         const _targetTag = self.focus.current
         if (_targetTag.getAttribute('number') === null) {
             self.onClickEvent()
@@ -517,7 +524,9 @@ var OsomeGantt = {
         }
         const _startNum = _targetTag.getAttribute('number').toNumber()
         const endOfDate = self.options.today.getLastDate()
-        const event = self.categories[_row].events[_eventId]
+        const events = self.categories[_row].events
+        const event = { ...events[_index] }
+
         const total = event.total
         const _endNum = Math.min(_startNum + total - 1, endOfDate - 1)
         const _total = _endNum - _startNum + 1
@@ -527,16 +536,38 @@ var OsomeGantt = {
         const _left = _number * _size
         const _width = _total * _size
         // move eventId
-        const _eventBlock = document.getElementById(`event-block-${_row}-${_eventId}`)
+        const _eventBlock = document.getElementById(`event-block-${_row}-${_index}`)
         _eventBlock.style.left = `${_left}%`
         _eventBlock.setAttribute('startNum', _number)
         _eventBlock.style.width = `${_width}%`
-        event.startNum = _startNum
-        event.endNum = _endNum
-        event.total = _total
-
+        console.log(_startNum, _endNum)
+        const newEvent = self.syncEvent(_row, _index, _startNum, _endNum, _total)
         self.draggingEnd(self)
-        self.onChangedSchedule(event, event)
+
+        self.onChangedSchedule(_row, event, newEvent)
+    },
+    syncEvent(order, index, startNum, endNum, total) {
+        const self = this
+        const tilePrefix = 'back-tile-'
+        let event = JSON.parse(JSON.stringify(self.categories[order].events[index]))
+
+        let startTile = document.getElementById(`${tilePrefix}${order}-${startNum}`)
+        let endTile = document.getElementById(`${tilePrefix}${order}-${endNum}`)
+
+        const sYear = startTile.getAttribute('year').toNumber()
+        const sMonth = Math.max(Number(startTile.getAttribute('month')) - 1, 0)
+        const sDate = startTile.getAttribute('date').toNumber()
+
+        const eYear = endTile.getAttribute('year').toNumber()
+        const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
+        const eDate = endTile.getAttribute('date').toNumber()
+        event.start = startNum
+        event.startDate = new Date(sYear, sMonth, sDate)
+        event.endDate = new Date(eYear, eMonth, eDate)
+        event.startNum = startNum
+        event.endNum = endNum
+        event.total = total
+        return event
     },
     htmlToImg(element, callback) {
         const self = this
@@ -563,6 +594,7 @@ var OsomeGantt = {
 
         const _index = eventBlock.getAttribute('index').toNumber()
         const _row = eventBlock.getAttribute('row')
+
         let _eventData = self.categories[_row].events[_index]
 
         _eventData.row = _row
@@ -609,93 +641,44 @@ var OsomeGantt = {
         if (self.focus.start === undefined) {
             return
         }
-
-        const _parentId = 'osome-gantt-grid-left-container'
-        const _parent = document.getElementById(_parentId)
         const _sourceRowEl = self.focus.start
         const _sRow = _sourceRowEl.getAttribute('row').toNumber()
         const _targetRowEl = self.focus.current
         let _tRow = _targetRowEl.getAttribute('row').toNumber()
 
-        const sourceCategoryId = `left-row-${_sRow}`
-        const sourceScheduleId = `schedule-row-${_sRow}`
-        const _sourceCategoryEl = document.getElementById(sourceCategoryId)
-        const _sourceScheduleEl = document.getElementById(sourceScheduleId)
         // trow
         const targetRect = _targetRowEl.getBoundingClientRect()
         const offsetY = e.clientY - targetRect.top
         const height = _targetRowEl.offsetHeight
-        const idRegex = /div id="(.*?)-(.*?)-(.*?)-(.*?)"/g
-        const rowRegex = /row="(.*?)"/g
-        const classRegex = /class="event-block event-block-(.*?)"/g
+
+        let newCategories = JSON.parse(JSON.stringify(self.categories))
         if (_sRow < _tRow) {
             if (offsetY < height / 2) {
                 _tRow -= 1
             }
-
-            let targetCategoryId = `left-row-${_tRow}`
-            let targetScheduleId = `schedule-row-${_tRow}`
-            const _targetCategoryEl = document.getElementById(targetCategoryId)
-            const _targetScheduleEl = document.getElementById(targetScheduleId)
-            const _sourceHtml = _sourceCategoryEl.innerHTML
-            let _sourceScheduleHtml = _sourceScheduleEl.innerHTML
-            const _source = self.categories[_sRow]
+            let _source = newCategories[_sRow]
             for (let i = _sRow; i < _tRow; i++) {
-                const nextRow = document.getElementById(`left-row-${i + 1}`)
-                const beforeRow = document.getElementById(`left-row-${i}`)
-                beforeRow.innerHTML = nextRow.innerHTML
-                self.categories[i] = self.categories[i + 1]
-                const nextSchedule = document.getElementById(`schedule-row-${i + 1}`)
-                const beforeSchedule = document.getElementById(`schedule-row-${i}`)
-                let nextScheduleHtml = nextSchedule.innerHTML
-                nextScheduleHtml = nextScheduleHtml.replace(idRegex, `div id="$1-$2-${i}-$4"`)
-                nextScheduleHtml = nextScheduleHtml.replace(rowRegex, `row="${i}"`)
-                nextScheduleHtml = nextScheduleHtml.replace(classRegex, `class="event-block event-block-${i}"`)
-                beforeSchedule.innerHTML = nextScheduleHtml
+                newCategories[i] = newCategories[i + 1]
+                newCategories[i].content.order = i
             }
-
-            _sourceScheduleHtml = _sourceScheduleHtml.replace(idRegex, `div id="$1-$2-${_tRow}-$4"`)
-            _sourceScheduleHtml = _sourceScheduleHtml.replace(rowRegex, `row="${_tRow}"`)
-            _sourceScheduleHtml = _sourceScheduleHtml.replace(classRegex, `class="event-block event-block-${_tRow}"`)
-            _targetScheduleEl.innerHTML = _sourceScheduleHtml
-            _targetCategoryEl.innerHTML = _sourceHtml
-
-            self.categories[_tRow] = _source
+            newCategories[_tRow] = _source
+            newCategories[_tRow].content.order = _tRow
 
         }
         else if (_sRow > _tRow) {
             if (offsetY > height / 2) {
                 _tRow += 1
             }
-            let targetCategoryId = `left-row-${_tRow}`
-            let targetScheduleId = `schedule-row-${_tRow}`
-            const _targetCategoryEl = document.getElementById(targetCategoryId)
-            const _targetScheduleEl = document.getElementById(targetScheduleId)
-            const _sourceHtml = _sourceCategoryEl.innerHTML
-            let _sourceScheduleHtml = _sourceScheduleEl.innerHTML
-            const _source = self.categories[_sRow]
+            let _source = newCategories[_sRow]
             for (let i = _sRow; i > _tRow; i--) {
-                const nextRow = document.getElementById(`left-row-${i}`)
-                const beforeRow = document.getElementById(`left-row-${i - 1}`)
-                nextRow.innerHTML = beforeRow.innerHTML
-                self.categories[i] = self.categories[i - 1]
-                const nextSchedule = document.getElementById(`schedule-row-${i}`)
-                const beforeSchedule = document.getElementById(`schedule-row-${i - 1}`)
-
-                let beforeScheduleHtml = beforeSchedule.innerHTML
-                beforeScheduleHtml = beforeScheduleHtml.replace(idRegex, `div id="$1-$2-${i}-$4"`)
-                beforeScheduleHtml = beforeScheduleHtml.replace(rowRegex, `row="${i}"`)
-                beforeScheduleHtml = beforeScheduleHtml.replace(classRegex, `class="event-block event-block-${i}"`)
-                nextSchedule.innerHTML = beforeScheduleHtml
+                newCategories[i] = newCategories[i - 1]
+                newCategories[i].content.order = i
             }
-            _sourceScheduleHtml = _sourceScheduleHtml.replace(idRegex, `div id="$1-$2-${_tRow}-$4"`)
-            _sourceScheduleHtml = _sourceScheduleHtml.replace(rowRegex, `row="${_tRow}"`)
-            _sourceScheduleHtml = _sourceScheduleHtml.replace(classRegex, `class="event-block event-block-${_tRow}"`)
-            _targetScheduleEl.innerHTML = _sourceScheduleHtml
-            _targetCategoryEl.innerHTML = _sourceHtml
 
-            self.categories[_tRow] = _source
+            newCategories[_tRow] = _source
+            newCategories[_tRow].content.order = _tRow
         }
+        self.onChangedCategory(self.categories, newCategories)
     },
 
     onCategoryDragEnd(self, e) {
@@ -799,6 +782,7 @@ var OsomeGantt = {
             }
             else if (self.focus.type === 'move') {
                 const _number = targetTag.getAttribute('number')
+                const _row = targetTag.getAttribute('row')
                 const _startNum = self.focus.start.getAttribute('startNum')
 
                 if (_number === _startNum) {
@@ -818,43 +802,79 @@ var OsomeGantt = {
             self.clearFocus()
         }
     },
+    increaseEventTotal(order, index, startNum, endNum, increaseTotal) {
+        const self = this
+        const event = self.categories[order].events[index]
+        
+        if (event === undefined) return
+        event.total = increaseTotal
+        console.log(endNum)
+        event.startDate = new Date(event.startDate).setDate(startNum + 1)
+        event.endDate = new Date(event.endDate).setDate(endNum + 1)
+        self.categories[order].events[index] = event
+    },
     resizeEventBlock(eventBlock, toTile) {
         let self = this
         let width = self.options.style.row.height
-        const _eventId = eventBlock.getAttribute('event-id').toNumber()
+        const _index = eventBlock.getAttribute('index').toNumber()
         const _row = eventBlock.getAttribute('row').toNumber()
-        const _startNum = self.categories[_row].events[_eventId].startNum
+        const _event = { ...self.categories[_row].events[_index] }
+        const _startNum = _event.startNum
         const _endNum = toTile.getAttribute('number').toNumber()
         let _size = _endNum - _startNum + 1
         const _percentOfWidth = _size / self.options.endOfMonthDate * 100
-
         eventBlock.style.width = `${_percentOfWidth}%`
         eventBlock.style.height = `${width}px`
-        self.categories[_row].events[_eventId] = self.syncEvent(_row, _eventId, _startNum, _endNum)
-        self.syncHandler(_eventId, toTile.getAttribute('number'))
+        self.increaseEventTotal(_row, _index, _startNum, _endNum, _size)
+        self.categories[_row].events[_index] = self.syncEvent(_row, _index, _startNum, _endNum, _size)
+        self.syncHandler(_index, toTile.getAttribute('number'))
     },
 
     resizeEventBlockToNone(eventBlock) {
         eventBlock.style.display = 'none'
         prevBlock.classList.remove('block-right')
     },
-    syncHandler(eventId, endNum) {
-        const handlerClassName = `event-block-handler-${eventId}`
+    syncHandler(index, endNum) {
+        const handlerClassName = `event-block-handler-${index}`
         const handlers = document.getElementsByClassName(handlerClassName)
         for (let handler of handlers) {
             handler.setAttribute('endNum', endNum)
         }
     },
     eventStart(row, startNum, endNum) {
+        const self = this
         const elements = document.getElementsByClassName(`event-block-${row}`)
         for (let element of elements) {
             element.style.zIndex = 9
         }
         if (row !== undefined) {
+            const events = self.categories[row].events
+            events.map((event) => {
+                const _startNum = event.startNum
+                const _endNum = event.endNum
+                for (let i = _startNum; i <= _endNum; i++) {
+                    const element = document.getElementById(`back-tile-${row}-${i}`)
+                    element.classList.add('resizing')
+                }
+            })
+        }
+    },
+    eventModify(row, startNum, endNum) {
+        const self = this
+        if (row !== undefined) {
             const elements = document.getElementsByClassName(`back-tile-${row}`)
             for (let element of elements) {
-                element.classList.add('resizing')
+                element.classList.remove('resizing')
             }
+            const events = self.categories[row].events
+            events.map((event) => {
+                const _startNum = event.startNum
+                const _endNum = event.endNum
+                for (let i = _startNum; i <= _endNum; i++) {
+                    const element = document.getElementById(`back-tile-${row}-${i}`)
+                    element.classList.add('resizing')
+                }
+            })
         }
     },
     eventEnd(row, startNum, endNum) {
@@ -868,24 +888,6 @@ var OsomeGantt = {
                 element.classList.remove('resizing')
             }
         }
-    },
-    syncEvent(row, eventId, startNum, endNum) {
-        let event = this.categories[row].events[eventId]
-
-        const sYear = this.options.year
-        const sMonth = this.options.month
-        const sDate = startNum + 1
-
-        const eYear = this.options.year
-        const eMonth = this.options.month
-        const eDate = endNum + 1
-        event.startNum = startNum
-        event.endNum = endNum
-        event.total = endNum - startNum + 1
-        event.startDate = new Date(sYear, sMonth, sDate)
-        event.endDate = new Date(eYear, eMonth, eDate)
-        return { ...event }
-
     },
     syncContainerSize: function (leftWidth) {
         const self = this
@@ -949,7 +951,6 @@ var OsomeGantt = {
                 self.focus.current.classList.remove('dragOverDown')
             }
 
-
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag, e) {
@@ -959,6 +960,9 @@ var OsomeGantt = {
 
     attachDragAndDropEvent: {
         onMouseDown: function (self, targetTag, e) {
+            const row = targetTag.getAttribute('row').toNumber()
+            const index = targetTag.getAttribute('index').toNumber()
+            self.focus.event = { ...self.categories[row].events[index] }
             self.focus.start = targetTag
             self.focus.current = targetTag
             self.onBlockDragStart(targetTag, self, e)
@@ -975,7 +979,7 @@ var OsomeGantt = {
             if (_tRow !== _row) {
                 return
             }
-            const _index = self.dragging.eventId
+            const _index = self.dragging.index
             let dragImg = document.getElementById(`dragImage-${_row}-${_index}`)
             dragImg.style.left = `${e.clientX}px`
             dragImg.style.top = `${e.clientY}px`
@@ -1006,17 +1010,19 @@ var OsomeGantt = {
     attachResizeEvent: {
         prefix: 'event-block-',
         onMouseDown: function (self, targetTag) {
-            const row = targetTag.getAttribute('row')
+            const row = targetTag.getAttribute('row').toNumber()
+            const index = targetTag.getAttribute('index').toNumber()
             const endNum = targetTag.getAttribute('endNum')
+            self.focus.event = { ...self.categories[row].events[index] }
             self.focus.start = targetTag
             self.focus.current = document.getElementById(`back-tile-${row}-${endNum}`)
             self.eventStart(row)
         },
         onMouseMove: function (self, targetTag) {
-            const eventId = self.focus.start.getAttribute('event-id')
+            const index = self.focus.start.getAttribute('index')
             const row = targetTag.getAttribute('row').toNumber()
-            const startNum = self.categories[row].events[eventId].startNum
-            const endNum = self.categories[row].events[eventId].endNum
+            const startNum = self.categories[row].events[index].startNum.toNumber()
+            const endNum = self.categories[row].events[index].endNum.toNumber()
             const nextNum = targetTag.getAttribute('number').toNumber()
 
             if (nextNum === null) {
@@ -1026,7 +1032,7 @@ var OsomeGantt = {
                 return
             }
 
-            const eventBlock = document.getElementById(`${this.prefix}${row}-${eventId}`)
+            const eventBlock = document.getElementById(`${this.prefix}${row}-${index}`)
 
             if (eventBlock === null) {
                 return
@@ -1035,14 +1041,16 @@ var OsomeGantt = {
             if (startNum <= nextNum) {
                 self.resizeEventBlock(eventBlock, targetTag)
             }
-
+            self.eventModify(row, startNum, nextNum)
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag) {
             const row = targetTag.getAttribute('row')
+            const index = targetTag.getAttribute('index')
+
+            self.onChangedSchedule(row, self.focus.event, self.categories[row].events[self.focus.event.index])
             self.eventEnd(row)
             self.clearSelectedBlock(row)
-            self.reorderEventBox()
         }
     },
     attachEventCreate: {
@@ -1072,10 +1080,18 @@ var OsomeGantt = {
                 const row = start.getAttribute('row')
                 self.eventEnd(row)
                 self.clearSelectedBlock(row)
-                const startNum = start.getAttribute('col')
-                const endNum = end.getAttribute('col')
                 if (start !== undefined && end !== undefined) {
-                    self.attachEvent(row, startNum.toNumber(), endNum.toNumber(), { title: 'This is Title', detail: 'This is Detail', color: self.categories[row].content.style.color })
+                    const startYear = start.getAttribute('year')
+                    const startMonth = start.getAttribute('month').toNumber() - 1
+                    const startDate = start.getAttribute('date')
+                    const endYear = end.getAttribute('year')
+                    const endMonth = end.getAttribute('month').toNumber() - 1
+                    const endDate = end.getAttribute('date')
+                    const _start = new Date(startYear, startMonth, startDate)
+                    const _end = new Date(endYear, endMonth, endDate)
+                    const renderOption = { startNumber: start.getAttribute('number'), endNumber: end.getAttribute('number') }
+                    self.onDragEndTile(row, _start, _end, renderOption)
+                    // self.attachEvent(row, startNum.toNumber(), endNum.toNumber(), { title: self.categories[row].content.title, detail: 'This is Detail', color: self.categories[row].content.style.color })
                 }
             }
         }

@@ -22,7 +22,7 @@ var OsomeCalendar = {
     },
     onClickSchedule: function (element, event, index) {
     },
-    onChangedSchedule: function (before, after) {
+    onChangedSchedule: function (order, before, after) {
     },
     //
     eventOption: {
@@ -641,13 +641,13 @@ var OsomeCalendar = {
         const startNum = e.target.getAttribute('number').toNumber()
         const week = e.target.getAttribute('week').toNumber()
         const event = parent.categories[order].events[index]
-        const beforeEvent = new Object() 
-        Object.keys(event).map((key)=>{
+        const beforeEvent = new Object()
+        Object.keys(event).map((key) => {
             beforeEvent[key] = event[key]
         })
         const endNum = Math.min(startNum + event.total.toNumber() - 1, parent.endNum - 1)
-        const nextEvent = parent.moveSchedule(week, order, index, startNum, endNum, parent)
-        parent.onChangedSchedule(beforeEvent, nextEvent)
+        const newEvent = parent.moveSchedule(week, order, index, startNum, endNum, parent)
+        parent.onChangedSchedule(order, beforeEvent, newEvent)
 
     },
     moveSchedule(week, order, index, startNum, endNum, parent) {
@@ -696,10 +696,9 @@ var OsomeCalendar = {
         self.categories[order].events.map(event => { return event.total = 0 })
     },
     increaseEventTotal(order, index, increaseTotal) {
-
         const self = this
         const event = self.categories[order].events[index]
-
+        if(event === undefined) return
         event.total += increaseTotal
         self.categories[order].events[index] = event
     },
@@ -925,8 +924,8 @@ var OsomeCalendar = {
         onMouseUp: function (self, targetTag) {
             const _index = self.focus.start.getAttribute('index')
             const _order = self.focus.start.getAttribute('order')
-            
-            self.onChangedSchedule(self.categories[_order].events[_index], self.categories[_order].events[_index])
+
+            self.onChangedSchedule(_order, self.categories[_order].events[_index], self.categories[_order].events[_index])
             self.eventEnd()
             self.clearFocus()
             self.reorderEventBox(_order)

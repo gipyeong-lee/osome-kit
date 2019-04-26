@@ -13,7 +13,9 @@ class OSGantt extends Component {
   }
   onClickSchedule = (element, event, index) => {
   }
-  onChangedSchedule = (event, afterEvent) => {
+  onChangedCategory = (categories, afterCategories) => {
+  }
+  onChangedSchedule = (order, event, afterEvent) => {
   }
   onMouseRightClick = (element, event) => {
     console.log(`Mouse Right Button Clicked ${element.getAttribute('row')}`)
@@ -33,7 +35,6 @@ class OSGantt extends Component {
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return false
     }
-
     if (this.props.categories !== nextProps.categories) {
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return false
@@ -47,6 +48,7 @@ class OSGantt extends Component {
     OsomeGantt.onMouseRightClick = this.props.onMouseRightClick || this.onMouseRightClick
     OsomeGantt.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile
     OsomeGantt.onChangedSchedule = this.props.onChangedSchedule || this.onChangedSchedule
+    OsomeGantt.onChangedCategory = this.props.onChangedCategory || this.onChangedCategory
   }
 
   render() {
@@ -84,7 +86,7 @@ class OSCalendar extends Component {
   }
   onClickSchedule = (element, event, index) => {
   }
-  onChangedSchedule = (event, afterEvent) => {
+  onChangedSchedule = (order, event, afterEvent) => {
   }
 
   constructor(props) {
