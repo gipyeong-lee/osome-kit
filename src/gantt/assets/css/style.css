@@ -1,12 +1,19 @@
-
+body {
+    width:100%;
+    height:100%;
+}
 * {
     user-select: none;
 }
 /* GRID */
+.osome-gantt-grid-container {
+    position: absolute;
+    width:100%;
+    height:100%;
+}
 
 .osome-gantt-grid-inner-container {
-    position: relative;
-    display:inline-block;
+    position: absolute;
     background-color:#dfe4ea;
 }
 .osome-gantt-grid-handle-bar {
@@ -38,6 +45,7 @@
 }
 .osome-gantt-grid-week-grid {
     position: absolute;
+    display:block;
     width:100%;
     height:100%;
     background-color:transparent;
@@ -45,6 +53,7 @@
 }
 .osome-gantt-grid-week-schedule {
     position: absolute;
+    display:block;
     width:100%;
     padding-top:20px;
 }
@@ -72,6 +81,7 @@
 /* */
 .osome-gantt-grid-category-row {
     background-color:transparent;
+    transition: box-shadow 0.1s;
 }
 
 .osome-gantt-grid-category-row.dragOver {
@@ -96,7 +106,7 @@
     box-shadow: 3px 4px 2px 0px rgba(0,0,0,0.09);
     display:block;
     cursor: move;
-    transition: all 0.1s ease-in-out;
+    transition: left 0.1s ease-in-out, width 0.1s ease-in-out;
 }
 .osome-gantt-grid-row {
     border-right:1px solid #eaeaea;
@@ -120,6 +130,12 @@
 .osome-gantt-grid-row .tile.active {
     background-color: rgba(81, 92, 230, 0.2)
 }
+
+.dragImage {
+    position: absolute;
+    transition: left 0.1s ease-in-out, width 0.1s ease-in-out;
+}
+
 
 #osome-gantt-grid-days .column {
     padding: 0;
