@@ -5,7 +5,8 @@
 /* GRID */
 
 .osome-gantt-grid-inner-container {
-    position: absolute;
+    position: relative;
+    display:inline-block;
     background-color:#dfe4ea;
 }
 .osome-gantt-grid-handle-bar {

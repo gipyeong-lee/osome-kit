@@ -39,7 +39,7 @@ var OsomeGantt = {
         type: 'row',
         style: {
             row: {
-                height: 20
+                height: 40
             },
             eventHeader: {
                 width: 100,
@@ -362,16 +362,11 @@ var OsomeGantt = {
         self.options.endOfMonthDate = endOfMonthDate
 
         const handleBarWidth = 5
-        const parentWidth = calendarGrid.clientWidth
-
 
         const rightWidthPercentage = 100 - self.state.leftWidth.numOfPercent()
-        const rightWidth = parentWidth * rightWidthPercentage / 100
 
-        let tileWidth = Math.ceil(rightWidth / endOfMonthDate)
-
-        self.options.style.row.height = tileWidth
-
+        const rowHeight = self.options.style.row.height || 40
+        self.options.style.row.height  = rowHeight
         // 
         // 0. create container
         let container = document.createElement('div')
@@ -382,7 +377,6 @@ var OsomeGantt = {
         let leftContainer = document.createElement('div')
         leftContainer.id = `osome-gantt-grid-left-container`
         leftContainer.className = 'osome-gantt-grid-inner-container'
-        leftContainer.style.left = 0
         leftContainer.style.borderRight = ``
         leftContainer.style.backgroundColor = `transparent`
         leftContainer.style.width = `${self.state.leftWidth}`
@@ -392,13 +386,12 @@ var OsomeGantt = {
         handleBar.className = 'osome-gantt-grid-handle-bar'
         handleBar.style.right = 0
         handleBar.style.width = `${handleBarWidth}px`
-        handleBar.style.top = `${tileWidth}px`
+        handleBar.style.top = `${rowHeight}px`
 
 
         let rightContainer = document.createElement('div')
         rightContainer.id = `osome-gantt-grid-right-container`
         rightContainer.className = 'osome-gantt-grid-inner-container'
-        rightContainer.style.left = `${self.state.leftWidth}`
         rightContainer.style.width = `${rightWidthPercentage}%`
 
         container.appendChild(leftContainer)
@@ -628,22 +621,6 @@ var OsomeGantt = {
     onCategoryDragStart(rowEl, self, e) {
         const _row = rowEl.getAttribute('row')
         self.draggingCategoryStart(self, _row)
-
-        // let canvas = document.createElement('canvas')
-        // let context = canvas.getContext('2d')
-        // canvas.id = `dragImage-category-${_row}`
-        // canvas.className = 'dragImage'
-        // canvas.width = rowEl.offsetWidth
-        // canvas.height = self.options.style.row.height
-        // canvas.style.boxShadow = '3px 4px 2px 0px rgba(0,0,0,0.09)'
-        // canvas.style.left = `${e.clientX + 5}px`
-        // canvas.style.top = `${e.clientY + 5}px`
-        // self.htmlToImg(rowEl, (img) => {
-        //     if (self.focus.type === 'reorder') {
-        //         context.drawImage(img, 0, 0)
-        //         document.body.append(canvas)
-        //     }
-        // })
 
         if (!self.focus.start.classList.contains('dragOver')) {
             self.focus.start.classList.add('dragOver')
