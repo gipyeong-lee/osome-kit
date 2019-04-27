@@ -65,7 +65,7 @@ var OsomeCalendar = {
     init: function (id = 'osome-cal-calendar', opt = {}, categories = []) {
         let self = this
         let _options = Object.assign({}, this.options, opt)
-
+        self.options = _options
         let _calendarGrid = document.getElementById(id)
         self.categories = categories
         self.clear(_calendarGrid)
@@ -697,7 +697,7 @@ var OsomeCalendar = {
     increaseEventTotal(order, index, increaseTotal) {
         const self = this
         const event = self.categories[order].events[index]
-        if(event === undefined) return
+        if (event === undefined) return
         event.total += increaseTotal
         self.categories[order].events[index] = event
     },

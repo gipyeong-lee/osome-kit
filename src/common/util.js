@@ -59,6 +59,44 @@ Date.prototype.endOfDay = function () {
 }
 
 const utils = {
+    convertDateToGanttNumber: (sDate, eDate, indexOfCurrentMonth, eNum) => {
+        let _startDate = new Date(sDate)
+        let _endDate = new Date(eDate)
+        let startMonth = _startDate.getMonth()
+        let endMonth = _endDate.getMonth()
+
+        let startDate = _startDate.getDate()
+        let endDate = _endDate.getDate()
+
+        let startNum = Math.max(startDate, 0)
+        let endNum = Math.min(endDate, eNum)
+
+        if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth + 1) { }
+        else if (startMonth < indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
+            // 전달 ~ 이번달
+            endNum = Math.min(endDate, endNum)
+        }
+        else if (startMonth === indexOfCurrentMonth && endMonth > indexOfCurrentMonth) {
+            // 이번달 ~ 다음달
+            startNum = startDate
+        }
+        else if (startMonth === indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
+            // 이번달
+            startNum = startDate
+            endNum = Math.min(endDate, endNum)
+        }
+        else {
+            return
+        }
+        if (Math.abs(startMonth - indexOfCurrentMonth) > 1) {
+            startNum = 0
+        }
+        if (Math.abs(endMonth - indexOfCurrentMonth) > 1) {
+            endNum = endNum
+        }
+
+        return { startNum: startNum, endNum: endNum }
+    },
     convertDateToNumber: (sDate, eDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, eNum) => {
         let _startDate = new Date(sDate)
         let _endDate = new Date(eDate)

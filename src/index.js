@@ -33,6 +33,7 @@ class OSGantt extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.options !== nextProps.options) {
       console.log('re init! options ')
+      console.log(nextProps.options)
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return false
     }

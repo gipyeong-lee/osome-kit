@@ -59,7 +59,8 @@ var OsomeGantt = {
     },
     init: function (id = 'osome-gantt', opt = {}, categories = []) {
         let self = this
-        let _options = Object.assign({}, this.options, opt)
+        let _options = Object.assign({}, self.options, opt)
+        self.options = _options
         let _ganttGrid = document.getElementById(id)
 
         self.categories = categories
@@ -172,7 +173,7 @@ var OsomeGantt = {
         const startOfDay = targetDate.startOfDay();
 
         let endOfMonthDate = targetDate.getLastDate()
-
+        console.log(_categories)
         for (let i = 0; i < _length; i++) {
             const _category = _categories[i]
             const _content = _category.content
@@ -180,13 +181,15 @@ var OsomeGantt = {
 
             const _row = _content.order.toNumber()
             _events.map((event, idx) => {
-                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, prevEndOfMonthDate, endOfMonthDate, endOfMonthDate)
+                console.log(event)
+                const num = utils.convertDateToGanttNumber(event.startDate, event.endDate, indexOfCurrentMonth, endOfMonthDate)
                 if (num === undefined) {
                     return
                 }
                 const startTile = document.getElementById(`${tilePrefix}-${_row}-${num.startNum - 1}`)
                 const endTile = document.getElementById(`${tilePrefix}-${_row}-${num.endNum - 1}`)
-
+                event.startNum = num.startNum
+                event.endNum = num.endNum
                 event.color = _content.style.color
                 if (startTile !== null && endTile !== null) {
                     self.renderEventBlock(_row, startTile, endTile, event)
@@ -343,7 +346,7 @@ var OsomeGantt = {
         tile.setAttribute('col', col)
         tile.setAttribute('dayNum', (col + 1))
         tile.setAttribute('year', options.year)
-        tile.setAttribute('month', options.month + 1)
+        tile.setAttribute('month', options.month)
         tile.setAttribute('date', col + 1)
         tile.setAttribute('number', col)
         if (type === 'day') {
@@ -409,7 +412,7 @@ var OsomeGantt = {
         rightContainer.appendChild(daysRow)
 
         self.focus.last = endOfMonthDate
-
+        console.log(self.options)
         for (let i = 0; i < endOfMonthDate; i++) {
             const backTile = self.createBackTile("day", 0, i, self.options)
             daysRow.appendChild(backTile)
@@ -912,7 +915,7 @@ var OsomeGantt = {
             if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
                 return
             }
-            
+
             const targetRect = targetTag.getBoundingClientRect()
             const offsetY = e.clientY - targetRect.top
             const height = targetTag.offsetHeight
@@ -920,16 +923,16 @@ var OsomeGantt = {
             if (offsetY < height / 2) {
                 const nextRow = _tRow.toNumber() + 1
                 const nextElement = document.getElementById(`${this.leftPrefix}${nextRow}`)
-                if(nextElement) nextElement.classList.remove(`dragOverUp`)
+                if (nextElement) nextElement.classList.remove(`dragOverUp`)
                 if (!targetTag.classList.contains('dragOverUp')) {
                     targetTag.classList.add('dragOverUp')
                 }
 
             } else {
-                if(self.focus.current) self.focus.current.classList.remove('dragOverUp')
+                if (self.focus.current) self.focus.current.classList.remove('dragOverUp')
                 const nextRow = _tRow.toNumber() + 1
                 const nextElement = document.getElementById(`${this.leftPrefix}${nextRow}`)
-                if(!nextElement.classList.contains(`dragOverUp`)) nextElement.classList.add(`dragOverUp`)
+                if (!nextElement.classList.contains(`dragOverUp`)) nextElement.classList.add(`dragOverUp`)
             }
 
             if (self.focus.current === targetTag) {
@@ -1030,14 +1033,14 @@ var OsomeGantt = {
             const startNum = self.focus.event.startNum.toNumber()
             const endNum = self.focus.event.endNum.toNumber()
             const nextNum = targetTag.getAttribute('number').toNumber()
-            
+
             if (nextNum === null) {
                 return
             }
             if (endNum === nextNum || nextNum < startNum) {
                 return
             }
-            
+
             const eventBlock = document.getElementById(`${this.prefix}${row}-${index}`)
 
             if (eventBlock === null) {
@@ -1086,6 +1089,7 @@ var OsomeGantt = {
                 const row = start.getAttribute('row')
                 self.eventEnd(row)
                 self.clearSelectedBlock(row)
+
                 if (start !== undefined && end !== undefined) {
                     const startYear = start.getAttribute('year')
                     const startMonth = start.getAttribute('month').toNumber() - 1
@@ -1096,6 +1100,7 @@ var OsomeGantt = {
                     const _start = new Date(startYear, startMonth, startDate)
                     const _end = new Date(endYear, endMonth, endDate)
                     const renderOption = { startNumber: start.getAttribute('number'), endNumber: end.getAttribute('number') }
+                    console.log(_start, _end)
                     if (_start.getDate() > _end.getDate()) {
                         return
                     }
