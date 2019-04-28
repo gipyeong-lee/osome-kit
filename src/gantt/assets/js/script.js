@@ -101,33 +101,8 @@ var OsomeGantt = {
         }
         self.createEventBlock(row, startTile, endTile, _eventOption)
     },
-    insertRow(row) {
-        const emptyEvents = {
-            "index": 0,
-            "title": "This is Title",
-            "detail": "This is Detail",
-            "style": {
-                "color": "#fff",
-                "backgroundColor": "#f00"
-            },
-            "startDate": `2019-04-0${(i % 10)}T15:00:00.000Z`,
-            "endDate": `2019-04-0${(2 + i % 10)}T15:00:00.000Z`,
-            "start": 2,
-            "total": 2
-        }
-        const emptyCategory = {
-            content: {
-                title: ``,
-                type: 'empty',
-                style: {
-                    color: self.randomColor(),
-                    padding: '5px'
-                }
-            }
-        }
-    },
     deleteRow(row) {
-
+        self.onChangedCategory(self.categoires, self.categories.splice(row, 1))
     },
     createHandler(row, startNum, endNum, eventOption) {
         let _eventHandler = document.createElement('span')
