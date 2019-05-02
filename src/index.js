@@ -7,7 +7,6 @@ import './gantt/assets/css/style.css'
 
 class OSGantt extends Component {
   onDragEndTile = (start, end, renderOption) => {
-    console.log(start, end)
     console.log('Please implement `onDragEndTile` ')
     // Calendar.attachEvent(renderOption.startTileNumber,renderOption.endTileNumber)
   }
@@ -34,14 +33,11 @@ class OSGantt extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.options !== nextProps.options) {
-      console.log('re init! options ')
-      console.log(nextProps.options)
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return false
     }
     
     if (this.props.categories !== nextProps.categories) {
-      console.log('re init! categories')
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return false
     }
@@ -86,7 +82,6 @@ OSGantt.propTypes = {
 
 class OSCalendar extends Component {
   onDragEndTile = (start, end, renderOption) => {
-    console.log(start, end)
     console.log('Please implement `onDragEndTile` ')
     // Calendar.attachEvent(renderOption.startTileNumber,renderOption.endTileNumber)
   }

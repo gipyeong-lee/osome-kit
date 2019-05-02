@@ -148,7 +148,7 @@ var OsomeGantt = {
         const startOfDay = targetDate.startOfDay();
 
         let endOfMonthDate = targetDate.getLastDate()
-        console.log(_categories)
+        
         for (let i = 0; i < _length; i++) {
             const _category = _categories[i]
             const _content = _category.content
@@ -156,7 +156,7 @@ var OsomeGantt = {
 
             const _row = _content.order.toNumber()
             _events.map((event, idx) => {
-                console.log(event)
+                
                 const num = utils.convertDateToGanttNumber(event.startDate, event.endDate, indexOfCurrentMonth, endOfMonthDate)
                 if (num === undefined) {
                     return
@@ -387,7 +387,7 @@ var OsomeGantt = {
         rightContainer.appendChild(daysRow)
 
         self.focus.last = endOfMonthDate
-        console.log(self.options)
+        
         for (let i = 0; i < endOfMonthDate; i++) {
             const backTile = self.createBackTile("day", 0, i, self.options)
             daysRow.appendChild(backTile)
@@ -1075,7 +1075,7 @@ var OsomeGantt = {
                     const _start = new Date(startYear, startMonth, startDate)
                     const _end = new Date(endYear, endMonth, endDate)
                     const renderOption = { startNumber: start.getAttribute('number'), endNumber: end.getAttribute('number') }
-                    console.log(_start, _end)
+                    
                     if (_start.getDate() > _end.getDate()) {
                         return
                     }
