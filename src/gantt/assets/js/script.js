@@ -147,8 +147,6 @@ var OsomeGantt = {
         const indexOfCurrentMonth = currentMonth - 1
         const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
         const prevMonthObj = targetDate.getPrevMonth()
-        const prevEndOfMonthDate = prevMonthObj.getLastDate()
-        const startOfDay = targetDate.startOfDay();
 
         let endOfMonthDate = targetDate.getLastDate()
 
@@ -166,8 +164,8 @@ var OsomeGantt = {
                 }
                 const startTile = document.getElementById(`${tilePrefix}-${_row}-${num.startNum - 1}`)
                 const endTile = document.getElementById(`${tilePrefix}-${_row}-${num.endNum - 1}`)
-                event.startNum = num.startNum
-                event.endNum = num.endNum
+                event.startNum = num.startNum - 1
+                event.endNum = num.endNum - 1
                 event.color = _content.style.color
                 if (startTile !== null && endTile !== null) {
                     self.renderEventBlock(_row, startTile, endTile, event)
@@ -549,17 +547,18 @@ var OsomeGantt = {
 
         const sYear = startTile.getAttribute('year').toNumber()
         const sMonth = Math.max(Number(startTile.getAttribute('month')) - 1, 0)
-        const sDate = startTile.getAttribute('date').toNumber()
+        const sDate = startTile.getAttribute('number').toNumber()
 
         const eYear = endTile.getAttribute('year').toNumber()
         const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
-        const eDate = endTile.getAttribute('date').toNumber()
+        const eDate = endTile.getAttribute('number').toNumber()
         event.start = startNum
         event.startDate = new Date(sYear, sMonth, sDate)
         event.endDate = new Date(eYear, eMonth, eDate)
         event.startNum = startNum
         event.endNum = endNum
         event.total = total
+
         return event
     },
     htmlToImg(element, callback) {
@@ -802,7 +801,7 @@ var OsomeGantt = {
         const _percentOfWidth = _size / self.options.endOfMonthDate * 100
         eventBlock.style.width = `${_percentOfWidth}%`
         eventBlock.style.height = `${width}px`
-        self.increaseEventTotal(_row, _index, _startNum, _endNum, _size)
+        // self.increaseEventTotal(_row, _index, _startNum, _endNum, _size)
         self.categories[_row].events[_index] = self.syncEvent(_row, _index, _startNum, _endNum, _size)
         self.syncHandler(_index, toTile.getAttribute('number'))
     },
@@ -1035,6 +1034,7 @@ var OsomeGantt = {
             self.resizeEventBlock(eventBlock, targetTag)
 
             self.eventModify(row)
+            
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag) {
@@ -1087,6 +1087,8 @@ var OsomeGantt = {
                     if (_start.getDate() > _end.getDate()) {
                         return
                     }
+                    console.log(renderOption)
+                    console.log(_start,_end)
                     self.onDragEndTile(row, _start, _end, renderOption)
                     // self.attachEvent(row, startNum.toNumber(), endNum.toNumber(), { title: self.categories[row].content.title, detail: 'This is Detail', color: self.categories[row].content.style.color })
                 }
