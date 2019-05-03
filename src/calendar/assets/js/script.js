@@ -21,6 +21,7 @@ var OsomeCalendar = {
     onDragEndTile: function (start, end, renderOption) {
     },
     onClickSchedule: function (element, category, event) {
+        console.log('onClickSchedule')
     },
     onChangedSchedule: function (order, before, after) {
     },
@@ -393,6 +394,9 @@ var OsomeCalendar = {
         let _grid = document.createElement('div')
         _grid.id = 'osome-cal-grid'
         _grid.style.width = `100%`
+        _grid.style.position = `absolute`
+        _grid.style.height = `100%`
+        _grid.style.overflow = `auto`
         // _grid.className = 'ui equal width celled grid'
         let _divDays = document.createElement("div");
         _divDays.id = 'osome-cal-days'
@@ -753,6 +757,7 @@ var OsomeCalendar = {
             }
             else if (self.isEventBlock(targetTag)) {
                 self.focus.type = 'move'
+                self.focus.start = targetTag
             }
             else if (self.isTileBlock(targetTag)) {
                 self.focus.type = 'create'
@@ -781,8 +786,10 @@ var OsomeCalendar = {
             }
             else if (self.focus.type === 'move') {
                 const _index = targetTag.getAttribute('index').toNumber()
-                const _order = self.focus.start.getAttribute('order')
-                self.onClickSchedule(targetTag, self.categories[_order], self.categories[_order].events[_index])
+                if(self.focus.start !== undefined){
+                    const _order = self.focus.start.getAttribute('order')
+                    self.onClickSchedule(targetTag, self.categories[_order], self.categories[_order].events[_index])
+                }
             }
         }
     },

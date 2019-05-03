@@ -497,9 +497,9 @@ var OsomeGantt = {
         const _index = self.dragging.index
         const _startTag = self.focus.start
         const _targetTag = self.focus.current
-        
+
         if (_targetTag.getAttribute('number') === null) {
-            
+
             if (_startTag.getAttribute('number') === _targetTag.getAttribute('number')) {
                 console.log('click!')
                 self.onClickSchedule(_targetTag, self.categories[_row], self.focus.event)
@@ -1015,13 +1015,12 @@ var OsomeGantt = {
             const index = self.focus.event.index
             const row = self.focus.event.order
             const startNum = self.focus.event.startNum.toNumber()
-            const endNum = self.focus.event.endNum.toNumber()
             const nextNum = targetTag.getAttribute('number').toNumber()
 
             if (nextNum === null) {
                 return
             }
-            if (endNum === nextNum || nextNum < startNum) {
+            if (nextNum < startNum) {
                 return
             }
 
@@ -1031,10 +1030,10 @@ var OsomeGantt = {
                 return
             }
 
-            if (startNum <= nextNum) {
-                self.dragging.endNum = nextNum
-                self.resizeEventBlock(eventBlock, targetTag)
-            }
+
+            self.dragging.endNum = nextNum
+            self.resizeEventBlock(eventBlock, targetTag)
+
             self.eventModify(row)
             self.focus.current = targetTag
         },

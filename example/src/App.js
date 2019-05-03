@@ -92,7 +92,7 @@ export default class App extends Component {
   render() {
 
     return (<div style={{ width: '100%' }}>
-      <div style={{ padding: '10px' }}>
+      <div style={{ padding: '10px',overflow:'auto' }}>
         <div style={{ width: '40px', height: '40px', textAlign: 'center', lineHeight: '40px', display: 'inline-block', cursor: 'pointer', userSelect: 'none' }} onClick={() => {
           const prevMonth = Math.max(Number(this.state.options.month) - 1, 1)
           this.setState(update(this.state, { options: { month: { $set: prevMonth } } }))
@@ -120,9 +120,10 @@ export default class App extends Component {
           this.setState(update(this.state, { categories: { [row]: { events: { $push: [data] } } } }))
         }}
       /> :
-        <OSCalendar className="hello" ref={this.osCalendar}
+        <OSCalendar ref={this.osCalendar}
           options={this.state.options}
           categories={this.state.categories}
+          onClickSchedule={this.onClickSchedule}
           onChangedSchedule={this.onChangedSchedule}
           onDragEndTile={(start, end, renderOption) => {
             const order = Math.round(Math.random() * 10) % (this.state.categories.length || 1)

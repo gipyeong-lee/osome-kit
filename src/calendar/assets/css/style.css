@@ -24,8 +24,9 @@
     display:block;
     cursor: move;
 }
-.osome-cal-grid .event-block .title {
+.osome-cal-grid-week-schedule .event-block .title {
     display: block;
+    width:100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
