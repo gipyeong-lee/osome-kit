@@ -113,6 +113,7 @@ var OsomeCalendar = {
     },
     createBlock(week, startNum, endNum, eventOption) {
         const self = this
+        console.log(eventOption)
         let _eventBlock = document.createElement('div')
         _eventBlock.draggable = true
         _eventBlock.ondragstart = function (event) {
@@ -599,9 +600,12 @@ var OsomeCalendar = {
         }
     },
     onBlockDragStart(event, self, parent) {
+        console.log(event.target)
         const _index = event.target.getAttribute('index').toNumber()
         const _order = event.target.getAttribute('order').toNumber()
         const _eventData = parent.categories[_order].events[_index]
+        console.log(_order,_index)
+        console.log(_eventData)
         const dataTransfer = event.dataTransfer
         event.dataTransfer.dropEffect = "move"
         let width = 100 / 7

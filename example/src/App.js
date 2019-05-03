@@ -92,7 +92,7 @@ export default class App extends Component {
   render() {
 
     return (<div style={{ width: '100%' }}>
-      <div style={{ padding: '10px',overflow:'auto' }}>
+      <div style={{ padding: '10px', overflow: 'auto' }}>
         <div style={{ width: '40px', height: '40px', textAlign: 'center', lineHeight: '40px', display: 'inline-block', cursor: 'pointer', userSelect: 'none' }} onClick={() => {
           const prevMonth = Math.max(Number(this.state.options.month) - 1, 1)
           this.setState(update(this.state, { options: { month: { $set: prevMonth } } }))
@@ -128,9 +128,10 @@ export default class App extends Component {
           onDragEndTile={(start, end, renderOption) => {
             const order = Math.round(Math.random() * 10) % (this.state.categories.length || 1)
             const category = this.state.categories[order]
+            const index = category.events.length
             // console.log('push', { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, start: start, end: end })
-            const data = (category === undefined) ? { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, order: order, startDate: start, endDate: end } : {
-              title: category.content.title, detail: '', style: { color: '#fff', backgroundColor: category.content.style.color }, order: order, startDate: start, endDate: end
+            const data = (category === undefined) ? { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, index: index, order: order, startDate: start, endDate: end } : {
+              title: category.content.title, detail: '', style: { color: '#fff', backgroundColor: category.content.style.color }, index: index, order: order, startDate: start, endDate: end
             }
             this.setState(update(this.state, { categories: { [order]: { events: { $push: [data] } } } }))
           }} />
