@@ -10,7 +10,7 @@ class OSGantt extends Component {
     console.log('Please implement `onDragEndTile` ')
     // Calendar.attachEvent(renderOption.startTileNumber,renderOption.endTileNumber)
   }
-  onClickSchedule = (element, event, index) => {
+  onClickSchedule = (element, category, event) => {
   }
   onChangedCategory = (categories, afterCategories) => {
   }
@@ -85,7 +85,7 @@ class OSCalendar extends Component {
     console.log('Please implement `onDragEndTile` ')
     // Calendar.attachEvent(renderOption.startTileNumber,renderOption.endTileNumber)
   }
-  onClickSchedule = (element, event, index) => {
+  onClickSchedule = (element, category, event) => {
   }
   onChangedSchedule = (order, event, afterEvent) => {
   }

@@ -20,7 +20,7 @@ var OsomeCalendar = {
     },
     onDragEndTile: function (start, end, renderOption) {
     },
-    onClickSchedule: function (element, event, index) {
+    onClickSchedule: function (element, category, event) {
     },
     onChangedSchedule: function (order, before, after) {
     },
@@ -780,8 +780,9 @@ var OsomeCalendar = {
                 self.attachResizeEvent.onMouseUp(self, targetTag)
             }
             else if (self.focus.type === 'move') {
-                const index = targetTag.getAttribute('index').toNumber()
-                self.onClickSchedule(targetTag, self.events[index], index)
+                const _index = targetTag.getAttribute('index').toNumber()
+                const _order = self.focus.start.getAttribute('order')
+                self.onClickSchedule(targetTag, self.categories[_order], self.categories[_order].events[_index])
             }
         }
     },

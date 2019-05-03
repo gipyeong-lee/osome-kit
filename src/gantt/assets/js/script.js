@@ -27,6 +27,9 @@ var OsomeGantt = {
     onClickEvent: function () {
         console.log(`onClickEvent`)
     },
+    onClickSchedule: function (element, category, event) {
+        console.log('onClickSchedule')
+    },
     //
     eventOption: {
         height: 20
@@ -148,7 +151,7 @@ var OsomeGantt = {
         const startOfDay = targetDate.startOfDay();
 
         let endOfMonthDate = targetDate.getLastDate()
-        
+
         for (let i = 0; i < _length; i++) {
             const _category = _categories[i]
             const _content = _category.content
@@ -156,7 +159,7 @@ var OsomeGantt = {
 
             const _row = _content.order.toNumber()
             _events.map((event, idx) => {
-                
+
                 const num = utils.convertDateToGanttNumber(event.startDate, event.endDate, indexOfCurrentMonth, endOfMonthDate)
                 if (num === undefined) {
                     return
@@ -387,7 +390,7 @@ var OsomeGantt = {
         rightContainer.appendChild(daysRow)
 
         self.focus.last = endOfMonthDate
-        
+
         for (let i = 0; i < endOfMonthDate; i++) {
             const backTile = self.createBackTile("day", 0, i, self.options)
             daysRow.appendChild(backTile)
@@ -492,9 +495,15 @@ var OsomeGantt = {
     onBlockDragEnd(self) {
         const _row = self.dragging.row
         const _index = self.dragging.index
+        const _startTag = self.focus.start
         const _targetTag = self.focus.current
+        
         if (_targetTag.getAttribute('number') === null) {
-            self.onClickEvent()
+            
+            if (_startTag.getAttribute('number') === _targetTag.getAttribute('number')) {
+                console.log('click!')
+                self.onClickSchedule(_targetTag, self.categories[_row], self.focus.event)
+            }
             return
         }
         const _startNum = _targetTag.getAttribute('number').toNumber()
@@ -754,7 +763,7 @@ var OsomeGantt = {
                 const _startNum = self.focus.start.getAttribute('startNum')
 
                 if (_number === _startNum) {
-                    self.draggingEnd(self).onClickEvent()
+                    self.draggingEnd(self).onClickEvent(targetTag, self.categories[_row], { ...self.focus.event })
                 }
                 else {
                     self.draggingEnd(self).attachDragAndDropEvent.onMouseUp(self, targetTag, e)
@@ -939,7 +948,7 @@ var OsomeGantt = {
             const _bNumber = self.focus.current.getAttribute('number')
             const _number = targetTag.getAttribute('number')
 
-            if (_bNumber === _number || _number === null) {
+            if (_number === null) {
                 return
             }
             const _row = self.dragging.row
@@ -1075,7 +1084,7 @@ var OsomeGantt = {
                     const _start = new Date(startYear, startMonth, startDate)
                     const _end = new Date(endYear, endMonth, endDate)
                     const renderOption = { startNumber: start.getAttribute('number'), endNumber: end.getAttribute('number') }
-                    
+
                     if (_start.getDate() > _end.getDate()) {
                         return
                     }

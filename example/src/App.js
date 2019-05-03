@@ -23,6 +23,9 @@ export default class App extends Component {
   randomColor = () => {
     return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
   }
+  onClickSchedule = (target, category, event) => {
+    console.log(category, event)
+  }
   onChangedCategory = (before, after) => {
     console.log(before, after)
     this.setState(update(this.state, { categories: { $set: after } }), () => {
@@ -110,6 +113,7 @@ export default class App extends Component {
       {this.state.calendarType === 'gantt' ? <OSGantt ref={this.osGantt} categories={this.state.categories} options={this.state.options}
         onChangedSchedule={this.onChangedSchedule}
         onChangedCategory={this.onChangedCategory}
+        onClickSchedule={this.onClickSchedule}
         onDragEndTile={(row, start, end, renderOption) => {
           const category = this.state.categories[row]
           const data = { title: category.content.title, detail: 'This is Detail', style: { color: '#fff', backgroundColor: category.content.style.color }, order: row, startDate: start, endDate: end, index: category.events.length }
