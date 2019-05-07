@@ -20,7 +20,7 @@ var OsomeCalendar = {
     },
     onDragEndTile: function (start, end, renderOption) {
     },
-    onClickSchedule: function (element, category, event) {
+    onClickSchedule: function (element, category, event, e) {
         console.log('onClickSchedule')
     },
     onChangedSchedule: function (order, before, after) {
@@ -604,7 +604,7 @@ var OsomeCalendar = {
         const _index = event.target.getAttribute('index').toNumber()
         const _order = event.target.getAttribute('order').toNumber()
         const _eventData = parent.categories[_order].events[_index]
-        console.log(_order,_index)
+        console.log(_order, _index)
         console.log(_eventData)
         const dataTransfer = event.dataTransfer
         event.dataTransfer.dropEffect = "move"
@@ -790,9 +790,9 @@ var OsomeCalendar = {
             }
             else if (self.focus.type === 'move') {
                 const _index = targetTag.getAttribute('index').toNumber()
-                if(self.focus.start !== undefined){
+                if (self.focus.start !== undefined) {
                     const _order = self.focus.start.getAttribute('order')
-                    self.onClickSchedule(targetTag, self.categories[_order], self.categories[_order].events[_index])
+                    self.onClickSchedule(targetTag, self.categories[_order], self.categories[_order].events[_index], e)
                 }
             }
         }

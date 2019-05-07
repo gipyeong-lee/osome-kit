@@ -27,7 +27,7 @@ var OsomeGantt = {
     onClickEvent: function () {
         console.log(`onClickEvent`)
     },
-    onClickSchedule: function (element, category, event) {
+    onClickSchedule: function (element, category, event, e) {
         console.log('onClickSchedule')
     },
     //
@@ -490,7 +490,7 @@ var OsomeGantt = {
 
         return self
     },
-    onBlockDragEnd(self) {
+    onBlockDragEnd(self, e) {
         const _row = self.dragging.row
         const _index = self.dragging.index
         const _startTag = self.focus.start
@@ -500,7 +500,7 @@ var OsomeGantt = {
 
             if (_startTag.getAttribute('number') === _targetTag.getAttribute('number')) {
                 console.log('click!')
-                self.onClickSchedule(_targetTag, self.categories[_row], self.focus.event)
+                self.onClickSchedule(_targetTag, self.categories[_row], self.focus.event, e)
             }
             return
         }
@@ -765,7 +765,7 @@ var OsomeGantt = {
                 const _startNum = self.focus.start.getAttribute('startNum')
 
                 if (_number === _startNum) {
-                    self.draggingEnd(self).onClickEvent(targetTag, self.categories[_row], { ...self.focus.event })
+                    self.draggingEnd(self).onClickSchedule(targetTag, self.categories[_row], { ...self.focus.event }, e)
                 }
                 else {
                     self.draggingEnd(self).attachDragAndDropEvent.onMouseUp(self, targetTag, e)
@@ -983,9 +983,9 @@ var OsomeGantt = {
             }
             self.focus.current = targetTag
         },
-        onMouseUp: function (self, targetTag) {
+        onMouseUp: function (self, targetTag, e) {
             self.focus.current.classList.remove('dragOver')
-            self.onBlockDragEnd(self)
+            self.onBlockDragEnd(self, e)
 
         }
     },
