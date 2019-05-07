@@ -59,6 +59,12 @@ Date.prototype.endOfDay = function () {
 }
 
 const utils = {
+    convertGanttNumberToDate: (startNumber, endNumber, eNum) => {
+        let startNum = Math.max(startNumber + 1, 1)
+        let endNum = Math.min(endNumber + 1, eNum)
+
+        return { startNum: startNum, endNum: endNum }
+    },
     convertDateToGanttNumber: (sDate, eDate, indexOfCurrentMonth, eNum) => {
         let _startDate = new Date(sDate)
         let _endDate = new Date(eDate)

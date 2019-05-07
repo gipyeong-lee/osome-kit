@@ -505,7 +505,7 @@ var OsomeGantt = {
             return
         }
         const _startNum = _targetTag.getAttribute('number').toNumber()
-        const endOfDate = self.options.today.getLastDate()
+        const endOfDate = self.options.endOfMonthDate
         const events = self.categories[_row].events
         const event = { ...events[_index] }
 
@@ -522,6 +522,7 @@ var OsomeGantt = {
         _eventBlock.style.left = `${_left}%`
         _eventBlock.setAttribute('startNum', _number)
         _eventBlock.style.width = `${_width}%`
+        self.categories[_row].events[_index].total = _total
         self.eventEnd(_row)
         self.onChangedSchedule(self.dragging.row, self.dragging.event, self.categories[_row].events[_index])
 
@@ -534,27 +535,29 @@ var OsomeGantt = {
             days: undefined,
             status: undefined
         }
-
-
     },
     syncEvent(order, index, startNum, endNum, total) {
         const self = this
         const tilePrefix = 'back-tile-'
+        const date = utils.convertGanttNumberToDate(startNum, endNum, self.options.endOfMonthDate)
+
         let event = JSON.parse(JSON.stringify(self.categories[order].events[index]))
 
-        let startTile = document.getElementById(`${tilePrefix}${order}-${startNum}`)
-        let endTile = document.getElementById(`${tilePrefix}${order}-${endNum}`)
+        let startTile = document.getElementById(`${tilePrefix}${order}-${(date.startNum - 1)}`)
+        let endTile = document.getElementById(`${tilePrefix}${order}-${(date.endNum - 1)}`)
 
         const sYear = startTile.getAttribute('year').toNumber()
         const sMonth = Math.max(Number(startTile.getAttribute('month')) - 1, 0)
-        const sDate = startTile.getAttribute('number').toNumber()
+
 
         const eYear = endTile.getAttribute('year').toNumber()
         const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
-        const eDate = endTile.getAttribute('number').toNumber()
+
+
+
         event.start = startNum
-        event.startDate = new Date(sYear, sMonth, sDate)
-        event.endDate = new Date(eYear, eMonth, eDate)
+        event.startDate = new Date(sYear, sMonth, date.startNum)
+        event.endDate = new Date(eYear, eMonth, date.endNum)
         event.startNum = startNum
         event.endNum = endNum
         event.total = total
@@ -970,7 +973,7 @@ var OsomeGantt = {
 
             const _size = self.categories[_row].events[_index].total.toNumber()
             const _start = _number.toNumber()
-            const _endNum = _start + _size - 1
+            const _endNum = Math.min(_start + _size - 1, self.options.endOfMonthDate - 1)
 
             self.categories[_row].events[_index] = self.syncEvent(_row, _index, _start, _endNum, _size)
 
@@ -1034,7 +1037,7 @@ var OsomeGantt = {
             self.resizeEventBlock(eventBlock, targetTag)
 
             self.eventModify(row)
-            
+
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag) {
@@ -1088,7 +1091,7 @@ var OsomeGantt = {
                         return
                     }
                     console.log(renderOption)
-                    console.log(_start,_end)
+                    console.log(_start, _end)
                     self.onDragEndTile(row, _start, _end, renderOption)
                     // self.attachEvent(row, startNum.toNumber(), endNum.toNumber(), { title: self.categories[row].content.title, detail: 'This is Detail', color: self.categories[row].content.style.color })
                 }
