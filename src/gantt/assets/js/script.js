@@ -337,6 +337,7 @@ var OsomeGantt = {
         const indexOfCurrentMonth = currentMonth - 1
         const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
         let endOfMonthDate = targetDate.getLastDate()
+        console.log(endOfMonthDate)
 
         self.options.endOfMonthDate = endOfMonthDate
 
@@ -548,19 +549,30 @@ var OsomeGantt = {
 
         const sYear = startTile.getAttribute('year').toNumber()
         const sMonth = Math.max(Number(startTile.getAttribute('month')) - 1, 0)
-
+        const sDate = date.startNum
 
         const eYear = endTile.getAttribute('year').toNumber()
         const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
-
-
+        const eDate = date.endNum
 
         event.start = startNum
-        event.startDate = new Date(sYear, sMonth, date.startNum)
-        event.endDate = new Date(eYear, eMonth, date.endNum)
         event.startNum = startNum
         event.endNum = endNum
         event.total = total
+
+        const originStartDate = new Date(event.startDate)
+        const originEndDate = new Date(event.endDate)
+
+        const nextStartDate = new Date(sYear, sMonth, sDate)
+        nextStartDate.setHours(originStartDate.getHours())
+        nextStartDate.setMinutes(originStartDate.getMinutes())
+        const nextEndDate = new Date(eYear, eMonth, eDate)
+        nextEndDate.setHours(originEndDate.getHours())
+        nextEndDate.setMinutes(originEndDate.getMinutes())
+
+        event.startDate = nextStartDate
+        event.endDate = nextEndDate
+
 
         return event
     },
@@ -873,12 +885,15 @@ var OsomeGantt = {
             }
         }
     },
-    syncContainerSize: function (leftWidth) {
+    syncContainerSize: function (_leftWidth) {
         const self = this
-        const containerWidth = self.container.offsetWidth
+        
+        const bounding = self.container.getBoundingClientRect()
+        const containerWidth = bounding.width
+        const leftWidth = _leftWidth - bounding.x
         const leftContainerId = 'osome-gantt-grid-left-container'
         const rightContainerId = 'osome-gantt-grid-right-container'
-        const handleBarId = 'osome-gantt-grid-handle-bar'
+        
         const leftContainer = document.getElementById(leftContainerId)
         const rightContainer = document.getElementById(rightContainerId)
         const rightWidth = containerWidth - leftWidth
@@ -995,7 +1010,7 @@ var OsomeGantt = {
 
         },
         onMouseMove: function (self, targetTag, e) {
-            self.syncContainerSize(e.clientX)
+            self.syncContainerSize(e.clientX) // 5px is handle bar width
         },
         onMouseUp: function (self, targetTag, e) {
 
@@ -1090,8 +1105,6 @@ var OsomeGantt = {
                     if (_start.getDate() > _end.getDate()) {
                         return
                     }
-                    console.log(renderOption)
-                    console.log(_start, _end)
                     self.onDragEndTile(row, _start, _end, renderOption)
                     // self.attachEvent(row, startNum.toNumber(), endNum.toNumber(), { title: self.categories[row].content.title, detail: 'This is Detail', color: self.categories[row].content.style.color })
                 }

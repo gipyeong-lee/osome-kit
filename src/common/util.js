@@ -26,18 +26,21 @@ HTMLElement.prototype.remove = function () {
 }
 Date.prototype.getPrevMonth = function () {
     let prevMonth = new Date()
+    prevMonth.setDate(1)
     prevMonth.setFullYear(this.getFullYear())
     prevMonth.setMonth(this.getMonth() - 1)
     return prevMonth
 }
 Date.prototype.getNextMonth = function () {
     let nextMonth = new Date()
+    nextMonth.setDate(1)
     nextMonth.setFullYear(this.getFullYear())
     nextMonth.setMonth(this.getMonth() + 1)
     return nextMonth
 }
 Date.prototype.getLastDate = function () {
     let nextMonth = new Date()
+    nextMonth.setDate(1)
     nextMonth.setFullYear(this.getFullYear())
     nextMonth.setMonth(this.getMonth() + 1)
     nextMonth.setDate(0)
@@ -45,13 +48,14 @@ Date.prototype.getLastDate = function () {
 }
 Date.prototype.startOfDay = function () {
     let copyMonth = new Date()
+    copyMonth.setDate(1)
     copyMonth.setFullYear(this.getFullYear())
     copyMonth.setMonth(this.getMonth())
-    copyMonth.setDate(1)
     return copyMonth.getDay()
 }
 Date.prototype.endOfDay = function () {
     let copyMonth = new Date()
+    copyMonth.setDate(1)
     copyMonth.setFullYear(this.getFullYear())
     copyMonth.setMonth(this.getMonth() + 1)
     copyMonth.setDate(0)
@@ -80,6 +84,7 @@ const utils = {
         if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth + 1) { }
         else if (startMonth < indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
             // 전달 ~ 이번달
+            startNum = 1
             endNum = Math.min(endDate, endNum)
         }
         else if (startMonth === indexOfCurrentMonth && endMonth > indexOfCurrentMonth) {

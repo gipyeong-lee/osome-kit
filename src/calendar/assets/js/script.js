@@ -599,11 +599,11 @@ var OsomeCalendar = {
         }
     },
     onBlockDragStart(event, self, parent) {
-        
+
         const _index = event.target.getAttribute('index').toNumber()
         const _order = event.target.getAttribute('order').toNumber()
         const _eventData = parent.categories[_order].events[_index]
-        
+
         const dataTransfer = event.dataTransfer
         event.dataTransfer.dropEffect = "move"
         let width = 100 / 7
@@ -676,8 +676,20 @@ var OsomeCalendar = {
         const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
         const eDate = endTile.getAttribute('date').toNumber()
         event.start = startNum
-        event.startDate = new Date(sYear, sMonth, sDate)
-        event.endDate = new Date(eYear, eMonth, eDate)
+
+        const originStartDate = new Date(event.startDate)
+        const originEndDate = new Date(event.endDate)
+
+        const nextStartDate = new Date(sYear, sMonth, sDate)
+        nextStartDate.setHours(originStartDate.getHours())
+        nextStartDate.setMinutes(originStartDate.getMinutes())
+
+        const nextEndDate = new Date(eYear, eMonth, eDate)
+        nextEndDate.setHours(originEndDate.getHours())
+        nextEndDate.setMinutes(originEndDate.getMinutes())
+
+        event.startDate = nextStartDate
+        event.endDate = nextEndDate
         return event
     },
 
