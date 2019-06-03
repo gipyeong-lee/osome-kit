@@ -10,6 +10,9 @@ class OSGantt extends Component {
     console.log('Please implement `onDragEndTile` ')
     // Calendar.attachEvent(renderOption.startTileNumber,renderOption.endTileNumber)
   }
+  onChangeContainer = (left,right) => {
+      console.log(left,right)
+  }
   onClickSchedule = (element, category, event) => {
   }
   onChangedCategory = (categories, afterCategories) => {
@@ -34,12 +37,12 @@ class OSGantt extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.options !== nextProps.options) {
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
-      return false
+      return true
     }
     
     if (this.props.categories !== nextProps.categories) {
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
-      return false
+      return true
     }
     return false
   }
@@ -51,6 +54,7 @@ class OSGantt extends Component {
     OsomeGantt.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile
     OsomeGantt.onChangedSchedule = this.props.onChangedSchedule || this.onChangedSchedule
     OsomeGantt.onChangedCategory = this.props.onChangedCategory || this.onChangedCategory
+    OsomeGantt.onChangeContainer = this.props.onChangeContainer || this.onChangeContainer
   }
 
   render() {
@@ -109,12 +113,12 @@ class OSCalendar extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.options !== nextProps.options) {
       OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.categories)
-      return false
+      return true
     }
 
     if (this.props.categories !== nextProps.categories) {
       OsomeCalendar.init('osome-calendar', nextProps.options, nextProps.categories)
-      return false
+      return true
     }
     return false
   }

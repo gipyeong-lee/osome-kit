@@ -901,6 +901,7 @@ var OsomeGantt = {
         rightContainer.style.left = `${leftWidth / containerWidth * 100}%`
         rightContainer.style.width = `${rightWidth / containerWidth * 100}%`
         self.state.leftWidth = `${leftWidth / containerWidth * 100}%`
+        self.onChangeContainer(leftContainer.style.width,rightContainer.style.width)
     },
     attachDragAndDropCategory: {
         leftPrefix: 'left-row-',

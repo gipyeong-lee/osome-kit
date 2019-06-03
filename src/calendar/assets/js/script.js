@@ -479,17 +479,11 @@ var OsomeCalendar = {
                 let cellText = document.createTextNode("");
                 let cellHeader = self.createCellHeader(i, uniqueNum)
 
-                if (todayYear === options.year && todayMonth === options.month && todayDate === date) {
-                    self.setCellHeaderNumber(cellHeader, cellText, self.options.style.todayHeader)
-                    self.setCellHeaderTitle(cellHeader, "오늘", self.options.style.todayHeader)
-                }
-                else {
-                    self.setCellHeaderNumber(cellHeader, cellText, self.options.style.cellHeader)
-                    self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
-                }
-
                 row.setAttribute('endNumber', uniqueNum)
                 if (i === 0 && j < startOfDay) {
+                    self.setCellHeaderNumber(cellHeader, cellText, self.options.style.cellHeader)
+                    self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
+
                     cellHeader.setAttribute('year', prevYear)
                     cellHeader.setAttribute('month', prevMonth)
                     cellHeader.setAttribute('date', prevEndOfMonthDate - (startOfDay - j) + 1)
@@ -507,6 +501,9 @@ var OsomeCalendar = {
                     cellText.textContent = `${prevEndOfMonthDate - (startOfDay - j) + 1}`;
                 }
                 else if (date > endOfMonthDate) {
+                    self.setCellHeaderNumber(cellHeader, cellText, self.options.style.cellHeader)
+                    self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
+
                     cellHeader.setAttribute('year', nextYear)
                     cellHeader.setAttribute('month', nextMonth)
                     cellHeader.setAttribute('date', nextDate)
@@ -525,6 +522,14 @@ var OsomeCalendar = {
                     nextDate++;
                 }
                 else {
+                    if (todayYear === options.year && todayMonth === options.month && todayDate === date) {
+                        self.setCellHeaderNumber(cellHeader, cellText, self.options.style.todayHeader)
+                        self.setCellHeaderTitle(cellHeader, "오늘", self.options.style.todayHeader)
+                    }else {
+                        self.setCellHeaderNumber(cellHeader, cellText, self.options.style.cellHeader)
+                         self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
+                    }
+                    
                     cellHeader.setAttribute('year', options.year)
                     cellHeader.setAttribute('month', currentMonth)
                     cellHeader.setAttribute('date', date)
@@ -542,6 +547,9 @@ var OsomeCalendar = {
                     cellText.textContent = date;
                     date++;
                 }
+
+                
+
                 offsetX += width
                 if (j === 0) {
                     cell.className += " text-red"
