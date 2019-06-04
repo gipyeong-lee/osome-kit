@@ -35,12 +35,15 @@ var OsomeGantt = {
         height: 20
     },
     //
-    state: {
-        leftWidth: '30%'
-    },
+    // state: {
+    //     leftWidth: '30%'
+    // },
     options: {
         type: 'row',
         style: {
+            container:{
+                leftWidth:'30%'
+            },
             row: {
                 height: 40
             },
@@ -343,7 +346,7 @@ var OsomeGantt = {
 
         const handleBarWidth = 5
 
-        const rightWidthPercentage = 100 - self.state.leftWidth.numOfPercent()
+        const rightWidthPercentage = 100 - self.options.style.container.leftWidth.numOfPercent()
 
         const rowHeight = self.options.style.row.height || 40
         self.options.style.row.height = rowHeight
@@ -359,7 +362,7 @@ var OsomeGantt = {
         leftContainer.className = 'osome-gantt-grid-inner-container'
         leftContainer.style.borderRight = ``
         leftContainer.style.backgroundColor = `transparent`
-        leftContainer.style.width = `${self.state.leftWidth}`
+        leftContainer.style.width = `${self.options.style.container.leftWidth}`
 
         let handleBar = document.createElement('div')
         handleBar.id = `osome-gantt-grid-handle-bar`
@@ -373,7 +376,7 @@ var OsomeGantt = {
         rightContainer.id = `osome-gantt-grid-right-container`
         rightContainer.className = 'osome-gantt-grid-inner-container'
         rightContainer.style.width = `${rightWidthPercentage}%`
-        rightContainer.style.left = `${self.state.leftWidth}`
+        rightContainer.style.left = `${self.options.style.container.leftWidth}`
 
         container.appendChild(leftContainer)
 
@@ -900,7 +903,7 @@ var OsomeGantt = {
         leftContainer.style.width = `${leftWidth / containerWidth * 100}%`
         rightContainer.style.left = `${leftWidth / containerWidth * 100}%`
         rightContainer.style.width = `${rightWidth / containerWidth * 100}%`
-        self.state.leftWidth = `${leftWidth / containerWidth * 100}%`
+        self.options.style.container.leftWidth = `${leftWidth / containerWidth * 100}%`
         self.onChangeContainer(leftContainer.style.width,rightContainer.style.width)
     },
     attachDragAndDropCategory: {
