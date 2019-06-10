@@ -58,18 +58,40 @@ var OsomeGantt = {
             }
         },
         country: 'ko',
-        days: { ko: ['일', '월', '화', '수', '목', '금', '토'] },
+        days: { ko: ['일', '월', '화', '수', '목', '금', '토'], jp: ['日', '月', '火', '水', '木', '金', '土'] },
         today: new Date(),
         year: new Date().getFullYear(),
         month: new Date().getMonth(),
         eventPopup: { html: 'test' }
     },
+    iteral: function (key, value, result) {
+        if (key === undefined) {
+            const keys = Object.keys(value)
+            keys.map((k) => {
+                this.iteral(k, value[k], result)
+            })
+        }
+        else if (typeof value === 'object') {
+            const keys = Object.keys(value)
+            keys.map((k) => {
+                if(!result[key]){
+                    result[key] = {}
+                }
+                this.iteral(k, value[k], result[key])
+            })
+        }
+        else {
+            console.log(key, result)
+            result[key] = value
+        }
+    },
+
     init: function (id = 'osome-gantt', opt = {}, categories = []) {
         let self = this
-        let _options = Object.assign({}, self.options, opt)
-        self.options = _options
+        self.iteral(undefined, opt, this.options)
+        let _options = this.options
         let _ganttGrid = document.getElementById(id)
-
+        console.log(_options)
         self.categories = categories
 
         self.clear(_ganttGrid)

@@ -14,6 +14,13 @@ export default class App extends Component {
   state = {
     calendarType: 'gantt',
     options: {
+      style: {
+        todayHeader: {
+          backgroundColor: 'blue',
+          numberColor: 'white',
+          titleColor: 'red'
+        }
+      },
       year: new Date().getFullYear(),
       month: new Date().getMonth() + 1
     },

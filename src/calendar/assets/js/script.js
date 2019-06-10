@@ -57,16 +57,39 @@ var OsomeCalendar = {
             }
         },
         country: 'ko',
-        days: { ko: ['일', '월', '화', '수', '목', '금', '토'] },
+        days: { ko: ['일', '월', '화', '수', '목', '금', '토'], jp: ['日', '月', '火', '水', '木', '金', '土'] },
         today: new Date(),
         year: new Date().getFullYear(),
         month: new Date().getMonth(),
         eventPopup: { html: 'test' }
     },
+    iteral: function (key, value, result) {
+        if (key === undefined) {
+            const keys = Object.keys(value)
+            keys.map((k) => {
+                this.iteral(k, value[k], result)
+            })
+        }
+        else if (typeof value === 'object') {
+            const keys = Object.keys(value)
+            keys.map((k) => {
+                if(!result[key]){
+                    result[key] = {}
+                }
+                this.iteral(k, value[k], result[key])
+            })
+        }
+        else {
+            console.log(key, result)
+            result[key] = value
+        }
+    },
     init: function (id = 'osome-cal-calendar', opt = {}, categories = []) {
         let self = this
-        let _options = Object.assign({}, this.options, opt)
-        self.options = _options
+        self.iteral(undefined, opt, this.options)
+        let _options = this.options
+        // let _options = Object.assign({}, this.options, opt)
+        // self.options = _options
         let _calendarGrid = document.getElementById(id)
         self.categories = categories
         self.clear(_calendarGrid)
@@ -525,11 +548,11 @@ var OsomeCalendar = {
                     if (todayYear === options.year && todayMonth === options.month && todayDate === date) {
                         self.setCellHeaderNumber(cellHeader, cellText, self.options.style.todayHeader)
                         self.setCellHeaderTitle(cellHeader, "오늘", self.options.style.todayHeader)
-                    }else {
+                    } else {
                         self.setCellHeaderNumber(cellHeader, cellText, self.options.style.cellHeader)
-                         self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
+                        self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
                     }
-                    
+
                     cellHeader.setAttribute('year', options.year)
                     cellHeader.setAttribute('month', currentMonth)
                     cellHeader.setAttribute('date', date)
@@ -548,7 +571,7 @@ var OsomeCalendar = {
                     date++;
                 }
 
-                
+
 
                 offsetX += width
                 if (j === 0) {
