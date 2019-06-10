@@ -40,9 +40,10 @@ var OsomeGantt = {
     // },
     options: {
         type: 'row',
+        fixed: true,
         style: {
-            container:{
-                leftWidth:'30%'
+            container: {
+                leftWidth: '30%'
             },
             row: {
                 height: 40
@@ -194,6 +195,7 @@ var OsomeGantt = {
         self.categories[row].events[idx] = _event
         const _rowEl = document.getElementById(rowTileId)
         const _eventBlock = self.createBlock(row, _startNum, _endNum, _event)
+
         const _eventHandler = self.createHandler(row, _startNum, _endNum, _event)
         _eventBlock.append(_eventHandler)
 
@@ -418,7 +420,9 @@ var OsomeGantt = {
 
         rightContainer.style.height = `${conatinerHeight}px`
         leftContainer.style.height = `${conatinerHeight}px`
-        leftContainer.appendChild(handleBar)
+        if (!self.options.fixed) {
+            leftContainer.appendChild(handleBar)
+        }
         // 2. create event tile
         // 3. create day tile
         // 4. 
@@ -747,6 +751,9 @@ var OsomeGantt = {
             }
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
             if (self.focus.type === 'create') {
+                if (!self.isRightTile(targetTag)) {
+                    return
+                }
                 self.attachEventCreate.onMouseMove(self, targetTag)
             }
             else if (self.focus.type === 'container-resize') {
@@ -769,6 +776,12 @@ var OsomeGantt = {
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
 
             if (self.focus.type === 'create') {
+                if (!self.isRightTile(targetTag)) {
+                    const _row = targetTag.getAttribute('row')
+                    self.clearSelectedBlock(_row)
+                    self.clearFocus()
+                    return
+                }
                 self.attachEventCreate.onMouseUp(self, targetTag)
             }
             else if (self.focus.type === 'resize') {
@@ -890,13 +903,13 @@ var OsomeGantt = {
     },
     syncContainerSize: function (_leftWidth) {
         const self = this
-        
+
         const bounding = self.container.getBoundingClientRect()
         const containerWidth = bounding.width
         const leftWidth = _leftWidth - bounding.x
         const leftContainerId = 'osome-gantt-grid-left-container'
         const rightContainerId = 'osome-gantt-grid-right-container'
-        
+
         const leftContainer = document.getElementById(leftContainerId)
         const rightContainer = document.getElementById(rightContainerId)
         const rightWidth = containerWidth - leftWidth
@@ -904,7 +917,7 @@ var OsomeGantt = {
         rightContainer.style.left = `${leftWidth / containerWidth * 100}%`
         rightContainer.style.width = `${rightWidth / containerWidth * 100}%`
         self.options.style.container.leftWidth = `${leftWidth / containerWidth * 100}%`
-        self.onChangeContainer(leftContainer.style.width,rightContainer.style.width)
+        self.onChangeContainer(leftContainer.style.width, rightContainer.style.width)
     },
     attachDragAndDropCategory: {
         leftPrefix: 'left-row-',
@@ -1010,14 +1023,17 @@ var OsomeGantt = {
     },
     attachContainerHandleBarEvent: {
         onMouseDown: function (self, targetTag, e) {
-            self.focus.type = 'container-resize'
+            if (self.options.fixed) return
 
+            self.focus.type = 'container-resize'
         },
         onMouseMove: function (self, targetTag, e) {
+            if (self.options.fixed) return
+
             self.syncContainerSize(e.clientX) // 5px is handle bar width
         },
         onMouseUp: function (self, targetTag, e) {
-
+            if (self.options.fixed) return
         }
     },
     attachResizeEvent: {
