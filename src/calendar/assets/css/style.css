@@ -101,11 +101,19 @@
 }
 
 .text-blue {
-    color: #2185d0;
+    color: rgba(52, 152, 219,1.0);
+}
+
+.text-prev-blue {
+    color: rgba(52, 152, 219,0.5);
 }
 
 .text-red {
-    color: #db2828;
+    color: rgba(231, 76, 60,1.0);
+}
+
+.text-prev-red {
+    color: rgba(231, 76, 60,0.5);
 }
 
 

@@ -74,7 +74,7 @@ var OsomeGantt = {
         else if (typeof value === 'object') {
             const keys = Object.keys(value)
             keys.map((k) => {
-                if(!result[key]){
+                if (!result[key]) {
                     result[key] = {}
                 }
                 this.iteral(k, value[k], result[key])
@@ -325,15 +325,18 @@ var OsomeGantt = {
 
         return rowContainer
     },
-    createRowTile: function (rowTile, row, days, options) {
+    createRowTile: function (rowTile, row, days, options, targetDate) {
         let self = this
+        let dayDate = targetDate
         for (let i = 0; i < days; i++) {
-            const backTile = self.createBackTile("back", row, i, options)
+            dayDate.setDate(i + 1)
+            const day = dayDate.getDay()
+            const backTile = self.createBackTile("back", row, i, options, day)
             rowTile.appendChild(backTile)
         }
 
     },
-    createBackTile: function (type, row, col, options) {
+    createBackTile: function (type, row, col, options, day) {
         const self = this
         let tile = document.createElement('div')
         const offset = col * (100 / options.endOfMonthDate)
@@ -352,9 +355,25 @@ var OsomeGantt = {
         tile.setAttribute('month', options.month)
         tile.setAttribute('date', col + 1)
         tile.setAttribute('number', col)
+
         if (type === 'day') {
             tile.style.textAlign = 'center'
             tile.textContent = `${col + 1}`
+            if (day === 0) {
+                tile.className += " text-red"
+            }
+            else if (day === 6) {
+                tile.className += " text-blue"
+            }
+        }
+        else {
+            if (day === 0) {
+                tile.className += " text-red holiday"
+                
+            }
+            else if (day === 6) {
+                tile.className += " text-blue holiday"
+            }
         }
         return tile
     },
@@ -416,9 +435,12 @@ var OsomeGantt = {
         rightContainer.appendChild(daysRow)
 
         self.focus.last = endOfMonthDate
-
+        // Sunday is 0, Monday is 1
+        const dayDate = targetDate
         for (let i = 0; i < endOfMonthDate; i++) {
-            const backTile = self.createBackTile("day", 0, i, self.options)
+            dayDate.setDate(i + 1)
+            const day = dayDate.getDay()
+            const backTile = self.createBackTile("day", 0, i, self.options, day)
             daysRow.appendChild(backTile)
         }
 
@@ -433,7 +455,7 @@ var OsomeGantt = {
             }
             leftContainer.appendChild(self.createRow('left', i, options.style.row, category.content))
             let _row = self.createRow('right', i, options.style.row)
-            self.createRowTile(_row, i, endOfMonthDate, self.options)
+            self.createRowTile(_row, i, endOfMonthDate, self.options, targetDate)
             rightContainer.appendChild(_row)
             let _rowSchedule = self.createRow('schedule', i, options.style.row)
             rightContainer.appendChild(_rowSchedule)

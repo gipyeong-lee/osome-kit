@@ -127,7 +127,9 @@ body {
 .osome-gantt-grid-row .tile.dragOver {
     background-color: rgba(223, 230, 233,0.5);
 }
-
+.osome-gantt-grid-row .tile.holiday {
+    background-color: rgba(223, 230, 233,0.2)
+}
 .osome-gantt-grid-row .tile.active {
     background-color: rgba(81, 92, 230, 0.2)
 }

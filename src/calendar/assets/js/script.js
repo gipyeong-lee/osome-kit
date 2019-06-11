@@ -73,7 +73,7 @@ var OsomeCalendar = {
         else if (typeof value === 'object') {
             const keys = Object.keys(value)
             keys.map((k) => {
-                if(!result[key]){
+                if (!result[key]) {
                     result[key] = {}
                 }
                 this.iteral(k, value[k], result[key])
@@ -429,12 +429,19 @@ var OsomeCalendar = {
         let _country = options.country
         let days = options.days[_country]
         let offsetX = 0
-        days.forEach((day) => {
+        let dayLength = days.length
+        days.forEach((day, idx) => {
             let _dayDiv = document.createElement("div")
             _dayDiv.className = 'column'
             _dayDiv.style.display = 'inline-block'
             _dayDiv.style.width = `${width}%`
             _dayDiv.style.left = `${offsetX}%`
+            if (idx === 0) {
+                _dayDiv.className += " text-red"
+            }
+            else if (idx === dayLength - 1) {
+                _dayDiv.className += " text-blue"
+            }
             _dayDiv.innerHTML = day
             _divDays.append(_dayDiv)
             offsetX += width
@@ -506,11 +513,10 @@ var OsomeCalendar = {
                 if (i === 0 && j < startOfDay) {
                     self.setCellHeaderNumber(cellHeader, cellText, self.options.style.cellHeader)
                     self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
-
                     cellHeader.setAttribute('year', prevYear)
                     cellHeader.setAttribute('month', prevMonth)
                     cellHeader.setAttribute('date', prevEndOfMonthDate - (startOfDay - j) + 1)
-                    cell.className = "tile prev"
+                    
                     cell.setAttribute('year', prevYear)
                     cell.setAttribute('month', prevMonth)
                     cell.setAttribute('date', prevEndOfMonthDate - (startOfDay - j) + 1)
@@ -521,6 +527,15 @@ var OsomeCalendar = {
                     cell.style.width = `${width}%`
                     cell.style.left = `${offsetX}%`
                     cell.style.display = `inline-block`
+                    if(j === 0){
+                        cell.className += " text-prev-red"
+                    }
+                    else if(j === 6){
+                        cell.className += " text-prev-blue"
+                    }
+                    else {
+                        cell.className = "tile prev"
+                    }
                     cellText.textContent = `${prevEndOfMonthDate - (startOfDay - j) + 1}`;
                 }
                 else if (date > endOfMonthDate) {
@@ -530,7 +545,6 @@ var OsomeCalendar = {
                     cellHeader.setAttribute('year', nextYear)
                     cellHeader.setAttribute('month', nextMonth)
                     cellHeader.setAttribute('date', nextDate)
-                    cell.className = "tile next"
                     cell.setAttribute('year', nextYear)
                     cell.setAttribute('month', nextMonth)
                     cell.setAttribute('date', nextDate)
@@ -543,6 +557,16 @@ var OsomeCalendar = {
                     cell.setAttribute('number', uniqueNum++)
                     cellText.textContent = nextDate;
                     nextDate++;
+
+                    if(j === 0){
+                        cell.className += " text-prev-red"
+                    }
+                    else if(j === 6){
+                        cell.className += " text-prev-blue"
+                    }
+                    else {
+                        cell.className = "tile next"
+                    }
                 }
                 else {
                     if (todayYear === options.year && todayMonth === options.month && todayDate === date) {
@@ -569,17 +593,17 @@ var OsomeCalendar = {
                     cell.setAttribute('number', uniqueNum++)
                     cellText.textContent = date;
                     date++;
+
+                    if (j === 0) {
+                        cell.className += " text-red"
+                    }
+                    else if (j === 6) {
+                        cell.className += " text-blue"
+                    }
                 }
-
-
 
                 offsetX += width
-                if (j === 0) {
-                    cell.className += " text-red"
-                }
-                else if (j === 6) {
-                    cell.className += " text-blue"
-                }
+                
                 // cellHeader.append(cellText)
                 cell.appendChild(cellHeader);
                 _rowGrid.appendChild(cell);
