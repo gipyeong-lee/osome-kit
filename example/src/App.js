@@ -21,7 +21,8 @@ export default class App extends Component {
         todayHeader: {
           backgroundColor: 'blue',
           numberColor: 'white',
-          titleColor: 'red'
+          titleColor: 'red',
+          textAlign:'center'
         }
       },
       year: new Date().getFullYear(),
