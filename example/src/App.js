@@ -15,6 +15,9 @@ export default class App extends Component {
     calendarType: 'gantt',
     options: {
       style: {
+        cellHeader: {
+          textAlign: 'left'
+        },
         todayHeader: {
           backgroundColor: 'blue',
           numberColor: 'white',

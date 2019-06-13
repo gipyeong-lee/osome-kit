@@ -43,6 +43,7 @@ var OsomeCalendar = {
             cellHeader: {
                 height: 30,
                 fontSize: '0.8em',
+                textAlign: 'center',
                 gap: 10
             },
             todayHeader: {
@@ -388,7 +389,7 @@ var OsomeCalendar = {
         cellNumber.style.borderRadius = `50%`
         cellNumber.style.display = 'inline-block'
         cellNumber.style.backgroundColor = options.backgroundColor
-        cellNumber.style.textAlign = 'center'
+        cellNumber.style.textAlign = self.options.style.cellHeader && self.options.style.cellHeader.textAlign || 'center'
         cellNumber.style.lineHeight = `${self.options.style.cellHeader.height}px`
         cellNumber.style.fontSize = options.fontSize || '0.9em'
         cellNumber.style.color = options.numberColor
@@ -404,7 +405,7 @@ var OsomeCalendar = {
         cellSubTitle.style.marginLeft = 'auto'
         cellSubTitle.style.color = options.titleColor
         cellSubTitle.style.height = `${self.options.style.cellHeader.height}px`
-
+        cellSubTitle.style.textAlign = self.options.style.cellHeader && self.options.style.cellHeader.textAlign || 'center'
         let subText = document.createTextNode("");
         subText.textContent = title
         cellSubTitle.append(subText)
@@ -436,6 +437,7 @@ var OsomeCalendar = {
             _dayDiv.style.display = 'inline-block'
             _dayDiv.style.width = `${width}%`
             _dayDiv.style.left = `${offsetX}%`
+            _dayDiv.style.textAlign = options.style.cellHeader && options.style.cellHeader.textAlign || 'center'
             if (idx === 0) {
                 _dayDiv.className += " text-red"
             }
@@ -516,7 +518,7 @@ var OsomeCalendar = {
                     cellHeader.setAttribute('year', prevYear)
                     cellHeader.setAttribute('month', prevMonth)
                     cellHeader.setAttribute('date', prevEndOfMonthDate - (startOfDay - j) + 1)
-                    
+
                     cell.setAttribute('year', prevYear)
                     cell.setAttribute('month', prevMonth)
                     cell.setAttribute('date', prevEndOfMonthDate - (startOfDay - j) + 1)
@@ -527,10 +529,10 @@ var OsomeCalendar = {
                     cell.style.width = `${width}%`
                     cell.style.left = `${offsetX}%`
                     cell.style.display = `inline-block`
-                    if(j === 0){
+                    if (j === 0) {
                         cell.className += " text-prev-red"
                     }
-                    else if(j === 6){
+                    else if (j === 6) {
                         cell.className += " text-prev-blue"
                     }
                     else {
@@ -558,10 +560,10 @@ var OsomeCalendar = {
                     cellText.textContent = nextDate;
                     nextDate++;
 
-                    if(j === 0){
+                    if (j === 0) {
                         cell.className += " text-prev-red"
                     }
-                    else if(j === 6){
+                    else if (j === 6) {
                         cell.className += " text-prev-blue"
                     }
                     else {
@@ -603,7 +605,7 @@ var OsomeCalendar = {
                 }
 
                 offsetX += width
-                
+
                 // cellHeader.append(cellText)
                 cell.appendChild(cellHeader);
                 _rowGrid.appendChild(cell);
