@@ -31,8 +31,10 @@ var OsomeCalendar = {
             height: 20
         }
     },
+    eventCounter: {},
     //
     options: {
+        maxEvent: 3,
         style: {
             grid: {
                 width: 800
@@ -101,6 +103,8 @@ var OsomeCalendar = {
         return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
     },
     clear: function (element) {
+        const self = this
+        self.eventCounter = {}
         element.innerHTML = ''
     },
     clearFocus: function () {
@@ -168,6 +172,22 @@ var OsomeCalendar = {
         _eventBlock.append(_eventText)
         return _eventBlock
     },
+    countEvent(week, date) {
+        const self = this
+        if (!self.eventCounter[week]) {
+            self.eventCounter[week] = { total: 0 }
+        }
+        if (!self.eventCounter[week][date]) {
+            self.eventCounter[week][date] = 0
+        }
+
+        if (Number(self.eventCounter[week].total) > Number(self.options.maxEvent)) {
+            return true
+        }
+        self.eventCounter[week][date] += 1
+        self.eventCounter[week].total += 1
+        return false
+    },
     renderEventBlock(startTile, endTile, eventOption) {
         const self = this
         const tileWidth = 100 / 7
@@ -180,7 +200,6 @@ var OsomeCalendar = {
         const _endWeek = endTile.getAttribute('week').toNumber()
         const _endDayNum = endTile.getAttribute('dayNum').toNumber()
         // full date
-
         // week schedule.
         const totalDays = _endNum - _startNum + 1
         const idx = eventOption.index
@@ -193,12 +212,16 @@ var OsomeCalendar = {
         const eventBlockHeight = self.eventOption.style.height || 20
         const eventBlockMargin = eventOption.style.marginBottom || 2
         for (var i = _startWeek; i <= _endWeek; i++) {
+
             const _eventBlock = self.createBlock(i, i * 7, (i + 1) * 7 - 1, _event)
             const _eventHandler = self.createHandler(i, _startNum, _endNum, _event)
             _eventBlock.append(_eventHandler)
             const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
             const _weekEl = document.getElementById(`${weekPrefix}${i}`)
-            _weekEl.style.height = `${(eventBlockHeight + eventBlockMargin) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+            
+            if(self.eventCounter[i].total > self.options.maxEvent){
+                continue;
+            }
             if (i === _startWeek) {
                 const left = startTile.style.left
                 let size = _endDayNum - _startDayNum + 1
@@ -218,6 +241,7 @@ var OsomeCalendar = {
                     _eventBlock.setAttribute('endDayNum', _endDayNum)
                 }
                 _weekScheduleEl.append(_eventBlock)
+                _weekEl.style.height = `${(eventBlockHeight + eventBlockMargin) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
             }
             else if (i === _endWeek) {
                 const left = 0
@@ -228,6 +252,7 @@ var OsomeCalendar = {
                 _eventBlock.setAttribute('endNum', _endNum)
                 _eventBlock.setAttribute('endDayNum', _endDayNum)
                 _weekScheduleEl.append(_eventBlock)
+                _weekEl.style.height = `${(eventBlockHeight + eventBlockMargin) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
             }
             else {
                 const left = 0
@@ -237,6 +262,7 @@ var OsomeCalendar = {
                 _eventBlock.style.width = width
                 _eventBlock.className += " block-right"
                 _weekScheduleEl.append(_eventBlock)
+                _weekEl.style.height = `${(eventBlockHeight + eventBlockMargin) * (_weekScheduleEl.childNodes.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
             }
         }
         // self.syncGridHeight()
@@ -345,7 +371,7 @@ var OsomeCalendar = {
 
         const firstTile = document.getElementById(`${tilePrefix}0`)
         const firstTileDate = firstTile.getAttribute('date').toNumber()
-
+        self.eventCounter = {}
         self.categories.map((category) => {
             const events = category.events
             events.map((event, idx) => {
@@ -363,6 +389,11 @@ var OsomeCalendar = {
                 let endTile = document.getElementById(`${tilePrefix}${num.endNum}`)
 
                 event.order = category.content.order
+
+                for (let i = num.startNum; i <= num.endNum; i++) {
+                    const week = document.getElementById(`${tilePrefix}${i}`).getAttribute('week')
+                    self.countEvent(week, i)
+                }
                 self.renderEventBlock(startTile, endTile, event)
             })
         })

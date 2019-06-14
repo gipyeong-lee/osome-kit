@@ -365,6 +365,9 @@ var OsomeGantt = {
                 tile.className += " text-blue"
             }
         }
+        else if(type === 'today'){
+            
+        }
         else {
             if (day === 0) {
                 tile.className += " text-red holiday"
