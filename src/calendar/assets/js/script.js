@@ -81,7 +81,6 @@ var OsomeCalendar = {
             })
         }
         else {
-            console.log(key, result)
             result[key] = value
         }
     },
