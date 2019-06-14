@@ -91,7 +91,6 @@ var OsomeGantt = {
         self.iteral(undefined, opt, this.options)
         let _options = this.options
         let _ganttGrid = document.getElementById(id)
-        console.log(_options)
         self.categories = categories
 
         self.clear(_ganttGrid)
@@ -383,7 +382,6 @@ var OsomeGantt = {
         const indexOfCurrentMonth = currentMonth - 1
         const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
         let endOfMonthDate = targetDate.getLastDate()
-        console.log(endOfMonthDate)
 
         self.options.endOfMonthDate = endOfMonthDate
 
