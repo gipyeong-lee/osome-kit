@@ -81,7 +81,6 @@ var OsomeGantt = {
             })
         }
         else {
-            console.log(key, result)
             result[key] = value
         }
     },
@@ -365,13 +364,13 @@ var OsomeGantt = {
                 tile.className += " text-blue"
             }
         }
-        else if(type === 'today'){
-            
+        else if (type === 'today') {
+
         }
         else {
             if (day === 0) {
                 tile.className += " text-red holiday"
-                
+
             }
             else if (day === 6) {
                 tile.className += " text-blue holiday"
@@ -684,11 +683,15 @@ var OsomeGantt = {
         if (self.focus.start === undefined) {
             return
         }
+
         const _sourceRowEl = self.focus.start
         const _sRow = _sourceRowEl.getAttribute('row').toNumber()
         const _targetRowEl = self.focus.current
         let _tRow = _targetRowEl.getAttribute('row').toNumber()
-
+        if (_sRow === _tRow) {
+            document.getElementById(`left-row-${(_tRow + 1)}`).classList.remove(`dragOverUp`)
+            return
+        }
         // trow
         const targetRect = _targetRowEl.getBoundingClientRect()
         const offsetY = e.clientY - targetRect.top
@@ -728,6 +731,7 @@ var OsomeGantt = {
         self.focus.current.classList.remove('dragOverUp')
         self.focus.current.classList.remove('dragOverDown')
         self.focus.start.classList.remove('dragOver')
+
         self.moveRow(self, e)
         self.clearFocus()
         self.draggingCategoryEnd(self)
@@ -967,6 +971,13 @@ var OsomeGantt = {
     attachDragAndDropCategory: {
         leftPrefix: 'left-row-',
         onMouseDown: function (self, targetTag, e) {
+            const _tRow = targetTag.getAttribute('row')
+            if(_tRow === 'head-left'){
+                return
+            }
+            if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
+                return
+            }
             self.focus.start = targetTag
             self.focus.current = targetTag
             self.onCategoryDragStart(targetTag, self, e)
@@ -974,7 +985,12 @@ var OsomeGantt = {
         onMouseMove: function (self, targetTag, e) {
             const _row = self.dragging.row
             const _tRow = targetTag.getAttribute('row')
-
+            if(!self.focus.start){
+                return
+            }
+            if(_tRow === 'head-left'){
+                return
+            }
             if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
                 return
             }
@@ -1008,6 +1024,12 @@ var OsomeGantt = {
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag, e) {
+            if(!self.focus.start){
+                return
+            }
+            if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
+                return
+            }
             self.onCategoryDragEnd(self, e)
         }
     },

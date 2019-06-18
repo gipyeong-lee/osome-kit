@@ -27,7 +27,6 @@ var OsomeCalendar = {
     },
     onClickMoreButton: function (element, events) {
         console.log(element, events)
-
     },
     //
     eventOption: {
