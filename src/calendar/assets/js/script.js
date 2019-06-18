@@ -25,6 +25,10 @@ var OsomeCalendar = {
     },
     onChangedSchedule: function (order, before, after) {
     },
+    onClickMoreButton: function (element, events) {
+        console.log(element, events)
+
+    },
     //
     eventOption: {
         style: {
@@ -34,7 +38,7 @@ var OsomeCalendar = {
     eventCounter: {},
     //
     options: {
-        maxEvent: 3,
+        maxEvent: 15,
         style: {
             grid: {
                 width: 800
@@ -61,6 +65,7 @@ var OsomeCalendar = {
         },
         country: 'ko',
         days: { ko: ['일', '월', '화', '수', '목', '금', '토'], jp: ['日', '月', '火', '水', '木', '金', '土'] },
+        moreButton: { ko: '그 외 {n}개', jp: 'その他${n}...' },
         today: new Date(),
         year: new Date().getFullYear(),
         month: new Date().getMonth(),
@@ -98,6 +103,7 @@ var OsomeCalendar = {
         self.createGrid(_calendarGrid, _options)
         self.attachGridEvent(_calendarGrid)
         self.createEvents(_options)
+        self.setupMoreButton()
     },
     randomColor: function () {
         return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
@@ -172,21 +178,26 @@ var OsomeCalendar = {
         _eventBlock.append(_eventText)
         return _eventBlock
     },
-    countEvent(week, date) {
+    countEvent(week, number) {
         const self = this
         if (!self.eventCounter[week]) {
             self.eventCounter[week] = { total: 0 }
         }
-        if (!self.eventCounter[week][date]) {
-            self.eventCounter[week][date] = 0
+        if (!self.eventCounter[week][number]) {
+            self.eventCounter[week][number] = 0
         }
-
-        if (Number(self.eventCounter[week].total) > Number(self.options.maxEvent)) {
-            return true
-        }
-        self.eventCounter[week][date] += 1
+        self.eventCounter[week][number] += 1
         self.eventCounter[week].total += 1
-        return false
+    },
+    discountEventCounter(week, startNum, endNum) {
+        const self = this
+        const tilePrefix = 'osome-cal-grid-day-tile-'
+        for (let i = startNum; i <= endNum; i++) {
+            if (self.eventCounter[week][i]) {
+                self.eventCounter[week][i] -= 1
+                self.eventCounter[week].total -= 1
+            }
+        }
     },
     renderEventBlock(startTile, endTile, eventOption) {
         const self = this
@@ -218,10 +229,13 @@ var OsomeCalendar = {
             _eventBlock.append(_eventHandler)
             const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
             const _weekEl = document.getElementById(`${weekPrefix}${i}`)
-            
-            if(self.eventCounter[i].total > self.options.maxEvent){
+
+            const _childrenOfweekEl = _weekScheduleEl.childElementCount
+            if (_childrenOfweekEl >= Number(self.options.maxEvent)) {
                 continue;
             }
+            
+            self.discountEventCounter(i, _startNum, _endNum)
             if (i === _startWeek) {
                 const left = startTile.style.left
                 let size = _endDayNum - _startDayNum + 1
@@ -398,6 +412,30 @@ var OsomeCalendar = {
             })
         })
     },
+    setupMoreButton: function () {
+        const self = this
+        const tilePrefix = 'osome-cal-grid-day-tile-'
+        const cntKeys = Object.keys(self.eventCounter)
+        cntKeys.map(key => {
+            const counter = self.eventCounter[key]
+            const keys = Object.keys(counter)
+            keys.filter(k => k !== 'total' && counter[k] >= 3).map(k => {
+                const cnt = counter[k]
+                const tile = document.getElementById(`${tilePrefix}${k}`)
+                self.enableMoreButton(tile, cnt)
+            })
+        })
+        
+    },
+    enableMoreButton: function (tile, count) {
+        const self = this
+        const more_btn = tile.getElementsByClassName('more-btn')[0]
+
+        const realCount = count
+        more_btn.style.display = 'block'
+        more_btn.innerText = (self.options.moreButton[self.options.country] || '').replace('{n}', realCount)
+
+    },
     syncGridHeight: function () {
         const wrapper = document.getElementById('osome-cal-grid')
         wrapper.parentNode.style.height = wrapper.style.height
@@ -441,7 +479,31 @@ var OsomeCalendar = {
         cellSubTitle.append(subText)
         cellHeader.append(cellSubTitle)
     },
+    setCellMoreButton(cell) {
+        const self = this
+        const number = cell.getAttribute('number')
 
+        let cellMoreButton = document.createElement('div')
+        cellMoreButton.className = 'more-btn'
+        cellMoreButton.innerText = "More Button"
+        cellMoreButton.setAttribute('week', cell.getAttribute('week'))
+        cellMoreButton.setAttribute('number', number)
+        cellMoreButton.setAttribute('date', cell.getAttribute('date'))
+        cellMoreButton.setAttribute('month', cell.getAttribute('month'))
+        cellMoreButton.onclick = function (event) {
+            const moreEvents = []
+            self.categories.map((category) => {
+                const events = category.events
+                events.map(event => {
+                    if (number >= event.start && number <= (event.start + event.total - 1)) {
+                        moreEvents.push(event)
+                    }
+                })
+            })
+            self.onClickMoreButton(cellMoreButton, moreEvents)
+        }
+        cell.append(cellMoreButton)
+    },
     createGrid: function (calendarGrid, options) {
         let self = this
         let width = 100 / 7
@@ -540,7 +602,7 @@ var OsomeCalendar = {
                 }
                 let cellText = document.createTextNode("");
                 let cellHeader = self.createCellHeader(i, uniqueNum)
-
+                cell.style.position = 'absolute'
                 row.setAttribute('endNumber', uniqueNum)
                 if (i === 0 && j < startOfDay) {
                     self.setCellHeaderNumber(cellHeader, cellText, self.options.style.cellHeader)
@@ -548,7 +610,7 @@ var OsomeCalendar = {
                     cellHeader.setAttribute('year', prevYear)
                     cellHeader.setAttribute('month', prevMonth)
                     cellHeader.setAttribute('date', prevEndOfMonthDate - (startOfDay - j) + 1)
-
+                    cell.className = "tile"
                     cell.setAttribute('year', prevYear)
                     cell.setAttribute('month', prevMonth)
                     cell.setAttribute('date', prevEndOfMonthDate - (startOfDay - j) + 1)
@@ -558,6 +620,7 @@ var OsomeCalendar = {
                     cell.setAttribute('number', uniqueNum++)
                     cell.style.width = `${width}%`
                     cell.style.left = `${offsetX}%`
+
                     cell.style.display = `inline-block`
                     if (j === 0) {
                         cell.className += " text-prev-red"
@@ -573,7 +636,7 @@ var OsomeCalendar = {
                 else if (date > endOfMonthDate) {
                     self.setCellHeaderNumber(cellHeader, cellText, self.options.style.cellHeader)
                     self.setCellHeaderTitle(cellHeader, "", self.options.style.cellHeader)
-
+                    cell.className = "tile"
                     cellHeader.setAttribute('year', nextYear)
                     cellHeader.setAttribute('month', nextMonth)
                     cellHeader.setAttribute('date', nextDate)
@@ -638,7 +701,9 @@ var OsomeCalendar = {
 
                 // cellHeader.append(cellText)
                 cell.appendChild(cellHeader);
+
                 _rowGrid.appendChild(cell);
+                self.setCellMoreButton(cell)
             }
             row.append(_rowGrid)
             row.append(_rowSchedule)

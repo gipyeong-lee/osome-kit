@@ -10,8 +10,8 @@ class OSGantt extends Component {
     console.log('Please implement `onDragEndTile` ')
     // Calendar.attachEvent(renderOption.startTileNumber,renderOption.endTileNumber)
   }
-  onChangeContainer = (left,right) => {
-      console.log(left,right)
+  onChangeContainer = (left, right) => {
+    console.log(left, right)
   }
   onClickSchedule = (element, category, event) => {
   }
@@ -22,7 +22,7 @@ class OSGantt extends Component {
   onMouseRightClick = (element, event) => {
     console.log(`Mouse Right Button Clicked ${element.getAttribute('row')}`)
     //sample
-    
+
   }
   attachEvent(start, end, option) {
     OsomeGantt.attachEvent(start, end, option)
@@ -39,7 +39,7 @@ class OSGantt extends Component {
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return true
     }
-    
+
     if (this.props.categories !== nextProps.categories) {
       OsomeGantt.init('osome-gantt', nextProps.options, nextProps.categories)
       return true
@@ -58,7 +58,7 @@ class OSGantt extends Component {
   }
 
   render() {
-    const {style} = this.props
+    const { style } = this.props
     return (
       <div id="osome-gantt" style={style} >
       </div>
@@ -93,7 +93,9 @@ class OSCalendar extends Component {
   }
   onChangedSchedule = (order, event, afterEvent) => {
   }
+  onClickMoreButton = (element, events) => {
 
+  }
   constructor(props) {
     super(props)
   }
@@ -127,6 +129,7 @@ class OSCalendar extends Component {
     OsomeCalendar.onClickSchedule = this.props.onClickSchedule || this.onClickSchedule
     OsomeCalendar.onDragEndTile = this.props.onDragEndTile || this.onDragEndTile
     OsomeCalendar.onChangedSchedule = this.props.onChangedSchedule || this.onChangedSchedule
+    OsomeCalendar.onClickMoreButton = this.props.onClickMoreButton || this.onClickMoreButton
   }
 
   render() {
@@ -144,6 +147,7 @@ OSCalendar.defaultProps = {
 
 OSCalendar.propTypes = {
   onClickSchedule: PropTypes.func, // click schedule
+  onClickMoreButton: PropTypes.func,
   onDragEndTile: PropTypes.func,
   onChangedSchedule: PropTypes.func,
   createSchedule: PropTypes.func,
