@@ -37,7 +37,7 @@ var OsomeCalendar = {
     eventCounter: {},
     //
     options: {
-        maxEvent: 15,
+        maxEvent: 3,
         style: {
             grid: {
                 width: 800
@@ -62,9 +62,9 @@ var OsomeCalendar = {
                 titleColor: 'red'
             }
         },
-        country: 'ko',
+        country: 'jp',
         days: { ko: ['일', '월', '화', '수', '목', '금', '토'], jp: ['日', '月', '火', '水', '木', '金', '土'] },
-        moreButton: { ko: '그 외 {n}개', jp: 'その他${n}...' },
+        moreButton: { ko: '+ 더보기', jp: '+ もっと見る' },
         today: new Date(),
         year: new Date().getFullYear(),
         month: new Date().getMonth(),
@@ -233,7 +233,7 @@ var OsomeCalendar = {
             if (_childrenOfweekEl >= Number(self.options.maxEvent)) {
                 continue;
             }
-            
+
             self.discountEventCounter(i, _startNum, _endNum)
             if (i === _startWeek) {
                 const left = startTile.style.left
@@ -424,7 +424,7 @@ var OsomeCalendar = {
                 self.enableMoreButton(tile, cnt)
             })
         })
-        
+
     },
     enableMoreButton: function (tile, count) {
         const self = this
@@ -485,22 +485,11 @@ var OsomeCalendar = {
         let cellMoreButton = document.createElement('div')
         cellMoreButton.className = 'more-btn'
         cellMoreButton.innerText = "More Button"
+        cellMoreButton.style.zIndex = '10'
         cellMoreButton.setAttribute('week', cell.getAttribute('week'))
         cellMoreButton.setAttribute('number', number)
         cellMoreButton.setAttribute('date', cell.getAttribute('date'))
         cellMoreButton.setAttribute('month', cell.getAttribute('month'))
-        cellMoreButton.onclick = function (event) {
-            const moreEvents = []
-            self.categories.map((category) => {
-                const events = category.events
-                events.map(event => {
-                    if (number >= event.start && number <= (event.start + event.total - 1)) {
-                        moreEvents.push(event)
-                    }
-                })
-            })
-            self.onClickMoreButton(cellMoreButton, moreEvents)
-        }
         cell.append(cellMoreButton)
     },
     createGrid: function (calendarGrid, options) {
@@ -848,6 +837,9 @@ var OsomeCalendar = {
     isHandler(targetTag) {
         return targetTag.classList.contains('handler-y')
     },
+    isMoreButton(targetTag) {
+        return targetTag.classList.contains('more-btn')
+    },
     isEventBlock(targetTag) {
         return targetTag.classList.contains('title')
     },
@@ -923,6 +915,19 @@ var OsomeCalendar = {
             else if (self.isEventBlock(targetTag)) {
                 self.focus.type = 'move'
                 self.focus.start = targetTag
+            }
+            else if (self.isMoreButton(targetTag)) {
+                const moreEvents = []
+                const number = Number(targetTag.getAttribute('number'))
+                self.categories.map((category) => {
+                    const events = category.events
+                    events.map(event => {
+                        if (number >= event.start && number <= (event.start + event.total - 1)) {
+                            moreEvents.push(event)
+                        }
+                    })
+                })
+                self.onClickMoreButton(targetTag, moreEvents)
             }
             else if (self.isTileBlock(targetTag)) {
                 self.focus.type = 'create'
