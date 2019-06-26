@@ -40,7 +40,7 @@ var OsomeGantt = {
     // },
     options: {
         type: 'row',
-        fixed: true,
+        fixed: false,
         style: {
             container: {
                 leftWidth: '30%'
@@ -62,6 +62,8 @@ var OsomeGantt = {
         today: new Date(),
         year: new Date().getFullYear(),
         month: new Date().getMonth(),
+        handleMin: 5,
+        handleMax: 35,
         eventPopup: { html: 'test' }
     },
     iteral: function (key, value, result) {
@@ -301,7 +303,7 @@ var OsomeGantt = {
         rowContainer.setAttribute(`type`, type)
         if (content !== undefined) {
             const type = content.type || 'main'
-            const contentContainer = document.createElement('div')
+
             const bullet = document.createElement('div')
             bullet.style.display = 'inline-block'
             bullet.style.marginLeft = type === 'main' ? '10px' : '40px'
@@ -311,14 +313,18 @@ var OsomeGantt = {
             bullet.style.width = type === 'main' ? `${self.options.style.row.height / 2}px` : `${self.options.style.row.height / 5}px`
             bullet.style.borderRadius = type === 'main' ? `${self.options.style.row.height / 4}px` : 0
             bullet.style.backgroundColor = content.style.color
+            bullet.setAttribute('row', row)
+            bullet.setAttribute('type', type)
+
             const text = document.createElement('span')
+            text.setAttribute('row', row)
+            text.setAttribute('type', type)
             text.style.paddingLeft = '10px'
             text.style.display = 'inline-block'
             text.style.float = 'left'
             text.innerHTML = content.title
-            contentContainer.append(bullet)
-            contentContainer.append(text)
-            rowContainer.append(contentContainer)
+            rowContainer.append(bullet)
+            rowContainer.append(text)
         }
 
         return rowContainer
@@ -689,7 +695,9 @@ var OsomeGantt = {
         const _targetRowEl = self.focus.current
         let _tRow = _targetRowEl.getAttribute('row').toNumber()
         if (_sRow === _tRow) {
-            document.getElementById(`left-row-${(_tRow + 1)}`).classList.remove(`dragOverUp`)
+            if (document.getElementById(`left-row-${(_tRow + 1)}`)) {
+                document.getElementById(`left-row-${(_tRow + 1)}`).classList.remove(`dragOverUp`)
+            }
             return
         }
         // trow
@@ -738,7 +746,16 @@ var OsomeGantt = {
     },
     // Drag And Drop
     isCategoryRow(targetTag) {
-        return targetTag.classList.contains('osome-gantt-grid-category-row')
+        return targetTag.classList.contains('osome-gantt-grid-category-row') || (targetTag.parentElement && targetTag.parentElement.classList.contains('osome-gantt-grid-category-row'))
+    },
+    getCategoryRow(targetTag) {
+        if (targetTag.classList.contains('osome-gantt-grid-category-row')) return targetTag
+        else if (targetTag.parentElement && targetTag.parentElement.classList.contains('osome-gantt-grid-category-row')) {
+            return targetTag.parentElement
+        }
+        else {
+            return null
+        }
     },
     isRightTile(targetTag) {
         return targetTag.classList.contains('tile')
@@ -962,39 +979,45 @@ var OsomeGantt = {
         const leftContainer = document.getElementById(leftContainerId)
         const rightContainer = document.getElementById(rightContainerId)
         const rightWidth = containerWidth - leftWidth
-        leftContainer.style.width = `${leftWidth / containerWidth * 100}%`
-        rightContainer.style.left = `${leftWidth / containerWidth * 100}%`
+        const leftWidthPercent = leftWidth / containerWidth * 100
+        if (leftWidthPercent > self.options.handleMax || leftWidthPercent < self.options.handleMin) {
+            return
+        }
+        leftContainer.style.width = `${leftWidthPercent}%`
+        rightContainer.style.left = `${leftWidthPercent}%`
         rightContainer.style.width = `${rightWidth / containerWidth * 100}%`
-        self.options.style.container.leftWidth = `${leftWidth / containerWidth * 100}%`
+        self.options.style.container.leftWidth = `${leftWidthPercent}%`
         self.onChangeContainer(leftContainer.style.width, rightContainer.style.width)
     },
     attachDragAndDropCategory: {
         leftPrefix: 'left-row-',
         onMouseDown: function (self, targetTag, e) {
             const _tRow = targetTag.getAttribute('row')
-            if(_tRow === 'head-left'){
+            if (_tRow === 'head-left') {
                 return
             }
-            if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
+            if (!self.isCategoryRow(targetTag)) {
                 return
             }
             self.focus.start = targetTag
             self.focus.current = targetTag
             self.onCategoryDragStart(targetTag, self, e)
         },
-        onMouseMove: function (self, targetTag, e) {
+        onMouseMove: function (self, _targetTag, e) {
             const _row = self.dragging.row
-            const _tRow = targetTag.getAttribute('row')
-            if(!self.focus.start){
+            const _tRow = _targetTag.getAttribute('row')
+            if (!self.focus.start) {
                 return
             }
-            if(_tRow === 'head-left'){
-                return
-            }
-            if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
+            if (_tRow === 'head-left') {
                 return
             }
 
+            if (!self.isCategoryRow(_targetTag)) {
+                return
+            }
+
+            const targetTag = self.getCategoryRow(_targetTag)
             const targetRect = targetTag.getBoundingClientRect()
             const offsetY = e.clientY - targetRect.top
             const height = targetTag.offsetHeight
@@ -1011,6 +1034,7 @@ var OsomeGantt = {
                 if (self.focus.current) self.focus.current.classList.remove('dragOverUp')
                 const nextRow = _tRow.toNumber() + 1
                 const nextElement = document.getElementById(`${this.leftPrefix}${nextRow}`)
+                if (nextElement === null) return
                 if (!nextElement.classList.contains(`dragOverUp`)) nextElement.classList.add(`dragOverUp`)
             }
 
@@ -1024,10 +1048,15 @@ var OsomeGantt = {
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag, e) {
-            if(!self.focus.start){
+            if (!self.focus.start) {
                 return
             }
-            if (!targetTag.classList.contains('osome-gantt-grid-category-row')) {
+            if (!self.isCategoryRow(targetTag)) {
+                self.focus.current.classList.remove('dragOverUp')
+                self.focus.current.classList.remove('dragOverDown')
+                self.focus.start.classList.remove('dragOver')
+                self.clearFocus()
+                self.draggingCategoryEnd(self)
                 return
             }
             self.onCategoryDragEnd(self, e)

@@ -12,7 +12,7 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 
 export default class App extends Component {
   state = {
-    calendarType: 'calendar',
+    calendarType: 'gantt',
     options: {
       style: {
         cellHeader: {
@@ -55,7 +55,7 @@ export default class App extends Component {
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const categories = []
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 5; i++) {
       categories.push({
         content: {
           title: `캘린더 ${i}`,
