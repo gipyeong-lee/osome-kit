@@ -174,6 +174,7 @@ var OsomeCalendar = {
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
         _eventText.innerText = eventOption.title
+        _eventText.style.marginLeft = "5px"
         _eventText.setAttribute('order', eventOption.order)
         _eventText.setAttribute('index', eventOption.index)
         _eventBlock.append(_eventText)
@@ -556,7 +557,7 @@ var OsomeCalendar = {
         let dayLength = days.length
         days.forEach((day, idx) => {
             let _dayDiv = document.createElement("div")
-            _dayDiv.className = 'column'
+            _dayDiv.className = 'column day'
             _dayDiv.style.display = 'inline-block'
             _dayDiv.style.width = `${width}%`
             _dayDiv.style.left = `${offsetX}%`
@@ -618,7 +619,7 @@ var OsomeCalendar = {
             let _rowSchedule = document.createElement("div")
             _rowSchedule.id = `osome-cal-grid-week-schedule-${i}`
             _rowSchedule.className = `osome-cal-grid-week-schedule`
-            _rowSchedule.style.paddingTop = `${self.options.style.cellHeader.height + 5}px`
+            _rowSchedule.style.paddingTop = `${self.options.style.cellHeader.height + 10 + 5}px`
             _rowSchedule.setAttribute('week', i)
             _rowSchedule.setAttribute('start', uniqueNum)
             for (let j = 0; j < 7; j++) {

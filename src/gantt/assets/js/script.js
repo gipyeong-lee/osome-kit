@@ -229,6 +229,20 @@ var OsomeGantt = {
         _eventBlock.style.left = left
         _eventBlock.style.width = `${width}%`
 
+        let _eventText = document.createElement('span')
+        _eventText.classList = "title"
+        _eventText.innerText = eventOption.title
+        _eventText.style.marginLeft = '10px'
+        _eventText.style.display = 'block'
+        _eventText.style.textOverflow = "ellipsis";
+        _eventText.style.color = 'white'
+        _eventText.style.whiteSpace = 'nowrap'
+        _eventText.style.overflow = 'hidden'
+        _eventText.setAttribute('row', row)
+        _eventText.setAttribute('order', eventOption.order)
+        _eventText.setAttribute('index', eventOption.index)
+        _eventBlock.append(_eventText)
+
         _rowEl.append(_eventBlock)
     },
     createEventBlock(row, startTile, endTile, eventOption) {
@@ -260,6 +274,14 @@ var OsomeGantt = {
         _eventBlock.style.position = 'absolute'
         _eventBlock.style.left = left
         _eventBlock.style.width = `${width}%`
+
+        let _eventText = document.createElement('span')
+        _eventText.classList = "title"
+        _eventText.innerText = eventOption.title
+        _eventText.style.color = 'white'
+        _eventText.setAttribute('order', eventOption.order)
+        _eventText.setAttribute('index', eventOption.index)
+        _eventBlock.append(_eventText)
 
         _rowEl.append(_eventBlock)
     },
@@ -371,7 +393,20 @@ var OsomeGantt = {
             }
         }
         else if (type === 'today') {
-
+            tile.style.textAlign = 'center'
+            const todayTile =  document.createElement('span')
+            const height = options.style.row.height * 0.75
+            todayTile.style.width = `${height}px`
+            todayTile.style.height = `${height}px`
+            todayTile.style.lineHeight = `${height}px`
+            todayTile.style.margin = 'auto'
+            todayTile.style.borderRadius = `${height/2}px`
+            todayTile.style.verticalAlign = 'middle'
+            todayTile.style.color = 'white'
+            todayTile.style.display = 'inline-block'
+            todayTile.style.backgroundColor = options.style.todayHeader && options.style.todayHeader.backgroundColor || 'green'
+            todayTile.textContent = col + 1
+            tile.append(todayTile)
         }
         else {
             if (day === 0) {
@@ -386,9 +421,14 @@ var OsomeGantt = {
     },
     createGrid: function (calendarGrid, options) {
         let self = this
+        const currentYear = options.year
         const currentMonth = options.month
         const indexOfCurrentMonth = currentMonth - 1
-        const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
+        const targetDate = new Date(currentYear, indexOfCurrentMonth, 1)
+        const today = new Date()
+        const todayDate = today.getDate()
+        const todayMonth = today.getMonth() + 1
+        const todayYear = today.getFullYear()
         let endOfMonthDate = targetDate.getLastDate()
 
         self.options.endOfMonthDate = endOfMonthDate
@@ -446,7 +486,8 @@ var OsomeGantt = {
         for (let i = 0; i < endOfMonthDate; i++) {
             dayDate.setDate(i + 1)
             const day = dayDate.getDay()
-            const backTile = self.createBackTile("day", 0, i, self.options, day)
+            const isToday = todayYear === currentYear && todayMonth === currentMonth && todayDate === i + 1
+            const backTile = self.createBackTile(isToday ? "today" : "day", 0, i, self.options, day)
             daysRow.appendChild(backTile)
         }
 
@@ -764,7 +805,7 @@ var OsomeGantt = {
         return targetTag.classList.contains('handler-y')
     },
     isEventBlock(targetTag) {
-        return targetTag.classList.contains('event-block')
+        return targetTag.classList.contains('event-block') || (targetTag.parentElement && targetTag.parentElement.classList.contains('event-block'))
     },
     isContainerHandleBar(targetTag) {
         return targetTag.classList.contains('osome-gantt-grid-handle-bar')
