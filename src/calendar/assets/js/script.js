@@ -549,6 +549,7 @@ var OsomeCalendar = {
         let _divDays = document.createElement("div");
         _divDays.id = 'osome-cal-days'
         _divDays.style.width = `100%`
+        _divDays.style.backgroundColor = 'rgba(242,242,242,0.3)'
         _divDays.style.borderTop = 'solid 1px lightgray'
         _divDays.style.borderBottom = 'solid 1px lightgray'
         let _country = options.country
