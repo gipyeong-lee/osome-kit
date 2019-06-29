@@ -50,7 +50,7 @@ var OsomeCalendar = {
                 height: 30,
                 fontSize: '0.8em',
                 textAlign: 'center',
-                gap: 10
+                gap: 30
             },
             todayHeader: {
                 backgroundColor: 'red',
