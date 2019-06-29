@@ -391,7 +391,6 @@ var OsomeCalendar = {
         let endOfMonthDate = targetDate.getLastDate()
 
         const firstTile = document.getElementById(`${tilePrefix}0`)
-        const firstTileDate = firstTile.getAttribute('date').toNumber()
         self.eventCounter = {}
         self.categories.map((category) => {
             const events = category.events
@@ -401,7 +400,7 @@ var OsomeCalendar = {
                     return
                 }
 
-                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, self.endNum)
+                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTile, endOfMonthDate, self.endNum)
                 if (num === undefined) {
                     return
                 }
