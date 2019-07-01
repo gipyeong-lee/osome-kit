@@ -381,7 +381,7 @@ var OsomeCalendar = {
 
         const tilePrefix = 'osome-cal-grid-day-tile-'
         const currentMonth = options.month
-
+        const currentYear = options.year
         const indexOfCurrentMonth = currentMonth - 1
         const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
 
@@ -391,7 +391,6 @@ var OsomeCalendar = {
         let endOfMonthDate = targetDate.getLastDate()
 
         const firstTile = document.getElementById(`${tilePrefix}0`)
-        const firstTileDate = firstTile.getAttribute('date').toNumber()
         self.eventCounter = {}
         self.categories.map((category) => {
             const events = category.events
@@ -401,11 +400,11 @@ var OsomeCalendar = {
                     return
                 }
 
-                const num = utils.convertDateToNumber(event.startDate, event.endDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, self.endNum)
+                const num = utils.convertDateToNumber(event.startDate, event.endDate, currentYear, indexOfCurrentMonth, startOfDay, firstTile, endOfMonthDate, self.endNum)
                 if (num === undefined) {
                     return
                 }
-
+                
                 let startTile = document.getElementById(`${tilePrefix}${num.startNum}`)
                 let endTile = document.getElementById(`${tilePrefix}${num.endNum}`)
 
@@ -549,6 +548,7 @@ var OsomeCalendar = {
         let _divDays = document.createElement("div");
         _divDays.id = 'osome-cal-days'
         _divDays.style.width = `100%`
+        _divDays.style.backgroundColor = 'rgba(242,242,242,0.3)'
         _divDays.style.borderTop = 'solid 1px lightgray'
         _divDays.style.borderBottom = 'solid 1px lightgray'
         let _country = options.country

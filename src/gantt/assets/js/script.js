@@ -169,7 +169,7 @@ var OsomeGantt = {
         const _length = _categories.length
 
         const currentMonth = options.month
-
+        const currentYear = options.year
         const indexOfCurrentMonth = currentMonth - 1
         const targetDate = new Date(options.year, indexOfCurrentMonth, 1)
         const prevMonthObj = targetDate.getPrevMonth()
@@ -184,7 +184,7 @@ var OsomeGantt = {
             const _row = _content.order.toNumber()
             _events.map((event, idx) => {
 
-                const num = utils.convertDateToGanttNumber(event.startDate, event.endDate, indexOfCurrentMonth, endOfMonthDate)
+                const num = utils.convertDateToGanttNumber(event.startDate, event.endDate, currentYear, indexOfCurrentMonth, endOfMonthDate)
                 if (num === undefined) {
                     return
                 }

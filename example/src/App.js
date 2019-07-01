@@ -56,6 +56,7 @@ export default class App extends Component {
     this.osGantt = React.createRef()
     const categories = []
     for (let i = 0; i < 200; i++) {
+
       categories.push({
         content: {
           title: `캘린더 ${i}`,
@@ -90,7 +91,7 @@ export default class App extends Component {
             "backgroundColor": content.style.color
           },
           "startDate": `2019-06-${Math.min(sDate, eDate).pad(2)}T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
-          "endDate": `2019-06-${Math.max(sDate, eDate).pad(2)}T00:00:00.000Z`
+          "endDate": `2019-06-${Math.max(sDate, eDate).pad(2)}T00:00:00.000Z`,
         })
       }
       categories[j].events = events

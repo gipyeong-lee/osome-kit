@@ -69,95 +69,78 @@ const utils = {
 
         return { startNum: startNum, endNum: endNum }
     },
-    convertDateToGanttNumber: (sDate, eDate, indexOfCurrentMonth, eNum) => {
+    convertDateToGanttNumber: (sDate, eDate, currentYear, indexOfCurrentMonth, eNum) => {
+
         let _startDate = new Date(sDate)
         let _endDate = new Date(eDate)
-        let startMonth = _startDate.getMonth()
-        let endMonth = _endDate.getMonth()
+        let firstTileDate = 1
+        let firstTileMonth = indexOfCurrentMonth + 1
+        let firstTileYear = currentYear
 
+        let startYear = _startDate.getFullYear()
+        let endYear = _endDate.getFullYear()
+        let startMonth = _startDate.getMonth() + 1
+        let endMonth = _endDate.getMonth() + 1
         let startDate = _startDate.getDate()
         let endDate = _endDate.getDate()
+        let startNum = 1
+        let endNum = eNum
 
-        let startNum = Math.max(startDate, 0)
-        let endNum = Math.min(endDate, eNum)
+        let firstTileValue = firstTileYear * 10000 + firstTileMonth * 100 + firstTileDate
+        let startDateValue = startYear * 10000 + startMonth * 100 + startDate
+        let endDateValue = endYear * 10000 + endMonth * 100 + endDate
+        let endTileValue = currentYear * 10000 + (indexOfCurrentMonth+1) * 100 + eNum
 
-        if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth + 1) { }
-        else if (startMonth < indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
-            // 전달 ~ 이번달
-            startNum = 1
-            endNum = Math.min(endDate, endNum)
-        }
-        else if (startMonth === indexOfCurrentMonth && endMonth > indexOfCurrentMonth) {
-            // 이번달 ~ 다음달
-            startNum = startDate
-        }
-        else if (startMonth === indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
-            // 이번달
-            startNum = startDate
-            endNum = Math.min(endDate, endNum)
-        }
-        else {
+        if (startDateValue > endTileValue) {
             return
         }
-        if (Math.abs(startMonth - indexOfCurrentMonth) > 1) {
-            startNum = 0
+        if (endDateValue < firstTileValue) {
+            return
         }
-        if (Math.abs(endMonth - indexOfCurrentMonth) > 1) {
-            endNum = endNum
+        if (startDateValue > firstTileValue && startDateValue < endTileValue) {
+            startNum = startDate 
         }
-
+        if (endDateValue > firstTileValue && endDateValue < endTileValue) {
+            
+            endNum = Math.min(endDate, endNum)
+        }
         return { startNum: startNum, endNum: endNum }
     },
-    convertDateToNumber: (sDate, eDate, indexOfCurrentMonth, startOfDay, firstTileDate, endOfMonthDate, eNum) => {
+    convertDateToNumber: (sDate, eDate, currentYear, indexOfCurrentMonth, startOfDay, firstTile, endOfMonthDate, eNum) => {
         let _startDate = new Date(sDate)
         let _endDate = new Date(eDate)
-        let startMonth = _startDate.getMonth()
-        let endMonth = _endDate.getMonth()
+        let firstTileDate = firstTile.getAttribute('date').toNumber()
+        let firstTileMonth = firstTile.getAttribute('month').toNumber()
+        let firstTileYear = firstTile.getAttribute('year').toNumber()
 
+        let startYear = _startDate.getFullYear()
+        let endYear = _endDate.getFullYear()
+        let startMonth = _startDate.getMonth() + 1
+        let endMonth = _endDate.getMonth() + 1
         let startDate = _startDate.getDate()
         let endDate = _endDate.getDate()
 
-        let startNum = Math.max(startDate - firstTileDate, 0)
-        let endNum = Math.min(Number(startOfDay) + endOfMonthDate + endDate - 1, eNum)
+        let startNum = 0
+        let endNum = eNum
 
-        if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth + 1) { }
-        else if (startMonth < indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
-            // 전달 ~ 이번달
-            endNum = Math.min(Number(startOfDay) + endDate - 1, endNum)
-        }
-        else if (startMonth === indexOfCurrentMonth && endMonth > indexOfCurrentMonth) {
-            // 이번달 ~ 다음달
-            startNum = startOfDay + startDate - 1
-        }
-        else if (startMonth === indexOfCurrentMonth && endMonth === indexOfCurrentMonth) {
-            // 이번달
-            startNum = startOfDay + startDate - 1
-            endNum = Math.min(Number(startOfDay) + endDate - 1, endNum)
-        }
-        else if (startMonth === indexOfCurrentMonth - 1 && endMonth === indexOfCurrentMonth - 1) {
-            // 둘다 저번달
-            if (endDate - firstTileDate < 0) {
-                return
-            }
-            endNum = Math.max(endDate - firstTileDate, 0)
-        }
-        else if (startMonth === indexOfCurrentMonth + 1 && endMonth === indexOfCurrentMonth + 1) {
-            // 둘다 다음달
-            if (Number(startOfDay) + endOfMonthDate + startDate - 1 > endNum) {
-                return
-            }
-            startNum = Math.min(Number(startOfDay) + endOfMonthDate + startDate - 1, endNum)
-        }
-        else {
+        let firstTileValue = firstTileYear * 10000 + firstTileMonth * 100 + firstTileDate
+        let startDateValue = startYear * 10000 + startMonth * 100 + startDate
+        let endDateValue = endYear * 10000 + endMonth * 100 + endDate
+        let endTileValue = currentYear * 10000 + (indexOfCurrentMonth+1) * 100 + endOfMonthDate
+
+        if (startDateValue > endTileValue) {
             return
         }
-        if (Math.abs(startMonth - indexOfCurrentMonth) > 1) {
-            startNum = 0
+        if (endDateValue < firstTileValue) {
+            return
         }
-        if (Math.abs(endMonth - indexOfCurrentMonth) > 1) {
-            endNum = endNum
+        if (startDateValue > firstTileValue && startDateValue < endTileValue) {
+            startNum = startOfDay + startDate - 1
         }
-
+        if (endDateValue > firstTileValue && endDateValue < endTileValue) {
+            
+            endNum = Math.min(Number(startOfDay) + endDate - 1, endNum)
+        }
         return { startNum: startNum, endNum: endNum }
     }
 }
