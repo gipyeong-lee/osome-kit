@@ -315,6 +315,9 @@ var OsomeGantt = {
         }
         rowContainer.id = `${type}-row-${row}`
         rowContainer.style.width = '100%'
+        rowContainer.style.textOverflow = 'ellipsis'
+        rowContainer.style.whiteSpace = 'nowrap'
+        rowContainer.style.overflow = 'hidden'
         rowContainer.style.lineHeight = `${style.height}px`
         rowContainer.style.height = `${style.height}px`
         rowContainer.style.top = `0px`
@@ -342,8 +345,7 @@ var OsomeGantt = {
             text.setAttribute('row', row)
             text.setAttribute('type', type)
             text.style.paddingLeft = '10px'
-            text.style.display = 'inline-block'
-            text.style.float = 'left'
+            text.style.paddingRight = '10px'
             text.innerHTML = content.title
             rowContainer.append(bullet)
             rowContainer.append(text)
@@ -394,14 +396,14 @@ var OsomeGantt = {
         }
         else if (type === 'today') {
             tile.style.textAlign = 'center'
-            const todayTile =  document.createElement('span')
+            const todayTile = document.createElement('span')
             const height = options.style.row.height * 0.5
             todayTile.style.fontSize = `${height * 0.5}px`
             todayTile.style.width = `${height}px`
             todayTile.style.height = `${height}px`
             todayTile.style.lineHeight = `${height}px`
             todayTile.style.margin = 'auto'
-            todayTile.style.borderRadius = `${height/2}px`
+            todayTile.style.borderRadius = `${height / 2}px`
             todayTile.style.verticalAlign = 'middle'
             todayTile.style.color = 'white'
             todayTile.style.display = 'inline-block'

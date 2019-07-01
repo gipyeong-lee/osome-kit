@@ -59,7 +59,7 @@ export default class App extends Component {
 
       categories.push({
         content: {
-          title: `캘린더 ${i}`,
+          title: `캘린더 sssssss${i}`,
           type: i % 2 ? 'main' : 'sub',
           enable: true,
           order: i,
