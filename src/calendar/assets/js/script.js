@@ -38,7 +38,7 @@ var OsomeCalendar = {
     eventRenderCounter: {},
     //
     options: {
-        maxEvent: 5,
+        maxEvent: 15,
         style: {
             grid: {
                 width: 800
