@@ -89,7 +89,7 @@ const utils = {
         let firstTileValue = firstTileYear * 10000 + firstTileMonth * 100 + firstTileDate
         let startDateValue = startYear * 10000 + startMonth * 100 + startDate
         let endDateValue = endYear * 10000 + endMonth * 100 + endDate
-        let endTileValue = currentYear * 10000 + (indexOfCurrentMonth+1) * 100 + eNum
+        let endTileValue = currentYear * 10000 + (indexOfCurrentMonth + 1) * 100 + eNum
 
         if (startDateValue > endTileValue) {
             return
@@ -98,10 +98,10 @@ const utils = {
             return
         }
         if (startDateValue > firstTileValue && startDateValue < endTileValue) {
-            startNum = startDate 
+            startNum = startDate
         }
         if (endDateValue > firstTileValue && endDateValue < endTileValue) {
-            
+
             endNum = Math.min(endDate, endNum)
         }
         return { startNum: startNum, endNum: endNum }
@@ -120,13 +120,14 @@ const utils = {
         let startDate = _startDate.getDate()
         let endDate = _endDate.getDate()
 
-        let startNum = 0
-        let endNum = eNum
-
         let firstTileValue = firstTileYear * 10000 + firstTileMonth * 100 + firstTileDate
         let startDateValue = startYear * 10000 + startMonth * 100 + startDate
         let endDateValue = endYear * 10000 + endMonth * 100 + endDate
-        let endTileValue = currentYear * 10000 + (indexOfCurrentMonth+1) * 100 + endOfMonthDate
+        let startTileValue = currentYear * 10000 + (indexOfCurrentMonth + 1) * 100 + 1
+        let endTileValue = currentYear * 10000 + (indexOfCurrentMonth + 1) * 100 + endOfMonthDate
+
+        let startNum = startOfDay + startDate - 1
+        let endNum = Math.min(Number(startOfDay) + endDate - 1, eNum)
 
         if (startDateValue > endTileValue) {
             return
@@ -134,12 +135,17 @@ const utils = {
         if (endDateValue < firstTileValue) {
             return
         }
-        if (startDateValue > firstTileValue && startDateValue < endTileValue) {
-            startNum = startOfDay + startDate - 1
+        if (startDateValue <= firstTileValue) {
+            startNum = 0
         }
-        if (endDateValue > firstTileValue && endDateValue < endTileValue) {
-            
-            endNum = Math.min(Number(startOfDay) + endDate - 1, endNum)
+        if (endDateValue >= endTileValue) {
+            endNum = eNum
+        }
+        if (startDateValue > firstTileValue && startDateValue < startTileValue) {
+            startNum = _startDate.getDay()
+        }
+        if (endDateValue > firstTileValue && endDateValue < startTileValue) {
+            endNum = _endDate.getDay()
         }
         return { startNum: startNum, endNum: endNum }
     }

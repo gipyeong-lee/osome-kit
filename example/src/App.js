@@ -12,7 +12,7 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 
 export default class App extends Component {
   state = {
-    calendarType: 'gantt',
+    calendarType: 'calendar',
     options: {
       style: {
         cellHeader: {
@@ -26,7 +26,7 @@ export default class App extends Component {
         }
       },
       year: new Date().getFullYear(),
-      month: new Date().getMonth() + 1
+      month: new Date().getMonth()
     },
     categories: [],
     events: []
@@ -55,7 +55,7 @@ export default class App extends Component {
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const categories = []
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 1; i++) {
 
       categories.push({
         content: {
@@ -78,8 +78,9 @@ export default class App extends Component {
       const content = categories[j].content
 
       for (let i = 0; i < randomLength; i++) {
-        const sDate = Math.round((Math.random() * 10)) + 1
-        const eDate = Math.round((Math.random() * 10)) + 1
+        const sDate = Math.round((Math.random() * 25)) + 1
+        const eDate = Math.round((Math.random() * 28)) + 1
+      
 
         events.push({
           order: content.order,
@@ -90,7 +91,7 @@ export default class App extends Component {
             "color": "#fff",
             "backgroundColor": content.style.color
           },
-          "startDate": `2019-06-${Math.min(sDate, eDate).pad(2)}T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
+          "startDate": `2019-05-${Math.min(sDate, eDate).pad(2)}T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
           "endDate": `2019-06-${Math.max(sDate, eDate).pad(2)}T00:00:00.000Z`,
         })
       }
