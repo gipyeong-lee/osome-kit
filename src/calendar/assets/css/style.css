@@ -21,7 +21,7 @@
     position: relative;
     z-index:11;
     display:block;
-    cursor: move;
+    cursor: pointer;
 }
 .osome-cal-grid-week-schedule .event-block .title {
     display: block;

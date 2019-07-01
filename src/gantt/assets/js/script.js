@@ -395,7 +395,8 @@ var OsomeGantt = {
         else if (type === 'today') {
             tile.style.textAlign = 'center'
             const todayTile =  document.createElement('span')
-            const height = options.style.row.height * 0.75
+            const height = options.style.row.height * 0.5
+            todayTile.style.fontSize = `${height * 0.5}px`
             todayTile.style.width = `${height}px`
             todayTile.style.height = `${height}px`
             todayTile.style.lineHeight = `${height}px`
