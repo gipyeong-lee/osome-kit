@@ -112,6 +112,8 @@ const utils = {
         let firstTileDate = firstTile.getAttribute('date').toNumber()
         let firstTileMonth = firstTile.getAttribute('month').toNumber()
         let firstTileYear = firstTile.getAttribute('year').toNumber()
+        let monthEndDate = new Date(`${currentYear}-${(indexOfCurrentMonth + 1).pad(2)}-${endOfMonthDate}`)
+        let endOfMonthDay = monthEndDate.getDay()
 
         let startYear = _startDate.getFullYear()
         let endYear = _endDate.getFullYear()
@@ -120,16 +122,26 @@ const utils = {
         let startDate = _startDate.getDate()
         let endDate = _endDate.getDate()
 
+        let lastTileYear = currentYear
+        let lastTileMonth = indexOfCurrentMonth + 2
+        let lastTileDate = 6 - endOfMonthDay
+        if (lastTileMonth > 12) {
+            lastTileYear += 1
+            lastTileMonth -= 12
+        }
+
         let firstTileValue = firstTileYear * 10000 + firstTileMonth * 100 + firstTileDate
+        let lastTileValue = lastTileYear * 10000 + lastTileMonth * 100 + lastTileDate
         let startDateValue = startYear * 10000 + startMonth * 100 + startDate
         let endDateValue = endYear * 10000 + endMonth * 100 + endDate
-        let startTileValue = currentYear * 10000 + (indexOfCurrentMonth + 1) * 100 + 1
-        let endTileValue = currentYear * 10000 + (indexOfCurrentMonth + 1) * 100 + endOfMonthDate
+        let startMonthValue = currentYear * 10000 + (indexOfCurrentMonth + 1) * 100 + 1
+        let endMonthValue = currentYear * 10000 + (indexOfCurrentMonth + 1) * 100 + endOfMonthDate
 
         let startNum = startOfDay + startDate - 1
         let endNum = Math.min(Number(startOfDay) + endDate - 1, eNum)
+        const saturday = 6
 
-        if (startDateValue > endTileValue) {
+        if (startDateValue > lastTileValue) {
             return
         }
         if (endDateValue < firstTileValue) {
@@ -138,15 +150,25 @@ const utils = {
         if (startDateValue <= firstTileValue) {
             startNum = 0
         }
-        if (endDateValue >= endTileValue) {
+        if (endDateValue >= lastTileValue) {
             endNum = eNum
         }
-        if (startDateValue > firstTileValue && startDateValue < startTileValue) {
+        // prevMonth
+        if (startDateValue > firstTileValue && startDateValue < startMonthValue) {
             startNum = _startDate.getDay()
         }
-        if (endDateValue > firstTileValue && endDateValue < startTileValue) {
+        if (endDateValue > firstTileValue && endDateValue < startMonthValue) {
             endNum = _endDate.getDay()
         }
+
+        // nextMonth
+        if (startDateValue > endMonthValue && startDateValue < lastTileValue) {
+            startNum = startOfDay + endOfMonthDate + startDate - 1
+        }
+        if (endDateValue > endMonthValue && endDateValue < lastTileValue) {
+            endNum = startOfDay + endOfMonthDate + endDate - 1
+        }
+        
         return { startNum: startNum, endNum: endNum }
     }
 }

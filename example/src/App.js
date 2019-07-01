@@ -79,8 +79,7 @@ export default class App extends Component {
 
       for (let i = 0; i < randomLength; i++) {
         const sDate = Math.round((Math.random() * 25)) + 1
-        const eDate = Math.round((Math.random() * 28)) + 1
-      
+        const eDate = Math.round((Math.random() * 26)) + 1
 
         events.push({
           order: content.order,
@@ -91,8 +90,8 @@ export default class App extends Component {
             "color": "#fff",
             "backgroundColor": content.style.color
           },
-          "startDate": `2019-05-${Math.min(sDate, eDate).pad(2)}T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
-          "endDate": `2019-06-${Math.max(sDate, eDate).pad(2)}T00:00:00.000Z`,
+          "startDate": `2019-06-${Math.min(sDate, eDate).pad(2)}T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
+          "endDate": `2019-07-${Math.max(sDate, eDate).pad(2)}T00:00:00.000Z`,
         })
       }
       categories[j].events = events
