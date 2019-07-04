@@ -174,7 +174,7 @@ var OsomeCalendar = {
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
         _eventText.innerText = eventOption.title
-        _eventText.style.marginLeft = "5px"
+        _eventText.style.paddingLeft = "5px"
         _eventText.setAttribute('order', eventOption.order)
         _eventText.setAttribute('index', eventOption.index)
         _eventBlock.append(_eventText)
