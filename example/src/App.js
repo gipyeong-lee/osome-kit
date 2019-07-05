@@ -22,11 +22,11 @@ export default class App extends Component {
           backgroundColor: 'blue',
           numberColor: 'white',
           titleColor: 'red',
-          textAlign:'center'
+          textAlign: 'center'
         }
       },
       year: new Date().getFullYear(),
-      month: new Date().getMonth()
+      month: 12//new Date().getMonth()
     },
     categories: [],
     events: []
@@ -90,8 +90,8 @@ export default class App extends Component {
             "color": "#fff",
             "backgroundColor": content.style.color
           },
-          "startDate": `2019-06-${Math.min(sDate, eDate).pad(2)}T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
-          "endDate": `2019-07-${Math.max(sDate, eDate).pad(2)}T00:00:00.000Z`,
+          "startDate": `2019-12-20T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
+          "endDate": `2020-01-12T00:00:00.000Z`,
         })
       }
       categories[j].events = events
@@ -103,7 +103,7 @@ export default class App extends Component {
   }
   render() {
 
-    return (<div style={{ width: '100%' }}>
+    return (<div style={{ width: '100%', height: '100%' }}>
       <div style={{ padding: '10px', overflow: 'auto' }}>
         <div style={{ width: '40px', height: '40px', textAlign: 'center', lineHeight: '40px', display: 'inline-block', cursor: 'pointer', userSelect: 'none' }} onClick={() => {
           const prevMonth = Math.max(Number(this.state.options.month) - 1, 1)
@@ -134,6 +134,7 @@ export default class App extends Component {
           }}
         /> :
           <OSCalendar ref={this.osCalendar}
+            style={{ paddingRight: 0, paddingLeft: 0, width: '100%', height: '100%', overflowY: 'auto',position:'relative' }}
             options={this.state.options}
             categories={this.state.categories}
             onClickSchedule={this.onClickSchedule}
