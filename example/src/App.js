@@ -55,7 +55,7 @@ export default class App extends Component {
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const categories = []
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 30; i++) {
 
       categories.push({
         content: {
@@ -134,7 +134,7 @@ export default class App extends Component {
           }}
         /> :
           <OSCalendar ref={this.osCalendar}
-            style={{ paddingRight: 0, paddingLeft: 0, width: '100%', height: '100%', overflowY: 'auto',position:'relative' }}
+            style={{ paddingRight: 0, paddingLeft: 0, width: '100%', height: '100%', overflowY: 'auto', position:'relative' }}
             options={this.state.options}
             categories={this.state.categories}
             onClickSchedule={this.onClickSchedule}
