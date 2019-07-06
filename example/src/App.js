@@ -34,6 +34,7 @@ export default class App extends Component {
   randomColor = () => {
     return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
   }
+  
   onClickSchedule = (target, category, event) => {
     console.log(category, event)
   }
@@ -122,8 +123,15 @@ export default class App extends Component {
           this.setState(update(this.state, { calendarType: { $set: 'calendar' } }))
         }}>Calendar</div>
       </div>
-      <div style={{ width: '100%', height: '100%' }}>
-        {this.state.calendarType === 'gantt' ? <OSGantt style={{ display: 'inline-block', width: '100%', height: '100%' }} ref={this.osGantt} categories={this.state.categories} options={this.state.options}
+      <div class={'no-scroll'} style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        width: '100%',
+                        height: '100%',
+                        overflowY: 'auto',
+                        position: 'absolute'
+                      }}>
+        {this.state.calendarType === 'gantt' ? <OSGantt style={{width: '100%', padding: '0'}} ref={this.osGantt} categories={this.state.categories} options={this.state.options}
           onChangedSchedule={this.onChangedSchedule}
           onChangedCategory={this.onChangedCategory}
           onClickSchedule={this.onClickSchedule}
@@ -134,7 +142,7 @@ export default class App extends Component {
           }}
         /> :
           <OSCalendar ref={this.osCalendar}
-            style={{ paddingRight: 0, paddingLeft: 0, width: '100%', height: '100%', overflowY: 'auto', position:'relative' }}
+            style={{width: '100%', padding: '0'}}
             options={this.state.options}
             categories={this.state.categories}
             onClickSchedule={this.onClickSchedule}

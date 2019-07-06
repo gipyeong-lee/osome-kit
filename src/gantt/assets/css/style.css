@@ -9,8 +9,11 @@ body {
 .osome-gantt-grid-container {
     position: absolute;
     width:100%;
+    padding:0;
 }
-
+::-webkit-scrollbar { 
+    display: none; 
+}
 .osome-gantt-grid-inner-container {
     position: absolute;
     background-color:#dfe4ea;

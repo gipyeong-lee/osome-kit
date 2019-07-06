@@ -86,7 +86,18 @@ var OsomeGantt = {
             result[key] = value
         }
     },
-
+    blur: function (e, self) {
+        const focus = { ...self.focus }
+        if (!focus || !focus.start) {
+            return
+        }
+        focus.current.classList.remove('dragOverUp')
+        focus.current.classList.remove('dragOverDown')
+        focus.start.classList.remove('dragOver')
+        self.clearFocus()
+        self.draggingCategoryEnd(self)
+        return
+    },
     init: function (id = 'osome-gantt', opt = {}, categories = []) {
         let self = this
         self.iteral(undefined, opt, this.options)
@@ -99,6 +110,9 @@ var OsomeGantt = {
         self.renderEventBlocks(_options)
         self.attachGridEvent(_ganttGrid)
 
+        document.onmouseup = function (e) {
+            self.blur(e, self)
+        }
         // self.createEvents(_options)
     },
     randomColor: function () {
@@ -447,7 +461,16 @@ var OsomeGantt = {
         let container = document.createElement('div')
         container.className = 'osome-gantt-grid-container'
         self.container = container
-
+        
+        let headerContainer = document.createElement('div')
+        headerContainer.id = `osome-gantt-grid-header-container`
+        headerContainer.style.position = 'fixed'
+        headerContainer.style.width = 'inherit'
+        headerContainer.style.backgroundColor = 'white'
+        headerContainer.style.height = `${rowHeight}px`
+        headerContainer.style.zIndex = 20
+        headerContainer.style.borderBottom = '1px solid lightGray'
+        container.append(headerContainer)
 
         let leftContainer = document.createElement('div')
         leftContainer.id = `osome-gantt-grid-left-container`
@@ -471,8 +494,8 @@ var OsomeGantt = {
         rightContainer.style.left = `${self.options.style.container.leftWidth}`
 
         container.appendChild(leftContainer)
-
         container.appendChild(rightContainer)
+
         calendarGrid.appendChild(container)
 
         // 0. create header
@@ -481,7 +504,11 @@ var OsomeGantt = {
 
         leftContainer.appendChild(self.createRow('left', 'head-left', options.style.row))
         const daysRow = self.createRow('day', 'head-right', options.style.row)
-        rightContainer.appendChild(daysRow)
+        daysRow.id = `osome-gantt-header-day-row`
+        daysRow.style.left =  `${self.options.style.container.leftWidth}`
+        daysRow.style.width = `${rightWidthPercentage}%`
+        daysRow.style.borderBottom = 'none'
+        headerContainer.appendChild(daysRow)
 
         self.focus.last = endOfMonthDate
         // Sunday is 0, Monday is 1
@@ -601,7 +628,6 @@ var OsomeGantt = {
         if (_targetTag.getAttribute('number') === null) {
 
             if (_startTag.getAttribute('number') === _targetTag.getAttribute('number')) {
-                console.log('click!')
                 self.onClickSchedule(_targetTag, self.categories[_row], self.focus.event, e)
             }
             return
@@ -825,7 +851,6 @@ var OsomeGantt = {
     },
     attachGridEvent: function (calendarGrid) {
         let self = this
-
         calendarGrid.onmousedown = function (e) {
 
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
@@ -884,7 +909,6 @@ var OsomeGantt = {
         }
         calendarGrid.onmouseup = function (e) {
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
-
             if (self.focus.type === 'create') {
                 if (!self.isRightTile(targetTag)) {
                     const _row = targetTag.getAttribute('row')
@@ -915,7 +939,6 @@ var OsomeGantt = {
             else if (self.focus.type === 'reorder') {
                 self.attachDragAndDropCategory.onMouseUp(self, targetTag, e)
             }
-
             self.clearFocus()
         }
     },
@@ -1017,9 +1040,10 @@ var OsomeGantt = {
         const bounding = self.container.getBoundingClientRect()
         const containerWidth = bounding.width
         const leftWidth = _leftWidth - bounding.x
+        const dayHeaderId = 'osome-gantt-header-day-row'
         const leftContainerId = 'osome-gantt-grid-left-container'
         const rightContainerId = 'osome-gantt-grid-right-container'
-
+        const dayHeaderContainer = document.getElementById(dayHeaderId)
         const leftContainer = document.getElementById(leftContainerId)
         const rightContainer = document.getElementById(rightContainerId)
         const rightWidth = containerWidth - leftWidth
@@ -1030,6 +1054,8 @@ var OsomeGantt = {
         leftContainer.style.width = `${leftWidthPercent}%`
         rightContainer.style.left = `${leftWidthPercent}%`
         rightContainer.style.width = `${rightWidth / containerWidth * 100}%`
+        dayHeaderContainer.style.left = rightContainer.style.left 
+        dayHeaderContainer.style.width =  rightContainer.style.width 
         self.options.style.container.leftWidth = `${leftWidthPercent}%`
         self.onChangeContainer(leftContainer.style.width, rightContainer.style.width)
     },

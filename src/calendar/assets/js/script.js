@@ -548,9 +548,11 @@ var OsomeCalendar = {
         let _divDays = document.createElement("div");
         _divDays.id = 'osome-cal-days'
         _divDays.style.width = `100%`
-        _divDays.style.backgroundColor = 'rgba(242,242,242,0.3)'
-        _divDays.style.borderTop = 'solid 1px lightgray'
-        _divDays.style.borderBottom = 'solid 1px lightgray'
+        _divDays.style.position = 'fixed'
+        _divDays.style.backgroundColor = 'rgba(242,242,242,1)'
+        _divDays.style.opacity = 1
+        _divDays.style.zIndex = 20
+
         let _country = options.country
         let days = options.days[_country]
         let offsetX = 0
@@ -573,7 +575,7 @@ var OsomeCalendar = {
             offsetX += width
         })
         _grid.append(_divDays)
-
+       
         const targetDate = new Date(options.year, options.month - 1, 1)
 
         const prevMonthObj = targetDate.getPrevMonth()
@@ -605,6 +607,9 @@ var OsomeCalendar = {
             row.style.position = 'relative'
             row.style.width = `100%`
             row.style.minHeight = `${self.options.style.row.minHeight}px`
+            if(i===0){
+                row.style.marginTop = '32px'
+            }
             row.setAttribute('week', i)
             row.className = "osome-cal-grid-week"
             offsetX = 0
