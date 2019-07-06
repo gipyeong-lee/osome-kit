@@ -12,7 +12,7 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 
 export default class App extends Component {
   state = {
-    calendarType: 'calendar',
+    calendarType: 'gantt',
     options: {
       style: {
         cellHeader: {
@@ -128,7 +128,6 @@ export default class App extends Component {
                         paddingLeft: 0,
                         width: '100%',
                         height: '100%',
-                        overflowY: 'auto',
                         position: 'absolute'
                       }}>
         {this.state.calendarType === 'gantt' ? <OSGantt style={{width: '100%', padding: '0'}} ref={this.osGantt} categories={this.state.categories} options={this.state.options}

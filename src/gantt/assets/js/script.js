@@ -464,13 +464,13 @@ var OsomeGantt = {
         
         let headerContainer = document.createElement('div')
         headerContainer.id = `osome-gantt-grid-header-container`
-        headerContainer.style.position = 'fixed'
+        headerContainer.style.position = 'absolute'
         headerContainer.style.width = 'inherit'
         headerContainer.style.backgroundColor = 'white'
         headerContainer.style.height = `${rowHeight}px`
         headerContainer.style.zIndex = 20
         headerContainer.style.borderBottom = '1px solid lightGray'
-        container.append(headerContainer)
+        calendarGrid.append(headerContainer)
 
         let leftContainer = document.createElement('div')
         leftContainer.id = `osome-gantt-grid-left-container`
@@ -505,6 +505,7 @@ var OsomeGantt = {
         leftContainer.appendChild(self.createRow('left', 'head-left', options.style.row))
         const daysRow = self.createRow('day', 'head-right', options.style.row)
         daysRow.id = `osome-gantt-header-day-row`
+        daysRow.style.position = 'absolute'
         daysRow.style.left =  `${self.options.style.container.leftWidth}`
         daysRow.style.width = `${rightWidthPercentage}%`
         daysRow.style.borderBottom = 'none'

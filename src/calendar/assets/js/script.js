@@ -404,7 +404,7 @@ var OsomeCalendar = {
                 if (num === undefined) {
                     return
                 }
-                
+
                 let startTile = document.getElementById(`${tilePrefix}${num.startNum}`)
                 let endTile = document.getElementById(`${tilePrefix}${num.endNum}`)
 
@@ -538,20 +538,27 @@ var OsomeCalendar = {
     createGrid: function (calendarGrid, options) {
         let self = this
         let width = 100 / 7
+        let _wrapper = document.createElement('div')
         let _grid = document.createElement('div')
         _grid.id = 'osome-cal-grid'
         _grid.style.width = `100%`
         _grid.style.position = `absolute`
-        // _grid.style.height = `100%`
-        // _grid.style.overflow = `auto`
+        _grid.style.height = `100%`
+        _grid.style.overflow = `auto`
         // _grid.className = 'ui equal width celled grid'
-        let _divDays = document.createElement("div");
-        _divDays.id = 'osome-cal-days'
-        _divDays.style.width = `100%`
-        _divDays.style.position = 'fixed'
-        _divDays.style.backgroundColor = 'rgba(242,242,242,1)'
-        _divDays.style.opacity = 1
-        _divDays.style.zIndex = 20
+        let _gridHeader = document.createElement("div");
+        let _header = document.createElement("div");
+
+        _header.id = 'osome-cal-days'
+        _gridHeader.style.width = `100%`
+        _gridHeader.style.position = 'absolute'
+        _gridHeader.style.backgroundColor = 'white'
+        _gridHeader.style.zIndex = 20
+
+        _header.style.width = '100%'
+        _header.style.position = 'absolute'
+        _header.style.backgroundColor = 'rgba(242,242,242,0.2)'
+
 
         let _country = options.country
         let days = options.days[_country]
@@ -563,6 +570,8 @@ var OsomeCalendar = {
             _dayDiv.style.display = 'inline-block'
             _dayDiv.style.width = `${width}%`
             _dayDiv.style.left = `${offsetX}%`
+            _dayDiv.style.zIndex = 2
+            _dayDiv.style.borderRight = '1px solid lightGray'
             _dayDiv.style.textAlign = options.style.cellHeader && options.style.cellHeader.textAlign || 'center'
             if (idx === 0) {
                 _dayDiv.className += " text-red"
@@ -571,11 +580,14 @@ var OsomeCalendar = {
                 _dayDiv.className += " text-blue"
             }
             _dayDiv.innerHTML = day
-            _divDays.append(_dayDiv)
+            _header.append(_dayDiv)
             offsetX += width
         })
-        _grid.append(_divDays)
-       
+        _gridHeader.append(_header)
+        _gridHeader.style.height = '32px'
+        _gridHeader.style.borderBottom = '1px solid lightGray'
+        calendarGrid.append(_gridHeader)
+
         const targetDate = new Date(options.year, options.month - 1, 1)
 
         const prevMonthObj = targetDate.getPrevMonth()
@@ -607,9 +619,6 @@ var OsomeCalendar = {
             row.style.position = 'relative'
             row.style.width = `100%`
             row.style.minHeight = `${self.options.style.row.minHeight}px`
-            if(i===0){
-                row.style.marginTop = '32px'
-            }
             row.setAttribute('week', i)
             row.className = "osome-cal-grid-week"
             offsetX = 0
