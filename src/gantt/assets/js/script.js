@@ -41,6 +41,7 @@ var OsomeGantt = {
     options: {
         type: 'row',
         fixed: false,
+        disabled: false,
         style: {
             container: {
                 leftWidth: '30%'
@@ -233,7 +234,11 @@ var OsomeGantt = {
         const _eventBlock = self.createBlock(row, _startNum, _endNum, _event)
 
         const _eventHandler = self.createHandler(row, _startNum, _endNum, _event)
-        _eventBlock.append(_eventHandler)
+        
+        if(!self.options.disabled){
+            _eventBlock.append(_eventHandler)
+        }
+
 
         const left = startTile.style.left
         let size = _endNum - _startNum + 1
@@ -279,7 +284,10 @@ var OsomeGantt = {
         const _rowEl = document.getElementById(rowTileId)
         const _eventBlock = self.createBlock(row, _startNum, _endNum, _event)
         const _eventHandler = self.createHandler(row, _startNum, _endNum, _event)
-        _eventBlock.append(_eventHandler)
+
+        if(!self.options.disabled){
+            _eventBlock.append(_eventHandler)
+        }
 
         const left = startTile.style.left
         let size = _endNum - _startNum + 1
@@ -461,7 +469,7 @@ var OsomeGantt = {
         let container = document.createElement('div')
         container.className = 'osome-gantt-grid-container'
         self.container = container
-        
+
         let headerContainer = document.createElement('div')
         headerContainer.id = `osome-gantt-grid-header-container`
         headerContainer.style.position = 'absolute'
@@ -507,7 +515,7 @@ var OsomeGantt = {
         const daysRow = self.createRow('day', 'head-right', options.style.row)
         daysRow.id = `osome-gantt-header-day-row`
         daysRow.style.position = 'absolute'
-        daysRow.style.left =  `${self.options.style.container.leftWidth}`
+        daysRow.style.left = `${self.options.style.container.leftWidth}`
         daysRow.style.width = `${rightWidthPercentage}%`
         daysRow.style.borderBottom = 'none'
         headerContainer.appendChild(daysRow)
@@ -854,7 +862,9 @@ var OsomeGantt = {
     attachGridEvent: function (calendarGrid) {
         let self = this
         calendarGrid.onmousedown = function (e) {
-
+            if(self.options.disabled === true){
+                return
+            }
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
             if (e.which === 3) {
                 if (self.isCategoryRow(targetTag)) {
@@ -883,6 +893,9 @@ var OsomeGantt = {
             }
         }
         calendarGrid.onmousemove = function (e) {
+            if(self.options.disabled === true){
+                return
+            }
             if (self.focus.type === undefined) {
                 return
             }
@@ -910,7 +923,12 @@ var OsomeGantt = {
 
         }
         calendarGrid.onmouseup = function (e) {
+            if(self.options.disabled === true){
+                return
+            }
+
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
+        
             if (self.focus.type === 'create') {
                 if (!self.isRightTile(targetTag)) {
                     const _row = targetTag.getAttribute('row')
@@ -1056,8 +1074,8 @@ var OsomeGantt = {
         leftContainer.style.width = `${leftWidthPercent}%`
         rightContainer.style.left = `${leftWidthPercent}%`
         rightContainer.style.width = `${rightWidth / containerWidth * 100}%`
-        dayHeaderContainer.style.left = rightContainer.style.left 
-        dayHeaderContainer.style.width =  rightContainer.style.width 
+        dayHeaderContainer.style.left = rightContainer.style.left
+        dayHeaderContainer.style.width = rightContainer.style.width
         self.options.style.container.leftWidth = `${leftWidthPercent}%`
         self.onChangeContainer(leftContainer.style.width, rightContainer.style.width)
     },
