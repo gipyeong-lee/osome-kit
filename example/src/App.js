@@ -12,7 +12,7 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 
 export default class App extends Component {
   state = {
-    calendarType: 'gantt',
+    calendarType: 'calendar',
     options: {
       style: {
         cellHeader: {

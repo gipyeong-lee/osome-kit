@@ -541,24 +541,22 @@ var OsomeCalendar = {
         let _wrapper = document.createElement('div')
         let _grid = document.createElement('div')
         _grid.id = 'osome-cal-grid'
-        _grid.style.width = `100%`
-        _grid.style.position = `absolute`
-        _grid.style.height = `100%`
-        _grid.style.overflow = `auto`
+        _grid.className = 'osome-cal-grid'
+        
         // _grid.className = 'ui equal width celled grid'
         let _gridHeader = document.createElement("div");
         let _header = document.createElement("div");
 
         _header.id = 'osome-cal-days'
         _gridHeader.style.width = `100%`
-        _gridHeader.style.position = 'absolute'
+        _gridHeader.style.position = 'relative'
         _gridHeader.style.backgroundColor = 'white'
         _gridHeader.style.zIndex = 20
 
         _header.style.width = '100%'
         _header.style.position = 'absolute'
         _header.style.backgroundColor = 'rgba(242,242,242,0.2)'
-
+        _header.style.boxSizing = 'border-box'
 
         let _country = options.country
         let days = options.days[_country]
@@ -572,6 +570,7 @@ var OsomeCalendar = {
             _dayDiv.style.left = `${offsetX}%`
             _dayDiv.style.zIndex = 2
             _dayDiv.style.borderRight = '1px solid lightGray'
+            _dayDiv.style.boxSizing = 'border-box'
             _dayDiv.style.textAlign = options.style.cellHeader && options.style.cellHeader.textAlign || 'center'
             if (idx === 0) {
                 _dayDiv.className += " text-red"

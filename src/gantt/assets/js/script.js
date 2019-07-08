@@ -502,7 +502,8 @@ var OsomeGantt = {
 
 
 
-        leftContainer.appendChild(self.createRow('left', 'head-left', options.style.row))
+        // leftContainer.appendChild(self.createRow('left', 'head-left', options.style.row))
+
         const daysRow = self.createRow('day', 'head-right', options.style.row)
         daysRow.id = `osome-gantt-header-day-row`
         daysRow.style.position = 'absolute'
