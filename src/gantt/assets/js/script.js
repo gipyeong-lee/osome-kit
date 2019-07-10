@@ -838,7 +838,7 @@ var OsomeGantt = {
         }
     },
     isRightTile(targetTag) {
-        return targetTag.classList.contains('tile')
+        return targetTag.classList.contains('back-tile')
     },
     isHandler(targetTag) {
         return targetTag.classList.contains('handler-y')
