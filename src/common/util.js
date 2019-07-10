@@ -84,7 +84,7 @@ const utils = {
         let startDate = _startDate.getDate()
         let endDate = _endDate.getDate()
         let startNum = 1
-        let endNum = eNum
+        let endNum = endDate
 
         let firstTileValue = firstTileYear * 10000 + firstTileMonth * 100 + firstTileDate
         let startDateValue = startYear * 10000 + startMonth * 100 + startDate
@@ -96,6 +96,9 @@ const utils = {
         }
         if (endDateValue < firstTileValue) {
             return
+        }
+        if (endDateValue > endTileValue) {
+            endNum = eNum
         }
         if (startDateValue > firstTileValue && startDateValue < endTileValue) {
             startNum = startDate
@@ -168,7 +171,7 @@ const utils = {
         if (endDateValue > endMonthValue && endDateValue < lastTileValue) {
             endNum = startOfDay + endOfMonthDate + endDate - 1
         }
-        
+
         return { startNum: startNum, endNum: endNum }
     }
 }

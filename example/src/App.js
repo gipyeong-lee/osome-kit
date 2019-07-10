@@ -56,7 +56,7 @@ export default class App extends Component {
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const categories = []
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 1; i++) {
 
       categories.push({
         content: {
