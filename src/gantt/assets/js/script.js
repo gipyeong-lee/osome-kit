@@ -674,6 +674,33 @@ var OsomeGantt = {
             status: undefined
         }
     },
+    syncResizeEvent(order, index, startNum, endNum, total) {
+        const self = this
+        const tilePrefix = 'back-tile-'
+        const date = utils.convertGanttNumberToDate(startNum, endNum, self.options.endOfMonthDate)
+
+        let event = JSON.parse(JSON.stringify(self.categories[order].events[index]))
+
+    
+        let endTile = document.getElementById(`${tilePrefix}${order}-${(date.endNum - 1)}`)
+
+        const eYear = endTile.getAttribute('year').toNumber()
+        const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
+        const eDate = date.endNum
+
+        event.endNum = endNum
+        event.total = total
+
+        const originEndDate = new Date(event.endDate)
+
+        const nextEndDate = new Date(eYear, eMonth, eDate)
+        nextEndDate.setHours(originEndDate.getHours())
+        nextEndDate.setMinutes(originEndDate.getMinutes())
+
+        event.endDate = nextEndDate
+
+        return event
+    },
     syncEvent(order, index, startNum, endNum, total) {
         const self = this
         const tilePrefix = 'back-tile-'
@@ -986,7 +1013,7 @@ var OsomeGantt = {
         eventBlock.style.width = `${_percentOfWidth}%`
         eventBlock.style.height = `${width}px`
         // self.increaseEventTotal(_row, _index, _startNum, _endNum, _size)
-        self.categories[_row].events[_index] = self.syncEvent(_row, _index, _startNum, _endNum, _size)
+        self.categories[_row].events[_index] = self.syncResizeEvent(_row, _index, _startNum, _endNum, _size)
         self.syncHandler(_index, toTile.getAttribute('number'))
     },
 

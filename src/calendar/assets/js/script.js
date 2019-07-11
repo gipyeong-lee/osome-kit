@@ -860,6 +860,26 @@ var OsomeCalendar = {
         const event = parent.syncEvent(order, index, startNum, endNum)
         return event
     },
+    syncResizeEvent(order, index, startNum, endNum) {
+        const self = this
+        const tilePrefix = 'osome-cal-grid-day-tile-'
+        let event = JSON.parse(JSON.stringify(self.categories[order].events[index]))
+
+        let endTile = document.getElementById(`${tilePrefix}${endNum}`)
+        
+        const eYear = endTile.getAttribute('year').toNumber()
+        const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
+        const eDate = endTile.getAttribute('date').toNumber()
+        
+        const originEndDate = new Date(event.endDate)
+
+        const nextEndDate = new Date(eYear, eMonth, eDate)
+        nextEndDate.setHours(originEndDate.getHours())
+        nextEndDate.setMinutes(originEndDate.getMinutes())
+
+        event.endDate = nextEndDate
+        return event
+    },
     syncEvent(order, index, startNum, endNum) {
         const self = this
         const tilePrefix = 'osome-cal-grid-day-tile-'
@@ -1137,7 +1157,7 @@ var OsomeCalendar = {
                 }
                 const startNum = eventBlock.getAttribute('startNum').toNumber()
                 if (startNum <= currentNumber) {
-                    self.categories[_order].events[_index] = self.syncEvent(_order, _index, _startNum, currentNumber)
+                    self.categories[_order].events[_index] = self.syncResizeEvent(_order, _index, _startNum, currentNumber)
                     self.resizeEventBlock(eventBlock, targetTag)
                 }
             }
