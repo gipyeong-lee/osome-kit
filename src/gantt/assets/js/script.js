@@ -477,7 +477,7 @@ var OsomeGantt = {
         // 0. create container
         let container = document.createElement('div')
         container.className = 'osome-gantt-grid-container'
-        container.style.top = `${rowHeight}px`
+        container.style.marginTop = `${rowHeight}px`
         self.container = container
 
         let headerContainer = document.createElement('div')
