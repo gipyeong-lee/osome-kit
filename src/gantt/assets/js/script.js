@@ -248,9 +248,14 @@ var OsomeGantt = {
         _eventBlock.style.left = left
         _eventBlock.style.width = `${width}%`
 
+        const startDate = new Date(eventOption.startDate)
+        const endDate = new Date(eventOption.endDate)
+        
+
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
-        _eventText.innerText = eventOption.title
+        _eventText.innerText = `${eventOption.title} (${startDate.midasFormat()} ~ ${endDate.midasFormat()})`
+
         _eventText.style.marginLeft = '10px'
         _eventText.style.display = 'block'
         _eventText.style.textOverflow = "ellipsis";
@@ -297,9 +302,13 @@ var OsomeGantt = {
         _eventBlock.style.left = left
         _eventBlock.style.width = `${width}%`
 
+        const startDate = new Date(eventOption.startDate)
+        const endDate = new Date(eventOption.endDate)
+        
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
-        _eventText.innerText = eventOption.title
+        _eventText.innerText = `${eventOption.title} (${startDate.midasFormat()} ~ ${endDate.midasFormat()})`
+
         _eventText.style.color = 'white'
         _eventText.setAttribute('order', eventOption.order)
         _eventText.setAttribute('index', eventOption.index)
@@ -344,7 +353,7 @@ var OsomeGantt = {
         rowContainer.style.height = `${style.height}px`
         rowContainer.style.top = `0px`
         if (!isNaN(row)) {
-            rowContainer.style.top = `${(row + 1) * (height + 0.4)}px`
+            rowContainer.style.top = `${(row) * (height + 0.4)}px`
         }
         rowContainer.setAttribute(`row`, row)
         rowContainer.setAttribute(`type`, type)
@@ -468,6 +477,7 @@ var OsomeGantt = {
         // 0. create container
         let container = document.createElement('div')
         container.className = 'osome-gantt-grid-container'
+        container.style.top = `${rowHeight}px`
         self.container = container
 
         let headerContainer = document.createElement('div')
@@ -492,7 +502,7 @@ var OsomeGantt = {
         handleBar.className = 'osome-gantt-grid-handle-bar'
         handleBar.style.right = 0
         handleBar.style.width = `${handleBarWidth}px`
-        handleBar.style.top = `${rowHeight}px`
+        handleBar.style.top = `0px`
 
 
         let rightContainer = document.createElement('div')

@@ -62,6 +62,19 @@ Date.prototype.endOfDay = function () {
     return copyMonth.getDay()
 }
 
+
+Date.prototype.midasFormat = function (){
+    let month = this.getMonth() + 1
+    let date = this.getDate()
+    let hours = this.getHours()
+    let minutes = this.getMinutes()
+    month = month < 10 ? "0" + month : month; 
+    date  = date < 10 ? "0" + date : date;
+    hours = hours < 10 ? "0" + hours : hours;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    return `${month}/${date} ${hours}:${minutes}`
+}
+
 const utils = {
     convertGanttNumberToDate: (startNumber, endNumber, eNum) => {
         let startNum = Math.max(startNumber + 1, 1)
@@ -100,7 +113,7 @@ const utils = {
         if (endDateValue > endTileValue) {
             endNum = eNum
         }
-        if (startDateValue > firstTileValue && startDateValue < endTileValue) {
+        if (startDateValue > firstTileValue && startDateValue <= endTileValue) {
             startNum = startDate
         }
         if (endDateValue > firstTileValue && endDateValue < endTileValue) {

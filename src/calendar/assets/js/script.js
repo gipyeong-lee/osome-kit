@@ -171,9 +171,14 @@ var OsomeCalendar = {
         _eventBlock.setAttribute('endDayNum', 6)
         _eventBlock.style.height = `${eventOption.style.height || 20}px`
         _eventBlock.style.marginBottom = `${eventOption.style.marginBottom || 2}px`
+        
+        
+        const startDate = new Date(eventOption.startDate)
+        const endDate = new Date(eventOption.endDate)
+        
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
-        _eventText.innerText = eventOption.title
+        _eventText.innerText = `${eventOption.title} (${startDate.midasFormat()} ~ ${endDate.midasFormat()})`
         _eventText.style.paddingLeft = "5px"
         _eventText.setAttribute('order', eventOption.order)
         _eventText.setAttribute('index', eventOption.index)
