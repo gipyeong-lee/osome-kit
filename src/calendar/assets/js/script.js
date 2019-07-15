@@ -856,6 +856,12 @@ var OsomeCalendar = {
         })
         const endNum = Math.min(startNum + event.total.toNumber() - 1, parent.endNum - 1)
         const nextEvent = parent.moveSchedule(week, order, index, startNum, endNum, parent)
+
+        const startDate = new Date(nextEvent.startDate)
+        beforeEvent.startDate = new Date(beforeEvent.startDate)
+        beforeEvent.endDate = new Date(beforeEvent.endDate)
+        nextEvent.endDate = startDate.addDays(beforeEvent.total - 1)
+
         parent.onChangedSchedule(order, beforeEvent, nextEvent)
 
     },

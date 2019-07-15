@@ -61,6 +61,15 @@ Date.prototype.endOfDay = function () {
     copyMonth.setDate(0)
     return copyMonth.getDay()
 }
+Date.prototype.addDays = function (n){
+    var result = new Date();
+    result.setFullYear(this.getFullYear())
+    result.setMonth(this.getMonth())
+    result.setHours(this.getHours())
+    result.setMinutes(this.getMinutes())
+    result.setDate(this.getDate()+n)
+    return result;
+}
 
 
 Date.prototype.midasFormat = function (){

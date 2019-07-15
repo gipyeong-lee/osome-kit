@@ -234,8 +234,8 @@ var OsomeGantt = {
         const _eventBlock = self.createBlock(row, _startNum, _endNum, _event)
 
         const _eventHandler = self.createHandler(row, _startNum, _endNum, _event)
-        
-        if(!self.options.disabled){
+
+        if (!self.options.disabled) {
             _eventBlock.append(_eventHandler)
         }
 
@@ -247,10 +247,14 @@ var OsomeGantt = {
         _eventBlock.style.position = 'absolute'
         _eventBlock.style.left = left
         _eventBlock.style.width = `${width}%`
-
+        if (eventOption.style !== undefined) {
+            for (const [key, value] of Object.entries(eventOption.style)) {
+                _eventBlock.style[key] = value
+            }
+        }
         const startDate = new Date(eventOption.startDate)
         const endDate = new Date(eventOption.endDate)
-        
+
 
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
@@ -290,7 +294,7 @@ var OsomeGantt = {
         const _eventBlock = self.createBlock(row, _startNum, _endNum, _event)
         const _eventHandler = self.createHandler(row, _startNum, _endNum, _event)
 
-        if(!self.options.disabled){
+        if (!self.options.disabled) {
             _eventBlock.append(_eventHandler)
         }
 
@@ -301,10 +305,14 @@ var OsomeGantt = {
         _eventBlock.style.position = 'absolute'
         _eventBlock.style.left = left
         _eventBlock.style.width = `${width}%`
-
+        if (eventOption.style !== undefined) {
+            for (const [key, value] of Object.entries(eventOption.style)) {
+                _eventBlock.style[key] = value
+            }
+        }
         const startDate = new Date(eventOption.startDate)
         const endDate = new Date(eventOption.endDate)
-        
+
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
         _eventText.innerText = `${eventOption.title} (${startDate.midasFormat()} ~ ${endDate.midasFormat()})`
@@ -600,9 +608,11 @@ var OsomeGantt = {
         }
     },
     // Drag And Drop
-    changeAllEventBlockOpacity(row, opacity) {
+    changeAllEventBlockOpacity(row, opacity, exceptBlock) {
         const blocks = document.getElementsByClassName(`event-block-${row}`)
         for (let block of blocks) {
+            if (block === exceptBlock) continue
+
             block.style.opacity = opacity
             block.style.zIndex = opacity === 1 ? 11 : 9
         }
@@ -621,7 +631,7 @@ var OsomeGantt = {
     draggingStart(self, eventData) {
         const days = eventData.endNum - eventData.startNum
         self.dragging = {
-            event: eventData,
+            event: { ...eventData },
             row: eventData.row,
             index: eventData.index,
             startNum: eventData.startNum,
@@ -670,8 +680,14 @@ var OsomeGantt = {
         _eventBlock.style.left = `${_left}%`
         _eventBlock.setAttribute('startNum', _number)
         _eventBlock.style.width = `${_width}%`
-        self.categories[_row].events[_index].total = _total
+        /// need check real date
+
         self.eventEnd(_row)
+        const startDate = new Date(self.categories[_row].events[_index].startDate)
+        self.dragging.event.startDate = new Date(self.dragging.event.startDate)
+        self.dragging.event.endDate = new Date(self.dragging.event.endDate)
+        self.categories[_row].events[_index].endDate = startDate.addDays(total - 1)
+
         self.onChangedSchedule(self.dragging.row, self.dragging.event, self.categories[_row].events[_index])
 
         self.dragging = {
@@ -691,7 +707,7 @@ var OsomeGantt = {
 
         let event = JSON.parse(JSON.stringify(self.categories[order].events[index]))
 
-    
+
         let endTile = document.getElementById(`${tilePrefix}${order}-${(date.endNum - 1)}`)
 
         const eYear = endTile.getAttribute('year').toNumber()
@@ -899,7 +915,7 @@ var OsomeGantt = {
     attachGridEvent: function (calendarGrid) {
         let self = this
         calendarGrid.onmousedown = function (e) {
-            if(self.options.disabled === true){
+            if (self.options.disabled === true) {
                 return
             }
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
@@ -930,7 +946,7 @@ var OsomeGantt = {
             }
         }
         calendarGrid.onmousemove = function (e) {
-            if(self.options.disabled === true){
+            if (self.options.disabled === true) {
                 return
             }
             if (self.focus.type === undefined) {
@@ -960,12 +976,12 @@ var OsomeGantt = {
 
         }
         calendarGrid.onmouseup = function (e) {
-            if(self.options.disabled === true){
+            if (self.options.disabled === true) {
                 return
             }
 
             const targetTag = document.elementFromPoint(e.clientX, e.clientY)
-        
+
             if (self.focus.type === 'create') {
                 if (!self.isRightTile(targetTag)) {
                     const _row = targetTag.getAttribute('row')
@@ -1038,7 +1054,7 @@ var OsomeGantt = {
             handler.setAttribute('endNum', endNum)
         }
     },
-    eventMoveStart(row){
+    eventMoveStart(row) {
 
     },
     eventStart(row) {
@@ -1201,7 +1217,7 @@ var OsomeGantt = {
             self.focus.start = targetTag
             self.focus.current = targetTag
             self.onBlockDragStart(targetTag, self, e)
-            
+
             if (self.dragging.status === 0) {
                 const eventBlock = document.getElementById(`event-block-${self.dragging.row}-${self.dragging.index}`)
                 self.changeAllEventBlockOpacity(self.dragging.row, 0.2)
@@ -1227,7 +1243,7 @@ var OsomeGantt = {
             //
             if (self.dragging.status === 0) {
                 const eventBlock = document.getElementById(`event-block-${self.dragging.row}-${self.dragging.index}`)
-                self.changeAllEventBlockOpacity(self.dragging.row, 0.2)
+                self.changeAllEventBlockOpacity(self.dragging.row, 0.2, eventBlock)
                 eventBlock.style.opacity = 1
                 self.dragging.status = 1
             }
@@ -1311,6 +1327,11 @@ var OsomeGantt = {
         onMouseUp: function (self, targetTag) {
             const row = self.focus.event.order
             self.clearSelectedBlock(row)
+            console.log('resized', self.focus.event, self.categories[_row].events[self.focus.event.index])
+            const startDate = new Date(self.categories[_row].events[self.focus.event.index].startDate)
+            self.focus.event.startDate = new Date(self.focus.event.startDate)
+            self.focus.event.endDate = new Date(self.focus.event.endDate)
+            self.categories[_row].events[self.focus.event.index].endDate = startDate.addDays(total - 1)
             self.onChangedSchedule(row, self.focus.event, self.categories[row].events[self.focus.event.index])
             self.eventEnd(row)
 
