@@ -1038,6 +1038,9 @@ var OsomeGantt = {
             handler.setAttribute('endNum', endNum)
         }
     },
+    eventMoveStart(row){
+
+    },
     eventStart(row) {
         const self = this
         const elements = document.getElementsByClassName(`event-block-${row}`)
@@ -1198,6 +1201,13 @@ var OsomeGantt = {
             self.focus.start = targetTag
             self.focus.current = targetTag
             self.onBlockDragStart(targetTag, self, e)
+            
+            if (self.dragging.status === 0) {
+                const eventBlock = document.getElementById(`event-block-${self.dragging.row}-${self.dragging.index}`)
+                self.changeAllEventBlockOpacity(self.dragging.row, 0.2)
+                eventBlock.style.opacity = 1
+                self.dragging.status = 1
+            }
             // self.eventStart(row)
         },
         onMouseMove: function (self, targetTag, e) {
