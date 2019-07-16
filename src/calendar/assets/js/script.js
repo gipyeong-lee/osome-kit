@@ -857,6 +857,10 @@ var OsomeCalendar = {
         })
         const _beforeStartDate = new Date(beforeEvent.startDate)
         const _beforeEndDate = new Date(beforeEvent.endDate)
+        _beforeStartDate.setHours(0)
+        _beforeStartDate.setMinutes(0)
+        _beforeEndDate.setHours(0)
+        _beforeEndDate.setMinutes(0)
         const _total = Math.floor((_beforeEndDate.getTime() - _beforeStartDate.getTime()) / 86400000) + 1
         const endNum = Math.min(startNum + _total - 1, parent.endNum - 1)
         const nextEvent = parent.moveSchedule(week, order, index, startNum, endNum, parent)

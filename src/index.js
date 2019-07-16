@@ -11,7 +11,10 @@ class OSGantt extends Component {
     // Calendar.attachEvent(renderOption.startTileNumber,renderOption.endTileNumber)
   }
   onChangeContainer = (left, right) => {
-    console.log(left, right)
+    console.log('onChangeContainer', left, right)
+  }
+  onCompleteContainerResize = (left, right) => {
+    console.log('onCompleteContainerResize', left, right)
   }
   onClickSchedule = (element, category, event) => {
   }
@@ -55,6 +58,7 @@ class OSGantt extends Component {
     OsomeGantt.onChangedSchedule = this.props.onChangedSchedule || this.onChangedSchedule
     OsomeGantt.onChangedCategory = this.props.onChangedCategory || this.onChangedCategory
     OsomeGantt.onChangeContainer = this.props.onChangeContainer || this.onChangeContainer
+    OsomeGantt.onCompleteContainerResize = this.props.onCompleteContainerResize || this.onCompleteContainerResize
   }
 
   render() {

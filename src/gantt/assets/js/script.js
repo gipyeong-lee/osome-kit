@@ -485,7 +485,7 @@ var OsomeGantt = {
         // 0. create container
         let container = document.createElement('div')
         container.className = 'osome-gantt-grid-container'
-        container.style.marginTop = `${rowHeight}px`
+        container.style.paddingTop = `${rowHeight}px`
         self.container = container
 
         let headerContainer = document.createElement('div')
@@ -668,10 +668,13 @@ var OsomeGantt = {
         const event = { ...events[_index] }
         const _beforeStartDate = new Date(self.dragging.event.startDate)
         const _beforeEndDate = new Date(self.dragging.event.endDate)
+        _beforeStartDate.setHours(0)
+        _beforeStartDate.setMinutes(0)
+        _beforeEndDate.setHours(0)
+        _beforeEndDate.setMinutes(0)
         const total = Math.floor((_beforeEndDate.getTime() - _beforeStartDate.getTime()) / 86400000) + 1
         const _endNum = Math.min(_startNum + total - 1, endOfDate - 1)
         const _total = _endNum - _startNum + 1
-        console.log('total',_total)
         const _number = _targetTag.getAttribute('number').toNumber()
         const _size = 100 / self.options.endOfMonthDate
         const _left = _number * _size
@@ -1136,6 +1139,13 @@ var OsomeGantt = {
         self.options.style.container.leftWidth = `${leftWidthPercent}%`
         self.onChangeContainer(leftContainer.style.width, rightContainer.style.width)
     },
+    onChangedContainer: function(_leftWidth){
+        const self = this
+        const bounding = self.container.getBoundingClientRect()
+        const containerWidth = bounding.width
+        const leftWidth = _leftWidth - bounding.x
+        self.onCompleteContainerResize(leftWidth / containerWidth * 100, (containerWidth-leftWidth)/ containerWidth * 100)
+    },
     attachDragAndDropCategory: {
         leftPrefix: 'left-row-',
         onMouseDown: function (self, targetTag, e) {
@@ -1284,6 +1294,8 @@ var OsomeGantt = {
         },
         onMouseUp: function (self, targetTag, e) {
             if (self.options.fixed) return
+
+            self.onChangedContainer(e.clientX)
         }
     },
     attachResizeEvent: {
