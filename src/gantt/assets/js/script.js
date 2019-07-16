@@ -1144,6 +1144,9 @@ var OsomeGantt = {
         const bounding = self.container.getBoundingClientRect()
         const containerWidth = bounding.width
         const leftWidth = _leftWidth - bounding.x
+        if (leftWidth > self.options.handleMax || leftWidth < self.options.handleMin) {
+            return
+        }
         self.onCompleteContainerResize(leftWidth / containerWidth * 100, (containerWidth-leftWidth)/ containerWidth * 100)
     },
     attachDragAndDropCategory: {
