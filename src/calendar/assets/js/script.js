@@ -38,7 +38,7 @@ var OsomeCalendar = {
     eventRenderCounter: {},
     //
     options: {
-        maxEvent: 15,
+        maxEvent: 2000,
         style: {
             grid: {
                 width: 800
@@ -51,6 +51,9 @@ var OsomeCalendar = {
                 fontSize: '0.8em',
                 textAlign: 'center',
                 gap: 30
+            },
+            event :{
+                height: 20
             },
             todayHeader: {
                 backgroundColor: 'red',
@@ -136,9 +139,18 @@ var OsomeCalendar = {
         self.createEventBlock(startTile, endTile, _eventOption)
     },
     createHandler(week, startNum, endNum, eventOption) {
-        let _eventHandler = document.createElement('span')
+        const self = this
+        const height = self.options.style.event.height
+        const halfHeight = height/2
+        let _eventHandler = document.createElement('div')
         _eventHandler.className = `event-block-handler-${eventOption.order}-${eventOption.index} resize-handle handler-y`
-        _eventHandler.innerHTML = '&nbsp;'
+        _eventHandler.style.width = `${height}px`
+        _eventHandler.style.height = `${height}px`
+        _eventHandler.style.borderBottom = `solid ${halfHeight}px transparent`
+        _eventHandler.style.borderTop = `solid ${halfHeight}px transparent`
+        _eventHandler.style.borderLeft = `solid ${halfHeight}px ${eventOption.color || eventOption.style.backgroundColor}`
+        _eventHandler.style.right = `-${height}px`
+        _eventHandler.style.top = `0px`
         _eventHandler.setAttribute('week', week)
         _eventHandler.setAttribute('startNum', startNum)
         _eventHandler.setAttribute('endNum', endNum)

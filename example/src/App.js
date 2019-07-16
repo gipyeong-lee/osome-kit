@@ -84,6 +84,7 @@ export default class App extends Component {
 
         events.push({
           order: content.order,
+          "id":`${j}-${i}-schedule`,
           "index": i,
           "title": `${content.title}-${i}`,
           "detail": "This is Detail",
@@ -91,8 +92,8 @@ export default class App extends Component {
             "color": "#fff",
             "backgroundColor": content.style.color
           },
-          "startDate": `2019-12-20T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
-          "endDate": `2020-01-12T00:00:00.000`,
+          "startDate": `2019-12-01T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
+          "endDate": `2019-12-05T00:00:00.000`,
         })
       }
       categories[j].events = events

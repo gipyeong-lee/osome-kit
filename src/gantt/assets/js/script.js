@@ -47,7 +47,11 @@ var OsomeGantt = {
                 leftWidth: '30%'
             },
             row: {
-                height: 40
+                height: 40,
+                ratio: 0.5
+            },
+            event :{
+                height: 20
             },
             eventHeader: {
                 width: 100,
@@ -149,9 +153,18 @@ var OsomeGantt = {
         self.onChangedCategory(self.categoires, self.categories.splice(row, 1))
     },
     createHandler(row, startNum, endNum, eventOption) {
-        let _eventHandler = document.createElement('span')
+        const self = this
+        const height = self.options.style.event.height
+        const halfHeight = height/2
+        let _eventHandler = document.createElement('div')
         _eventHandler.className = `event-block-handler-${eventOption.index} resize-handle handler-y`
-        _eventHandler.innerHTML = '&nbsp;'
+        _eventHandler.style.width = `${height}px`
+        _eventHandler.style.height = `${height}px`
+        _eventHandler.style.borderBottom = `solid ${halfHeight}px transparent`
+        _eventHandler.style.borderTop = `solid ${halfHeight}px transparent`
+        _eventHandler.style.borderLeft = `solid ${halfHeight}px ${eventOption.color || eventOption.style.backgroundColor}`
+        _eventHandler.style.right = `-${height}px`
+        _eventHandler.style.top = `0px`
         _eventHandler.setAttribute('index', eventOption.index)
         _eventHandler.setAttribute('row', row)
         _eventHandler.setAttribute('startNum', startNum)
@@ -159,16 +172,19 @@ var OsomeGantt = {
         _eventHandler.setAttribute('index', eventOption.index)
         return _eventHandler
     },
+
     createBlock(row, startNum, endNum, eventOption) {
         const self = this
         let _eventBlock = document.createElement('div')
 
         const delta = self.options.style.row.height
-
+        const height = self.options.style.event.height
+        const gap = (delta - height) /2 
         _eventBlock.id = `event-block-${row}-${eventOption.index}`
         _eventBlock.className = `event-block event-block-${row}`
         _eventBlock.style.backgroundColor = eventOption.color
-        _eventBlock.style.height = `${delta}px`
+        _eventBlock.style.height = `${height}px`
+        _eventBlock.style.marginTop = `${gap}px`
         _eventBlock.style.zIndex = 11
         _eventBlock.setAttribute('index', eventOption.index)
         _eventBlock.setAttribute('row', row)
@@ -217,6 +233,7 @@ var OsomeGantt = {
     },
     renderEventBlock(row, startTile, endTile, eventOption) {
         const self = this
+        const height = self.options.style.event.height
 
         const rowTileId = `schedule-row-${row}`
 
@@ -259,7 +276,7 @@ var OsomeGantt = {
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
         _eventText.innerText = `${eventOption.title} (${startDate.midasFormat()} ~ ${endDate.midasFormat()})`
-
+        _eventText.style.lineHeight = `${height}px`
         _eventText.style.marginLeft = '10px'
         _eventText.style.display = 'block'
         _eventText.style.textOverflow = "ellipsis";
@@ -687,13 +704,14 @@ var OsomeGantt = {
         /// need check real date
 
         self.eventEnd(_row)
-        const startDate = new Date(self.categories[_row].events[_index].startDate)
+        const startDate = new Date(event.startDate)
         self.dragging.event.startDate = new Date(self.dragging.event.startDate)
         self.dragging.event.endDate = new Date(self.dragging.event.endDate)
-        self.categories[_row].events[_index].endDate = startDate.addDays(total - 1)
-        self.categories[_row].events[_index].endDate.setHours(self.dragging.event.endDate.getHours())
-        self.categories[_row].events[_index].endDate.setMinutes(self.dragging.event.endDate.getMinutes())
-        self.onChangedSchedule(self.dragging.row, self.dragging.event, self.categories[_row].events[_index])
+        event.endDate = startDate.addDays(total - 1)
+        event.endDate.setHours(self.dragging.event.endDate.getHours())
+        event.endDate.setMinutes(self.dragging.event.endDate.getMinutes())
+       
+        self.onChangedSchedule(self.dragging.row, self.dragging.event, event)
 
         self.dragging = {
             event: undefined,
@@ -1033,6 +1051,7 @@ var OsomeGantt = {
     resizeEventBlock(eventBlock, toTile) {
         let self = this
         let width = self.options.style.row.height
+        const height = self.options.style.event.height
         const _index = eventBlock.getAttribute('index').toNumber()
         const _row = eventBlock.getAttribute('row').toNumber()
         const _event = { ...self.categories[_row].events[_index] }
@@ -1041,7 +1060,7 @@ var OsomeGantt = {
         let _size = _endNum - _startNum + 1
         const _percentOfWidth = _size / self.options.endOfMonthDate * 100
         eventBlock.style.width = `${_percentOfWidth}%`
-        eventBlock.style.height = `${width}px`
+        eventBlock.style.height = `${height}px`
         // self.increaseEventTotal(_row, _index, _startNum, _endNum, _size)
         self.categories[_row].events[_index] = self.syncResizeEvent(_row, _index, _startNum, _endNum, _size)
         self.syncHandler(_index, toTile.getAttribute('number'))
@@ -1139,15 +1158,19 @@ var OsomeGantt = {
         self.options.style.container.leftWidth = `${leftWidthPercent}%`
         self.onChangeContainer(leftContainer.style.width, rightContainer.style.width)
     },
-    onChangedContainer: function(_leftWidth){
+    onChangedContainer: function (_leftWidth) {
         const self = this
         const bounding = self.container.getBoundingClientRect()
         const containerWidth = bounding.width
         const leftWidth = _leftWidth - bounding.x
-        if (leftWidth > self.options.handleMax || leftWidth < self.options.handleMin) {
-            return
+        let leftWidthPercent = leftWidth / containerWidth * 100
+        if (leftWidthPercent > self.options.handleMax) {
+            leftWidthPercent = self.options.handleMax;
         }
-        self.onCompleteContainerResize(leftWidth / containerWidth * 100, (containerWidth-leftWidth)/ containerWidth * 100)
+        else if (leftWidthPercent < self.options.handleMin) {
+            leftWidthPercent = self.options.handleMin;
+        }
+        self.onCompleteContainerResize(leftWidthPercent, 100 - leftWidthPercent)
     },
     attachDragAndDropCategory: {
         leftPrefix: 'left-row-',
@@ -1349,6 +1372,7 @@ var OsomeGantt = {
             self.focus.event.endDate = new Date(self.focus.event.endDate)
             self.categories[row].events[self.focus.event.index].startDate = new Date(self.categories[row].events[self.focus.event.index].startDate)
             self.categories[row].events[self.focus.event.index].endDate = new Date(self.categories[row].events[self.focus.event.index].endDate)
+
             self.onChangedSchedule(row, self.focus.event, self.categories[row].events[self.focus.event.index])
             self.eventEnd(row)
 

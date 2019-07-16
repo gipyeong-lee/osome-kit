@@ -41,7 +41,6 @@ body {
     height:100%
 }
 
-
 .osome-gantt-grid-week {
     position: relative;
     min-height: 120px;
@@ -67,19 +66,10 @@ body {
 
 .event-block .resize-handle {
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 6px;
-    line-height: 24px;
+    box-sizing:border-box;
     cursor: col-resize;
     z-index:11;
 }
-.event-block .resize-handle.handler-y {
-    background-color:lightgray;
-    width: 6px;
-    height:100%;
-    border:solid 1px #acacac;
-}   
 
 /* */
 .osome-gantt-grid-category-row {
