@@ -865,6 +865,8 @@ var OsomeCalendar = {
         beforeEvent.endDate = new Date(beforeEvent.endDate)
         beforeEvent.startNum = beforeEvent.start
         nextEvent.endDate = startDate.addDays(_total - 1)
+        nextEvent.endDate.setHours(beforeEvent.endDate.getHours())
+        nextEvent.endDate.setMinutes(beforeEvent.endDate.getMinutes())
         nextEvent.total = _total
         nextEvent.startNum = nextEvent.start
         parent.onChangedSchedule(order, beforeEvent, nextEvent)

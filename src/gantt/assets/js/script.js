@@ -668,10 +668,10 @@ var OsomeGantt = {
         const event = { ...events[_index] }
         const _beforeStartDate = new Date(self.dragging.event.startDate)
         const _beforeEndDate = new Date(self.dragging.event.endDate)
-        const total = Math.floor((_beforeEndDate.getTime() - _beforeStartDate.getTime()) / 86400000)
-        const _endNum = Math.min(_startNum + total, endOfDate - 1)
+        const total = Math.floor((_beforeEndDate.getTime() - _beforeStartDate.getTime()) / 86400000) + 1
+        const _endNum = Math.min(_startNum + total - 1, endOfDate - 1)
         const _total = _endNum - _startNum + 1
-
+        console.log('total',_total)
         const _number = _targetTag.getAttribute('number').toNumber()
         const _size = 100 / self.options.endOfMonthDate
         const _left = _number * _size
@@ -687,8 +687,9 @@ var OsomeGantt = {
         const startDate = new Date(self.categories[_row].events[_index].startDate)
         self.dragging.event.startDate = new Date(self.dragging.event.startDate)
         self.dragging.event.endDate = new Date(self.dragging.event.endDate)
-        self.categories[_row].events[_index].endDate = startDate.addDays(total)
-
+        self.categories[_row].events[_index].endDate = startDate.addDays(total - 1)
+        self.categories[_row].events[_index].endDate.setHours(self.dragging.event.endDate.getHours())
+        self.categories[_row].events[_index].endDate.setMinutes(self.dragging.event.endDate.getMinutes())
         self.onChangedSchedule(self.dragging.row, self.dragging.event, self.categories[_row].events[_index])
 
         self.dragging = {
