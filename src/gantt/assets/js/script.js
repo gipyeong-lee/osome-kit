@@ -1302,6 +1302,9 @@ var OsomeGantt = {
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag, e) {
+            if(self.dragging.status !== 1){
+                return
+            }
             self.focus.current.classList.remove('dragOver')
             if(self.dragging.status !== 1){
                 self.dragging = {
