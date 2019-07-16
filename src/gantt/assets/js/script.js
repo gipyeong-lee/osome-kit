@@ -1280,6 +1280,18 @@ var OsomeGantt = {
         },
         onMouseUp: function (self, targetTag, e) {
             self.focus.current.classList.remove('dragOver')
+            if(self.dragging.status !== 1){
+                self.dragging = {
+                    event: undefined,
+                    row: undefined,
+                    index: undefined,
+                    startNum: undefined,
+                    endNum: undefined,
+                    days: undefined,
+                    status: undefined
+                }
+                return
+            }
             self.onBlockDragEnd(self, e)
 
         }
@@ -1341,6 +1353,9 @@ var OsomeGantt = {
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag) {
+            if(self.focus.event === undefined){
+                return
+            }
             const row = self.focus.event.order
             self.clearSelectedBlock(row)
 
