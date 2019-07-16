@@ -666,9 +666,10 @@ var OsomeGantt = {
         const endOfDate = self.options.endOfMonthDate
         const events = self.categories[_row].events
         const event = { ...events[_index] }
-
-        const total = event.total
-        const _endNum = Math.min(_startNum + total - 1, endOfDate - 1)
+        const _beforeStartDate = new Date(self.dragging.event.startDate)
+        const _beforeEndDate = new Date(self.dragging.event.endDate)
+        const total = Math.floor((_beforeEndDate.getTime() - _beforeStartDate.getTime()) / 86400000)
+        const _endNum = Math.min(_startNum + total, endOfDate - 1)
         const _total = _endNum - _startNum + 1
 
         const _number = _targetTag.getAttribute('number').toNumber()
@@ -686,7 +687,7 @@ var OsomeGantt = {
         const startDate = new Date(self.categories[_row].events[_index].startDate)
         self.dragging.event.startDate = new Date(self.dragging.event.startDate)
         self.dragging.event.endDate = new Date(self.dragging.event.endDate)
-        self.categories[_row].events[_index].endDate = startDate.addDays(total - 1)
+        self.categories[_row].events[_index].endDate = startDate.addDays(total)
 
         self.onChangedSchedule(self.dragging.row, self.dragging.event, self.categories[_row].events[_index])
 
@@ -762,7 +763,6 @@ var OsomeGantt = {
 
         event.startDate = nextStartDate
         event.endDate = nextEndDate
-
 
         return event
     },
@@ -1327,11 +1327,12 @@ var OsomeGantt = {
         onMouseUp: function (self, targetTag) {
             const row = self.focus.event.order
             self.clearSelectedBlock(row)
-            console.log('resized', self.focus.event, self.categories[_row].events[self.focus.event.index])
-            const startDate = new Date(self.categories[_row].events[self.focus.event.index].startDate)
+
+            // const startDate = new Date(self.categories[row].events[self.focus.event.index].startDate)
             self.focus.event.startDate = new Date(self.focus.event.startDate)
             self.focus.event.endDate = new Date(self.focus.event.endDate)
-            self.categories[_row].events[self.focus.event.index].endDate = startDate.addDays(total - 1)
+            self.categories[row].events[self.focus.event.index].startDate = new Date(self.categories[row].events[self.focus.event.index].startDate)
+            self.categories[row].events[self.focus.event.index].endDate = new Date(self.categories[row].events[self.focus.event.index].endDate)
             self.onChangedSchedule(row, self.focus.event, self.categories[row].events[self.focus.event.index])
             self.eventEnd(row)
 

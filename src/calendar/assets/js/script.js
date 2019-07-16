@@ -120,6 +120,7 @@ var OsomeCalendar = {
         self.focus.end = undefined
         self.focus.start = undefined
         self.focus.current = undefined
+        self.focus.event = undefined
         self.clearSelectedBlock()
     },
     attachEvent: function (startNum, endNum, eventOption) {
@@ -171,11 +172,11 @@ var OsomeCalendar = {
         _eventBlock.setAttribute('endDayNum', 6)
         _eventBlock.style.height = `${eventOption.style.height || 20}px`
         _eventBlock.style.marginBottom = `${eventOption.style.marginBottom || 2}px`
-        
-        
+
+
         const startDate = new Date(eventOption.startDate)
         const endDate = new Date(eventOption.endDate)
-        
+
         let _eventText = document.createElement('span')
         _eventText.classList = "title"
         _eventText.innerText = `${eventOption.title} (${startDate.midasFormat()} ~ ${endDate.midasFormat()})`
@@ -547,7 +548,7 @@ var OsomeCalendar = {
         let _grid = document.createElement('div')
         _grid.id = 'osome-cal-grid'
         _grid.className = 'osome-cal-grid'
-        
+
         // _grid.className = 'ui equal width celled grid'
         let _gridHeader = document.createElement("div");
         let _header = document.createElement("div");
@@ -854,14 +855,18 @@ var OsomeCalendar = {
         Object.keys(event).map((key) => {
             beforeEvent[key] = event[key]
         })
-        const endNum = Math.min(startNum + event.total.toNumber() - 1, parent.endNum - 1)
+        const _beforeStartDate = new Date(beforeEvent.startDate)
+        const _beforeEndDate = new Date(beforeEvent.endDate)
+        const _total = Math.floor((_beforeEndDate.getTime() - _beforeStartDate.getTime()) / 86400000) + 1
+        const endNum = Math.min(startNum + _total - 1, parent.endNum - 1)
         const nextEvent = parent.moveSchedule(week, order, index, startNum, endNum, parent)
-
         const startDate = new Date(nextEvent.startDate)
         beforeEvent.startDate = new Date(beforeEvent.startDate)
         beforeEvent.endDate = new Date(beforeEvent.endDate)
-        nextEvent.endDate = startDate.addDays(beforeEvent.total - 1)
-
+        beforeEvent.startNum = beforeEvent.start
+        nextEvent.endDate = startDate.addDays(_total - 1)
+        nextEvent.total = _total
+        nextEvent.startNum = nextEvent.start
         parent.onChangedSchedule(order, beforeEvent, nextEvent)
 
     },
@@ -877,11 +882,11 @@ var OsomeCalendar = {
         let event = JSON.parse(JSON.stringify(self.categories[order].events[index]))
 
         let endTile = document.getElementById(`${tilePrefix}${endNum}`)
-        
+
         const eYear = endTile.getAttribute('year').toNumber()
         const eMonth = Math.max(Number(endTile.getAttribute('month')) - 1, 0)
         const eDate = endTile.getAttribute('date').toNumber()
-        
+
         const originEndDate = new Date(event.endDate)
 
         const nextEndDate = new Date(eYear, eMonth, eDate)
@@ -898,6 +903,7 @@ var OsomeCalendar = {
 
         let startTile = document.getElementById(`${tilePrefix}${startNum}`)
         let endTile = document.getElementById(`${tilePrefix}${endNum}`)
+
         const sYear = startTile.getAttribute('year').toNumber()
         const sMonth = Math.max(Number(startTile.getAttribute('month')) - 1, 0)
         const sDate = startTile.getAttribute('date').toNumber()
@@ -918,6 +924,7 @@ var OsomeCalendar = {
         nextEndDate.setHours(originEndDate.getHours())
         nextEndDate.setMinutes(originEndDate.getMinutes())
 
+        event.startNum = startNum
         event.startDate = nextStartDate
         event.endDate = nextEndDate
         return event
@@ -1143,6 +1150,9 @@ var OsomeCalendar = {
         prefix: 'event-block-',
         onMouseDown: function (self, targetTag) {
             const endNum = targetTag.getAttribute('endNum')
+            const _index = targetTag.getAttribute('index')
+            const _order = targetTag.getAttribute('order')
+            self.focus.event = { ...self.categories[_order].events[_index] }
             self.focus.start = targetTag
             self.focus.current = document.getElementById(`osome-cal-grid-day-tile-${endNum}`)
             self.eventStart()
@@ -1191,8 +1201,15 @@ var OsomeCalendar = {
         onMouseUp: function (self, targetTag) {
             const _index = self.focus.start.getAttribute('index')
             const _order = self.focus.start.getAttribute('order')
-
-            self.onChangedSchedule(_order, self.categories[_order].events[_index], self.categories[_order].events[_index])
+            self.focus.event.startDate = new Date(self.focus.event.startDate)
+            self.focus.event.endDate = new Date(self.focus.event.endDate)
+            self.focus.event.startNum = self.focus.event.start
+            const nextEvent = { ...self.categories[_order].events[_index] }
+            nextEvent.startDate = new Date(nextEvent.startDate)
+            nextEvent.endDate = new Date(nextEvent.endDate)
+            nextEvent.startNum = nextEvent.start
+            nextEvent.total = Math.floor((nextEvent.endDate.getTime() - nextEvent.startDate.getTime()) / 86400000) + 1
+            self.onChangedSchedule(_order, self.focus.event, nextEvent)
             self.eventEnd()
             self.clearFocus()
             self.reorderEventBox(_order)
