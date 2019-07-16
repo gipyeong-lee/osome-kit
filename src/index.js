@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import OsomeCalendar from './calendar/assets/js/script'
 import OsomeGantt from './gantt/assets/js/script'
@@ -24,15 +24,16 @@ class OSGantt extends Component {
   }
   onMouseRightClick = (element, event) => {
     console.log(`Mouse Right Button Clicked ${element.getAttribute('row')}`)
-    //sample
-
   }
+
   attachEvent(start, end, option) {
     OsomeGantt.attachEvent(start, end, option)
   }
+
   resetEvent() {
     OsomeGantt.init('osome-gantt', options)
   }
+
   createSchedule(start, end, eventOption) {
     OsomeGantt.attachEvent(start, end, eventOption)
   }
@@ -58,13 +59,14 @@ class OSGantt extends Component {
     OsomeGantt.onChangedSchedule = this.props.onChangedSchedule || this.onChangedSchedule
     OsomeGantt.onChangedCategory = this.props.onChangedCategory || this.onChangedCategory
     OsomeGantt.onChangeContainer = this.props.onChangeContainer || this.onChangeContainer
-    OsomeGantt.onCompleteContainerResize = this.props.onCompleteContainerResize || this.onCompleteContainerResize
+    OsomeGantt.onCompleteContainerResize =
+      this.props.onCompleteContainerResize || this.onCompleteContainerResize
   }
 
   render() {
-    const { style } = this.props
+    const {style} = this.props
     return (
-      <div id="osome-gantt" style={style} >
+      <div id="osome-gantt" style={style}>
       </div>
     )
   }
@@ -100,18 +102,23 @@ class OSCalendar extends Component {
   onClickMoreButton = (element, events) => {
 
   }
+
   constructor(props) {
     super(props)
   }
+
   attachEvent(start, end, option) {
     OsomeCalendar.attachEvent(start, end, option)
   }
+
   resetEvent() {
     OsomeCalendar.init('osome-calendar', options)
   }
+
   createSchedule(start, end, eventOption) {
     OsomeCalendar.attachEvent(start, end, eventOption)
   }
+
   moveSchedule(eventId, startDay, endDay) {
 
   }
@@ -128,6 +135,7 @@ class OSCalendar extends Component {
     }
     return false
   }
+
   componentDidMount() {
     OsomeCalendar.init('osome-calendar', this.props.options, this.props.categories)
     OsomeCalendar.onClickSchedule = this.props.onClickSchedule || this.onClickSchedule
@@ -137,9 +145,9 @@ class OSCalendar extends Component {
   }
 
   render() {
-    const { style } = this.props
+    const {style} = this.props
     return (
-      <div id="osome-calendar" style={style} >
+      <div id="osome-calendar" style={style}>
       </div>
     )
   }
@@ -161,4 +169,4 @@ OSCalendar.propTypes = {
   onClickScheduleContent: PropTypes.element
 }
 
-export { OSCalendar, OSGantt }
+export {OSCalendar, OSGantt}

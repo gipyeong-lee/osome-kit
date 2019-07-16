@@ -168,7 +168,7 @@ var OsomeGantt = {
         const delta = self.options.style.row.height
         const height = self.options.style.row.height * self.options.style.row.ratio
         const gap = (delta - height) / 2
-        console.log("height", height)
+
         _eventBlock.id = `event-block-${row}-${eventOption.index}`
         _eventBlock.className = `event-block event-block-${row}`
         _eventBlock.style.backgroundColor = eventOption.color
@@ -490,7 +490,7 @@ var OsomeGantt = {
 
         const rowHeight = self.options.style.row.height || 40
         self.options.style.row.height = rowHeight
-        // 
+        //
         // 0. create container
         let container = document.createElement('div')
         container.className = 'osome-gantt-grid-container'
@@ -583,7 +583,7 @@ var OsomeGantt = {
         }
         // 2. create event tile
         // 3. create day tile
-        // 4. 
+        // 4.
     },
     renderSelectedBlock() {
         let self = this
@@ -702,7 +702,7 @@ var OsomeGantt = {
         event.endDate = startDate.addDays(total - 1)
         event.endDate.setHours(self.dragging.event.endDate.getHours())
         event.endDate.setMinutes(self.dragging.event.endDate.getMinutes())
-        
+
         if (self.dragging.event.id !== event.id) {
             self.dragging = {
                 event: undefined,
