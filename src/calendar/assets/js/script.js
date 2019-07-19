@@ -52,7 +52,7 @@ var OsomeCalendar = {
                 textAlign: 'center',
                 gap: 30
             },
-            event :{
+            event: {
                 height: 20
             },
             todayHeader: {
@@ -141,7 +141,7 @@ var OsomeCalendar = {
     createHandler(week, startNum, endNum, eventOption) {
         const self = this
         const height = self.options.style.event.height
-        const halfHeight = height/2
+        const halfHeight = height / 2
         let _eventHandler = document.createElement('div')
         _eventHandler.className = `event-block-handler-${eventOption.order}-${eventOption.index} resize-handle handler-y`
         _eventHandler.style.width = `${height}px`
@@ -228,6 +228,7 @@ var OsomeCalendar = {
     renderEventBlock(startTile, endTile, eventOption) {
         const self = this
         const tileWidth = 100 / 7
+        const arrowWidth = self.options.style.event.height
         const weekPrefix = 'osome-cal-grid-week-'
         const weekSchedulePrefix = 'osome-cal-grid-week-schedule-'
         const _startNum = startTile.getAttribute('number').toNumber()
@@ -267,7 +268,9 @@ var OsomeCalendar = {
                 if (_startWeek !== _endWeek) {
                     size = 7 - _startDayNum
                 }
-                const width = `${(tileWidth * (size))}%`
+                const parentWidth = _weekEl.offsetWidth
+                const pxWidth = parentWidth * (tileWidth * size) / 100 - arrowWidth
+                const width = `${pxWidth / parentWidth * 100}%`
                 _eventBlock.style.left = left
                 _eventBlock.style.width = width
                 if (_startWeek !== _endWeek) {
@@ -285,7 +288,9 @@ var OsomeCalendar = {
             else if (i === _endWeek) {
                 const left = 0
                 let size = _endDayNum + 1
-                const width = `${(tileWidth * (size))}%`
+                const parentWidth = _weekEl.offsetWidth
+                const pxWidth = parentWidth * (tileWidth * size) / 100 - arrowWidth
+                const width = `${pxWidth / parentWidth * 100}%`
                 _eventBlock.style.left = left
                 _eventBlock.style.width = width
                 _eventBlock.setAttribute('endNum', _endNum)
@@ -296,7 +301,9 @@ var OsomeCalendar = {
             else {
                 const left = 0
                 let size = 7
-                const width = `${(tileWidth * (size))}%`
+                const parentWidth = _weekEl.offsetWidth
+                const pxWidth = parentWidth * (tileWidth * size) / 100 - arrowWidth
+                const width = `${pxWidth / parentWidth * 100}%`
                 _eventBlock.style.left = left
                 _eventBlock.style.width = width
                 _eventBlock.className += " block-right"
@@ -309,6 +316,7 @@ var OsomeCalendar = {
     createEventBlock(startTile, endTile, eventOption) {
         const self = this
         const tileWidth = 100 / 7
+        const arrowWidth = self.options.style.event.height
         const weekPrefix = 'osome-cal-grid-week-'
         const weekSchedulePrefix = 'osome-cal-grid-week-schedule-'
         const _startNum = startTile.getAttribute('number').toNumber()
@@ -347,7 +355,9 @@ var OsomeCalendar = {
                 if (_startWeek !== _endWeek) {
                     size = 7 - _startDayNum
                 }
-                const width = `${(tileWidth * (size))}%`
+                const parentWidth = _weekEl.offsetWidth
+                const pxWidth = parentWidth * (tileWidth * size) / 100 - arrowWidth
+                const width = `${pxWidth / parentWidth * 100}%`
                 _eventBlock.style.left = left
                 _eventBlock.style.width = width
                 if (_startWeek !== _endWeek) {
@@ -364,7 +374,9 @@ var OsomeCalendar = {
             else if (i === _endWeek) {
                 const left = 0
                 let size = _endDayNum + 1
-                const width = `${(tileWidth * (size))}%`
+                const parentWidth = _weekEl.offsetWidth
+                const pxWidth = parentWidth * (tileWidth * size) / 100 - arrowWidth
+                const width = `${pxWidth / parentWidth * 100}%`
                 _eventBlock.style.left = left
                 _eventBlock.style.width = width
                 _eventBlock.setAttribute('endNum', _endNum)
@@ -374,7 +386,9 @@ var OsomeCalendar = {
             else {
                 const left = 0
                 let size = 7
-                const width = `${(tileWidth * (size))}%`
+                const parentWidth = _weekEl.offsetWidth
+                const pxWidth = parentWidth * (tileWidth * size) / 100 - arrowWidth
+                const width = `${pxWidth / parentWidth * 100}%`
                 _eventBlock.style.left = left
                 _eventBlock.style.width = width
                 _eventBlock.className += " block-right"
@@ -1081,6 +1095,7 @@ var OsomeCalendar = {
     resizeEventBlock(eventBlock, toTile) {
         let self = this
         let _eventBlock = eventBlock
+        const arrowWidth = self.options.style.event.height
         const endNum = toTile.getAttribute('number')
         const endDayNum = toTile.getAttribute('daynum')
         if (_eventBlock === null || _eventBlock === undefined) {
@@ -1109,6 +1124,7 @@ var OsomeCalendar = {
         if (_eventBlock.style.display === 'none') {
             _eventBlock.style.display = 'block'
         }
+        const parentWidth = toTile.parentElement.offsetWidth
         const index = _eventBlock.getAttribute('index')
         const order = _eventBlock.getAttribute('order')
         const startNum = _eventBlock.getAttribute('startNum')
@@ -1116,9 +1132,10 @@ var OsomeCalendar = {
         const fromLeft = fromTile.style.left.numOfPercent()
         const toLeft = toTile.style.left.numOfPercent()
         const toWidth = toTile.style.width.numOfPercent()
+        const pxWidth = parentWidth * (toLeft - fromLeft + toWidth) / 100 - arrowWidth
         _eventBlock.setAttribute('endNum', endNum)
         _eventBlock.setAttribute('endDayNum', endDayNum)
-        _eventBlock.style.width = `${(toLeft - fromLeft + toWidth)}%`
+        _eventBlock.style.width = `${pxWidth / parentWidth * 100}%`
         self.syncHandler(order, index, toTile.getAttribute('number'))
     },
     resizeEventBlockToLast(eventBlock) {
