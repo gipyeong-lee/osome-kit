@@ -66,6 +66,7 @@ var OsomeCalendar = {
                 titleColor: 'red'
             }
         },
+        offsetY: 0,
         country: 'jp',
         days: { ko: ['일', '월', '화', '수', '목', '금', '토'], jp: ['日', '月', '火', '水', '木', '金', '土'] },
         moreButton: { ko: '+ 더보기', jp: '+ もっと見る' },
@@ -107,6 +108,14 @@ var OsomeCalendar = {
         self.attachGridEvent(_calendarGrid)
         self.createEvents(_options)
         self.setupMoreButton()
+        self.globalEvent(_calendarGrid)
+    },
+    globalEvent: function (calendar) {
+        const self = this
+        const container = document.getElementById('osome-cal-grid')
+        calendar.addEventListener('wheel', (event) => {
+            self.offsetY = container.scrollTop
+        }, { capture: false, passive: true })
     },
     randomColor: function () {
         return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
