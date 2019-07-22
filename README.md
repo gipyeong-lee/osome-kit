@@ -19,9 +19,6 @@
 -->
 [![NPM](https://img.shields.io/npm/v/osome-kit.svg)](https://www.npmjs.com/package/osome-kit) 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![LinkedIn][linkedin-shield]][https://linkedin.com/in/gipyeong-lee-85734396]
-
-
 
 <!-- PROJECT LOGO -->
 <br />
@@ -51,16 +48,16 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
-* [About the Project](#about-the-project)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Usage](#usage)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [License](#license)
-* [Contact](#contact)
-* [Acknowledgements](#acknowledgements)
+- [Table of Contents](#Table-of-Contents)
+- [About The Project](#About-The-Project)
+- [Getting Started](#Getting-Started)
+  - [Prerequisites](#Prerequisites)
+  - [Installation](#Installation)
+- [Usage](#Usage)
+- [Roadmap](#Roadmap)
+- [Contributing](#Contributing)
+- [License](#License)
+- [Contact](#Contact)
 
 
 
@@ -135,33 +132,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 GiPyeong Lee - [@gipyeong](https://linkedin.com/in/gipyeong-lee-85734396) - ocsoon.jin@gmail.com
 
 Project Link: [https://github.com/madist/osome-kit](https://github.com/madist/osome-kit)
-
-
-
-# osome-kit
-
-> pure javascript calendar react module
-
-[![NPM](https://img.shields.io/npm/v/osome-kit.svg)](https://www.npmjs.com/package/osome-kit) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
-## Install
-
-```bash
-npm install --save osome-kit
-```
-
-## Usage
-
-```jsx
-import React, { Component } from 'react'
-
-import {OSCalendar} from 'osome-kit'
-
-class Example extends Component {
-  render () {
-    return (
-      <OSCalendar />
-    )
-  }
-}
-```
