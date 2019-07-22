@@ -60,7 +60,7 @@ export default class App extends Component {
 
       categories.push({
         content: {
-          title: `캘린더 sssssss${i}`,
+          title: `Calendar ${i}`,
           type: i % 2 ? 'main' : 'sub',
           enable: true,
           order: i,
@@ -74,7 +74,7 @@ export default class App extends Component {
     }
     const length = categories.length
     for (let j = 0; j < length; j++) {
-      const randomLength = Math.round((Math.random() * 4))
+      const randomLength = Math.round((Math.random() * 1))
       const events = []
       const content = categories[j].content
 
@@ -86,14 +86,14 @@ export default class App extends Component {
           order: content.order,
           "id":`${j}-${i}-schedule`,
           "index": i,
-          "title": `${content.title}-${i}`,
+          "title": `${content.title}-Schedule-${i}`,
           "detail": "This is Detail",
           "style": {
             "color": "#fff",
             "backgroundColor": content.style.color
           },
-          "startDate": `2019-12-01T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
-          "endDate": `2019-12-05T00:00:00.000`,
+          "startDate": `2019-12-${Math.min(sDate, eDate).pad(2)}T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
+          "endDate": `2019-12-${Math.max(sDate, eDate).pad(2)}T00:00:00.000`,
         })
       }
       categories[j].events = events
