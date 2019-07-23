@@ -1049,7 +1049,7 @@ var OsomeCalendar = {
                     scheduleWrapper.appendChild(reordedChild)
                 })
                 const _weekEl = document.getElementById(`${weekPrefix}${scheduleWrapper.getAttribute('week')}`)
-                _weekEl.style.height = `${(eventBlockHeight + eventBlockMargin) * (children.length) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
+                _weekEl.style.height = `${(eventBlockHeight + eventBlockMargin) * (children.length + 1) + self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
             }
         }
     },
@@ -1264,6 +1264,7 @@ var OsomeCalendar = {
             nextEvent.endDate = new Date(nextEvent.endDate)
             nextEvent.startNum = nextEvent.start
             nextEvent.total = Math.floor((nextEvent.endDate.getTime() - nextEvent.startDate.getTime()) / 86400000) + 1
+            self.saveOffset()
             self.onChangedSchedule(_order, self.focus.event, nextEvent)
             self.eventEnd()
             self.clearFocus()
