@@ -12,7 +12,7 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 
 export default class App extends Component {
   state = {
-    calendarType: 'gantt',
+    calendarType: 'calender',
     options: {
       style: {
         cellHeader: {
@@ -74,7 +74,7 @@ export default class App extends Component {
     }
     const length = categories.length
     for (let j = 0; j < length; j++) {
-      const randomLength = Math.round((Math.random() * 1))
+      const randomLength = Math.round((Math.random() * 5))
       const events = []
       const content = categories[j].content
 

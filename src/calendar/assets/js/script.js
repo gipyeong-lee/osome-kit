@@ -71,6 +71,7 @@ var OsomeCalendar = {
         days: { ko: ['일', '월', '화', '수', '목', '금', '토'], jp: ['日', '月', '火', '水', '木', '金', '土'] },
         moreButton: { ko: '+ 더보기', jp: '+ もっと見る' },
         today: new Date(),
+        refresh: false,
         year: new Date().getFullYear(),
         month: new Date().getMonth(),
         eventPopup: { html: 'test' }
@@ -103,28 +104,38 @@ var OsomeCalendar = {
         // self.options = _options
         let _calendarGrid = document.getElementById(id)
         self.categories = categories
-        self.clear(_calendarGrid)
+        self.clear(id)
         self.createGrid(_calendarGrid, _options)
         self.attachGridEvent(_calendarGrid)
         self.createEvents(_options)
         self.setupMoreButton()
         self.globalEvent(_calendarGrid)
     },
+    saveOffset : function(){
+        const self = this
+        const container = document.getElementById('osome-cal-grid')
+        self.options.offsetY = container.scrollTop
+    },
     globalEvent: function (calendar) {
         const self = this
         const container = document.getElementById('osome-cal-grid')
-        calendar.addEventListener('wheel', (event) => {
-            self.offsetY = container.scrollTop
-        }, { capture: false, passive: true })
+        if (!self.refresh && self.offsetY !== 0) {
+            container.scrollTop = self.options.offsetY
+        }
     },
     randomColor: function () {
         return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
     },
-    clear: function (element) {
+    clear: function (elementId) {
         const self = this
+        let element = document.getElementById(elementId)
         self.eventCounter = {}
         self.eventRenderCounter = {}
+        if (self.refresh) {
+            self.offsetY = 0
+        }
         element.innerHTML = ''
+        
     },
     clearFocus: function () {
         let self = this
@@ -1298,6 +1309,7 @@ var OsomeCalendar = {
                     const _start = new Date(startYear, startMonth, startDate)
                     const _end = new Date(endYear, endMonth, endDate)
                     const renderOption = { startTileNumber: start.getAttribute('number'), endTileNumber: end.getAttribute('number') }
+                    self.saveOffset()
                     self.onDragEndTile(_start, _end, renderOption)
                 }
             }
