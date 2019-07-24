@@ -157,8 +157,7 @@ OSCalendar.propTypes = {
   createSchedule: PropTypes.func,
   attachEvent: PropTypes.func,
   options: PropTypes.object,
-  categories: PropTypes.array,
-  onClickScheduleContent: PropTypes.element
+  categories: PropTypes.array
 }
 
 export { OSCalendar, OSGantt }

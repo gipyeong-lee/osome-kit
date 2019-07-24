@@ -30,7 +30,7 @@
   <h3 align="center">Osome Kit</h3>
 
   <p align="center">
-    An simple calendar module. pure javascript. no jquery.
+    An simple react calendar module. pure javascript. no jquery.
     <br />
     <a href="https://github.com/madist/osome-kit"><strong>Explore the docs »</strong></a>
     <br />
@@ -54,6 +54,12 @@
   - [Prerequisites](#Prerequisites)
   - [Installation](#Installation)
 - [Usage](#Usage)
+  - [Before using `osome-kit` please import module.](#Before-using-osome-kit-please-import-module)
+  - [In react render() {}](#In-react-render)
+    - [Calendar](#Calendar)
+    - [Gantt](#Gantt)
+  - [Supported Properties](#Supported-Properties)
+    - [OSCalendar](#OSCalendar)
 - [Roadmap](#Roadmap)
 - [Contributing](#Contributing)
 - [License](#License)
@@ -67,7 +73,7 @@
 <img src="images/calendar.png" alt="Logo">
 <img src="images/gantt.png" alt="Logo">
 
-This project is for switching calendar & gantt easily.
+This project support you can switching calendar & gantt easily.
 
 
 <!-- GETTING STARTED -->
@@ -97,8 +103,50 @@ npm install --save react react-dom
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-
-- Currently, just reference example 
+### Before using `osome-kit` please import module.
+```js
+import { OSCalendar, OSGantt } from 'osome-kit'
+```
+### In react render() {} 
+#### Calendar
+```js
+ <OSCalendar 
+            options={this.state.options}
+            categories={this.state.categories}
+            onClickSchedule={this.onClickSchedule}
+            onChangedSchedule={this.onChangedSchedule}
+            onDragEndTile={(start, end, renderOption) => {
+              const order = Math.round(Math.random() * 10) % (this.state.categories.length || 1)
+              const category = this.state.categories[order]
+              const index = category.events.length
+              const data = (category === undefined) ? { title: 'This is Title', detail: 'This is Detail', style: { color: '#fff', backgroundColor: '#f00' }, index: index, order: order, startDate: start, endDate: end } : {
+                title: category.content.title, detail: '', style: { color: '#fff', backgroundColor: category.content.style.color }, index: index, order: order, startDate: start, endDate: end
+              }
+              this.setState(update(this.state, { categories: { [order]: { events: { $push: [data] } } } }))
+            }} />
+```
+#### Gantt
+```js
+<OSGantt style={{width: '100%', padding: '0'}} ref={this.osGantt} categories={this.state.categories} options={this.state.options}
+          onChangedSchedule={this.onChangedSchedule}
+          onChangedCategory={this.onChangedCategory}
+          onClickSchedule={this.onClickSchedule}
+          onDragEndTile={(row, start, end, renderOption) => {
+            const category = this.state.categories[row]
+            const data = { title: category.content.title, detail: 'This is Detail', style: { color: '#fff', backgroundColor: category.content.style.color }, order: row, startDate: start, endDate: end, index: category.events.length }
+            this.setState(update(this.state, { categories: { [row]: { events: { $push: [data] } } } }))
+          }}
+        />
+```
+### Supported Properties
+#### OSCalendar
+| Prop              | Description                                                                                |
+| ----------------- | ------------------------------------------------------------------------------------------ |
+| categories        | Event data                                                                                 |
+| options           | Calednar's option                                                                          |
+| onClickSchedule   | When click schedule block. it will be fired.                                               |
+| onChangedSchedule | When Schedule changed user interaction. such as `move`,`resize` it will be fired.          |
+| onClickMoreButton | When click more button. ( more button will be appeared when you set maxEvent in `options`) |
 
 ___ 
 
