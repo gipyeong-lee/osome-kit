@@ -61,7 +61,9 @@
   - [Supported Props](#supported-props)
     - [OSCalendar Props](#oscalendar-props)
     - [OSGantt Props](#osgantt-props)
+    - [More Info](#more-info)
       - [Options](#options)
+      - [Categories](#categories)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
@@ -162,6 +164,7 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 | onChangedCategory         | function(categories, afterCategories) | When category changed by user interaction. such as `move category` it will be fired.                  |
 | onChangeContainer         | function(left, right)                 | When container size changging. it will be fired every resized time.                                   |
 | onCompleteContainerResize | function(left, right)                 | When container's resize finished. it will be fired.                                                   |
+#### More Info
 
 ##### Options
 | Property   | type   | Description                                                                                                                                      |
@@ -180,6 +183,8 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 | maxEvent   | number | [Calendar Only] the limit of schedules can be displayed on calendar grid. if more than this number, more button will be shown.<br>Default `2000` |
 | moreButton | object | [Calendar Only] more button text.<br>Default `{ ko: '+ 더보기', jp: '+ もっと見る' }`                                                               |
 | refresh    | bool   | [Gantt & Calendar] after categories modified. calendar,gantt reset or saving offset y of scroll offset.                                          |
+
+##### Categories 
 ___ 
 
 <!-- ROADMAP -->
