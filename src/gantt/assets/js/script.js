@@ -68,8 +68,7 @@ var OsomeGantt = {
         year: new Date().getFullYear(),
         month: new Date().getMonth(),
         handleMin: 5,
-        handleMax: 35,
-        eventPopup: { html: 'test' }
+        handleMax: 35
     },
     iteral: function (key, value, result) {
         if (key === undefined) {
@@ -359,9 +358,6 @@ var OsomeGantt = {
                 tile.classList.remove('active')
             }
         }
-    },
-    createEventPopup: function (calendarGrid, options) {
-
     },
     createRow: function (type, row, style, content) {
         let self = this

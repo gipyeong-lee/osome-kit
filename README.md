@@ -48,22 +48,24 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
-- [Table of Contents](#Table-of-Contents)
-- [About The Project](#About-The-Project)
-- [Getting Started](#Getting-Started)
-  - [Prerequisites](#Prerequisites)
-  - [Installation](#Installation)
-- [Usage](#Usage)
-  - [Before using `osome-kit` please import module.](#Before-using-osome-kit-please-import-module)
-  - [In react render() {}](#In-react-render)
-    - [Calendar](#Calendar)
-    - [Gantt](#Gantt)
-  - [Supported Properties](#Supported-Properties)
-    - [OSCalendar](#OSCalendar)
-- [Roadmap](#Roadmap)
-- [Contributing](#Contributing)
-- [License](#License)
-- [Contact](#Contact)
+- [Table of Contents](#table-of-contents)
+- [About The Project](#about-the-project)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+  - [1. Before using `osome-kit` please import module.](#1-before-using-osome-kit-please-import-module)
+  - [2. Implement below codes in the react render method.](#2-implement-below-codes-in-the-react-render-method)
+    - [Calendar](#calendar)
+    - [Gantt](#gantt)
+  - [Supported Props](#supported-props)
+    - [OSCalendar Props](#oscalendar-props)
+    - [OSGantt Props](#osgantt-props)
+      - [Options](#options)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
 
 
@@ -103,11 +105,11 @@ npm install --save react react-dom
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-### Before using `osome-kit` please import module.
+### 1. Before using `osome-kit` please import module.
 ```js
 import { OSCalendar, OSGantt } from 'osome-kit'
 ```
-### In react render() {} 
+### 2. Implement below codes in the react render method.
 #### Calendar
 ```js
  <OSCalendar 
@@ -138,16 +140,43 @@ import { OSCalendar, OSGantt } from 'osome-kit'
           }}
         />
 ```
-### Supported Properties
-#### OSCalendar
+### Supported Props
+#### OSCalendar Props
 | Prop              | Description                                                                                |
 | ----------------- | ------------------------------------------------------------------------------------------ |
 | categories        | Event data                                                                                 |
-| options           | Calednar's option                                                                          |
+| options           | Calendar's option                                                                          |
 | onClickSchedule   | When click schedule block. it will be fired.                                               |
 | onChangedSchedule | When Schedule changed user interaction. such as `move`,`resize` it will be fired.          |
 | onClickMoreButton | When click more button. ( more button will be appeared when you set maxEvent in `options`) |
 
+#### OSGantt Props
+| Prop                      | Description                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------- |
+| categories                | Event data (same with above calnedar events)                                                          |
+| options                   | Gantt's option                                                                                        |
+| onClickSchedule           | When click schedule block. it will be fired.                                                          |
+| onMouseRightClick         | When click mouse right button on left continaer's rows.                                               |
+| onDragEndTile             | When mouse down and up in right container's row tiles it will be fired. (create schedule by dragging) |
+| onChangedSchedule         | When schedule changed by user interaction. such as `move`,`resize` it will be fired.                  |
+| onChangedCategory         | When category changed by user interaction. such as `move category` it will be fired.                  |
+| onChangeContainer         | When container size changging. it will be fired every resized time.                                   |
+| onCompleteContainerResize | When container's resize finished. it will be fired.                                                   |
+
+##### Options
+| Property  | Description |
+| --------- | ----------- |
+| type      |             |
+| fixed     |             |
+| disabled  |             |
+| style     |             |
+| country   |             |
+| days      |             |
+| today     |             |
+| year      |             |
+| month     |             |
+| handleMin |             |
+| handleMax |             |
 ___ 
 
 <!-- ROADMAP -->
