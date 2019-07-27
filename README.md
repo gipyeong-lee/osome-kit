@@ -142,41 +142,44 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 ```
 ### Supported Props
 #### OSCalendar Props
-| Prop              | Description                                                                                |
-| ----------------- | ------------------------------------------------------------------------------------------ |
-| categories        | Event data                                                                                 |
-| options           | Calendar's option                                                                          |
-| onClickSchedule   | When click schedule block. it will be fired.                                               |
-| onChangedSchedule | When Schedule changed user interaction. such as `move`,`resize` it will be fired.          |
-| onClickMoreButton | When click more button. ( more button will be appeared when you set maxEvent in `options`) |
+| Prop              | type                               | Description                                                                                |
+| ----------------- | ---------------------------------- | ------------------------------------------------------------------------------------------ |
+| categories        | object                             | Event data                                                                                 |
+| options           | object                             | Calendar's option                                                                          |
+| onClickSchedule   | function(element, category, event) | When click schedule block. it will be fired.                                               |
+| onChangedSchedule | function(order, event, afterEvent) | When Schedule changed user interaction. such as `move`,`resize` it will be fired.          |
+| onClickMoreButton | function(element, events)          | When click more button. ( more button will be appeared when you set maxEvent in `options`) |
 
 #### OSGantt Props
-| Prop                      | Description                                                                                           |
-| ------------------------- | ----------------------------------------------------------------------------------------------------- |
-| categories                | Event data (same with above calnedar events)                                                          |
-| options                   | Gantt's option                                                                                        |
-| onClickSchedule           | When click schedule block. it will be fired.                                                          |
-| onMouseRightClick         | When click mouse right button on left continaer's rows.                                               |
-| onDragEndTile             | When mouse down and up in right container's row tiles it will be fired. (create schedule by dragging) |
-| onChangedSchedule         | When schedule changed by user interaction. such as `move`,`resize` it will be fired.                  |
-| onChangedCategory         | When category changed by user interaction. such as `move category` it will be fired.                  |
-| onChangeContainer         | When container size changging. it will be fired every resized time.                                   |
-| onCompleteContainerResize | When container's resize finished. it will be fired.                                                   |
+| Prop                      | type                                  | Description                                                                                           |
+| ------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| categories                | object                                | Event data (same with above calnedar events)                                                          |
+| options                   | object                                | Gantt's option                                                                                        |
+| onClickSchedule           | function(element, category, event)    | When click schedule block. it will be fired.                                                          |
+| onMouseRightClick         | function(element, event)              | When click mouse right button on left continaer's rows.                                               |
+| onDragEndTile             | function(start, end, renderOption)    | When mouse down and up in right container's row tiles it will be fired. (create schedule by dragging) |
+| onChangedSchedule         | function(order, event, afterEvent)    | When schedule changed by user interaction. such as `move`,`resize` it will be fired.                  |
+| onChangedCategory         | function(categories, afterCategories) | When category changed by user interaction. such as `move category` it will be fired.                  |
+| onChangeContainer         | function(left, right)                 | When container size changging. it will be fired every resized time.                                   |
+| onCompleteContainerResize | function(left, right)                 | When container's resize finished. it will be fired.                                                   |
 
 ##### Options
-| Property  | Description |
-| --------- | ----------- |
-| type      |             |
-| fixed     |             |
-| disabled  |             |
-| style     |             |
-| country   |             |
-| days      |             |
-| today     |             |
-| year      |             |
-| month     |             |
-| handleMin |             |
-| handleMax |             |
+| Property   | type   | Description                                                                                                                                      |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| type       | string | [Gantt Only] currently only exist 'row', <br>Default `row`                                                                                       |
+| fixed      | bool   | [Gantt Only] fixed gantt resizable left, right container. <br>Default `false`                                                                    |
+| disabled   | bool   | [Gantt Only] disable all event.                                                                                                                  |
+| style      | object | [Gantt & Calendar] style of elements.                                                                                                            |
+| country    | string | [Gantt & Calendar] for localizing. <br>Default `ko`                                                                                              |
+| days       | object | [Gantt & Calendar] for localizing. <br>Default `{ ko: ['일', '월', '화', '수', '목', '금', '토'], jp: ['日', '月', '火', '水', '木', '金', '土']}`      |
+| today      | date   | [Gantt & Calendar] Today's date. <br>Default `new Date()`                                                                                        |
+| year       | number | [Gantt & Calendar] Today's year. <br>Default `new Date().getFullYear()`                                                                          |
+| month      | number | [Gantt & Calendar] Today's month. <br>Default `new Date().getMonth()`                                                                            |
+| handleMin  | number | [Gantt Only] the minimum limit of left container's width percentage number.<br>Default `5` (It mean 5%)                                          |
+| handleMax  | number | [Gantt Only] the minimum limit of left container's width percentage number.<br>Default `35` (It mean 35%)                                        |
+| maxEvent   | number | [Calendar Only] the limit of schedules can be displayed on calendar grid. if more than this number, more button will be shown.<br>Default `2000` |
+| moreButton | object | [Calendar Only] more button text.<br>Default `{ ko: '+ 더보기', jp: '+ もっと見る' }`                                                               |
+| refresh    | bool   | [Gantt & Calendar] after categories modified. calendar,gantt reset or saving offset y of scroll offset.                                          |
 ___ 
 
 <!-- ROADMAP -->

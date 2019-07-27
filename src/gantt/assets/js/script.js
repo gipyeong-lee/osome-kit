@@ -62,6 +62,8 @@ var OsomeGantt = {
                 gap: 10
             }
         },
+        offsetY: 0,
+        refresh: false,
         country: 'ko',
         days: { ko: ['일', '월', '화', '수', '목', '금', '토'], jp: ['日', '月', '火', '水', '木', '金', '土'] },
         today: new Date(),
@@ -113,17 +115,33 @@ var OsomeGantt = {
         self.createGrid(_ganttGrid, _options)
         self.renderEventBlocks(_options)
         self.attachGridEvent(_ganttGrid)
-
+        self.globalEvent()
         document.onmouseup = function (e) {
             self.blur(e, self)
         }
         // self.createEvents(_options)
     },
+    saveOffset : function(){
+        const self = this
+        const container = document.getElementById('osome-gantt-grid-container')
+        self.options.offsetY = container.scrollTop
+    },
+    globalEvent: function () {
+        const self = this
+        const container = document.getElementById('osome-gantt-grid-container')
+        if (!self.refresh && self.offsetY !== 0) {
+            container.scrollTop = self.options.offsetY
+        }
+    },
     randomColor: function () {
         return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
     },
     clear: function (element) {
+        const self = this
         element.innerHTML = ''
+        if (self.refresh) {
+            self.offsetY = 0
+        }
     },
     clearFocus: function () {
         let self = this
@@ -506,6 +524,7 @@ var OsomeGantt = {
         // 
         // 0. create container
         let container = document.createElement('div')
+        container.id = "osome-gantt-grid-container"
         container.className = 'osome-gantt-grid-container'
         container.style.paddingTop = `${rowHeight}px`
         self.container = container
@@ -713,7 +732,7 @@ var OsomeGantt = {
         event.endDate = startDate.addDays(total - 1)
         event.endDate.setHours(self.dragging.event.endDate.getHours())
         event.endDate.setMinutes(self.dragging.event.endDate.getMinutes())
-
+        self.saveOffset()
         self.onChangedSchedule(self.dragging.row, self.dragging.event, event)
 
         self.dragging = {
@@ -890,6 +909,7 @@ var OsomeGantt = {
             newCategories[_tRow] = _source
             newCategories[_tRow].content.order = _tRow
         }
+        self.saveOffset()
         self.onChangedCategory(self.categories, newCategories)
     },
 
@@ -1398,7 +1418,7 @@ var OsomeGantt = {
             self.focus.event.endDate = new Date(self.focus.event.endDate)
             self.categories[row].events[self.focus.event.index].startDate = new Date(self.categories[row].events[self.focus.event.index].startDate)
             self.categories[row].events[self.focus.event.index].endDate = new Date(self.categories[row].events[self.focus.event.index].endDate)
-
+            self.saveOffset()
             self.onChangedSchedule(row, self.focus.event, self.categories[row].events[self.focus.event.index])
             self.eventEnd(row)
 
@@ -1446,6 +1466,7 @@ var OsomeGantt = {
                     if (_start.getDate() > _end.getDate()) {
                         return
                     }
+                    self.saveOffset()
                     self.onDragEndTile(row, _start, _end, renderOption)
                     // self.attachEvent(row, startNum.toNumber(), endNum.toNumber(), { title: self.categories[row].content.title, detail: 'This is Detail', color: self.categories[row].content.style.color })
                 }
