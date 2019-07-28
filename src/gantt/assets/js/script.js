@@ -593,9 +593,7 @@ var OsomeGantt = {
 
         for (i = 0; i < self.categories.length; i++) {
             const category = self.categories[i]
-            if (category.content.enable === false) {
-                continue
-            }
+
             leftContainer.appendChild(self.createRow('left', i, options.style.row, category.content))
             let _row = self.createRow('right', i, options.style.row)
             self.createRowTile(_row, i, endOfMonthDate, self.options, targetDate)

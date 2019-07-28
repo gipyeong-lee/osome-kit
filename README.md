@@ -64,6 +64,8 @@
     - [More Info](#more-info)
       - [Options](#options)
       - [Categories](#categories)
+      - [Content](#content)
+      - [Events](#events)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
@@ -184,7 +186,53 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 | moreButton | object | [Calendar Only] more button text.<br>Default `{ ko: '+ 더보기', jp: '+ もっと見る' }`                                                               |
 | refresh    | bool   | [Gantt & Calendar] after categories modified. calendar,gantt reset or saving offset y of scroll offset.                                          |
 
-##### Categories 
+##### Categories
+| Property | type   | Description                                          |
+| -------- | ------ | ---------------------------------------------------- |
+| content  | object | It is just wrapper key. it includes below properties |
+##### Content
+| Property | type        | Description                                                                  |
+| -------- | ----------- | ---------------------------------------------------------------------------- |
+| type     | string      | [Gantt Only] you can set [`main`, `sub`] type of calendar.<br>Default `main` |
+| order    | gantt order | [Gantt Only] gantt chart's order                                             |
+| style    | object      | [Gantt & Calendar] react style object of calendar                            |
+| events   | array       | [Gantt & Calendar] events                                                    |
+- In Example
+<pre>
+content: {
+          title: `Calendar ${i}`,
+          type: i % 2 ? 'main' : 'sub',
+          order: i,
+          style: {
+            color: self.randomColor(),
+            padding: '5px'
+          }
+        }
+</pre>
+##### Events
+| Property  | type   | Description                                                   |
+| --------- | ------ | ------------------------------------------------------------- |
+| id        | string | [Gantt & Caldnear] this is schedule `id` key!                 |
+| index     | number | [Gantt & Caldnear] this is schedule's index of schedule array |
+| title     | string | [Gantt & Calendar] this is schedule title                     |
+| style     | object | [Gantt & Calendar] style of schedule block                    |
+| startDate | string | [Gantt & Calendar] when the schedule start                    |
+| endDate   | string | [Gantt & Calendar] when the schedule end                      |
+
+- In Example
+<pre>
+{
+  "id":`${j}-${i}-schedule`,
+  "index": i,
+  "title": `${content.title}-Schedule-${i}`,
+  "style": {
+    "color": "#fff",
+    "backgroundColor": content.style.color
+  },
+  "startDate": `2019-12-${Math.min(sDate, eDate).pad(2)}T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
+  "endDate": `2019-12-${Math.max(sDate, eDate).pad(2)}T00:00:00.000`,
+}
+</pre>
 ___ 
 
 <!-- ROADMAP -->
