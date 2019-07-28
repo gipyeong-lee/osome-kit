@@ -56,13 +56,12 @@ export default class App extends Component {
     this.osCalendar = React.createRef()
     this.osGantt = React.createRef()
     const categories = []
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 100; i++) {
 
       categories.push({
         content: {
           title: `Calendar ${i}`,
           type: i % 2 ? 'main' : 'sub',
-          enable: true,
           order: i,
           style: {
             color: self.randomColor(),
@@ -83,11 +82,9 @@ export default class App extends Component {
         const eDate = Math.round((Math.random() * 26)) + 1
 
         events.push({
-          order: content.order,
           "id":`${j}-${i}-schedule`,
           "index": i,
           "title": `${content.title}-Schedule-${i}`,
-          "detail": "This is Detail",
           "style": {
             "color": "#fff",
             "backgroundColor": content.style.color

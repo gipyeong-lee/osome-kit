@@ -67,14 +67,13 @@ var OsomeCalendar = {
             }
         },
         offsetY: 0,
-        country: 'jp',
+        refresh: false,
+        country: 'ko',
         days: { ko: ['일', '월', '화', '수', '목', '금', '토'], jp: ['日', '月', '火', '水', '木', '金', '土'] },
         moreButton: { ko: '+ 더보기', jp: '+ もっと見る' },
         today: new Date(),
-        refresh: false,
         year: new Date().getFullYear(),
-        month: new Date().getMonth(),
-        eventPopup: { html: 'test' }
+        month: new Date().getMonth()
     },
     iteral: function (key, value, result) {
         if (key === undefined) {
@@ -109,14 +108,14 @@ var OsomeCalendar = {
         self.attachGridEvent(_calendarGrid)
         self.createEvents(_options)
         self.setupMoreButton()
-        self.globalEvent(_calendarGrid)
+        self.globalEvent()
     },
     saveOffset : function(){
         const self = this
         const container = document.getElementById('osome-cal-grid')
         self.options.offsetY = container.scrollTop
     },
-    globalEvent: function (calendar) {
+    globalEvent: function () {
         const self = this
         const container = document.getElementById('osome-cal-grid')
         if (!self.refresh && self.offsetY !== 0) {
