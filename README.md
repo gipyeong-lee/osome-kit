@@ -77,8 +77,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src="images/calendar.png" alt="Logo">
-<img src="images/gantt.png" alt="Logo">
+<img src="images/calendar.png" alt="calendar">
+<img src="images/gantt.png" alt="gantt">
 
 This project support you can switching calendar & gantt easily.
 
