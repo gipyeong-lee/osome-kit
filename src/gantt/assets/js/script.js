@@ -121,7 +121,7 @@ var OsomeGantt = {
         }
         // self.createEvents(_options)
     },
-    saveOffset : function(){
+    saveOffset: function () {
         const self = this
         const container = document.getElementById('osome-gantt-grid-container')
         self.options.offsetY = container.scrollTop
@@ -282,8 +282,7 @@ var OsomeGantt = {
         const pxWidth = parentWidth * width - arrowWidth
         _eventBlock.style.position = 'absolute'
         _eventBlock.style.left = left
-
-        _eventBlock.style.width = `${pxWidth/parentWidth * 100}%`
+        _eventBlock.style.width = `${pxWidth / parentWidth * 100}%`
         if (eventOption.style !== undefined) {
             for (const [key, value] of Object.entries(eventOption.style)) {
                 _eventBlock.style[key] = value
@@ -347,7 +346,7 @@ var OsomeGantt = {
         _eventBlock.style.left = left
         const pxWidth = parentWidth * width - arrowWidth
         _eventBlock.style.width = `${pxWidth / parentWidth * 100}%`
-        
+
         if (eventOption.style !== undefined) {
             for (const [key, value] of Object.entries(eventOption.style)) {
                 _eventBlock.style[key] = value
@@ -715,12 +714,19 @@ var OsomeGantt = {
         const _size = 100 / self.options.endOfMonthDate
         const _left = _number * _size
         const _width = _total * _size
-
         // move eventId
         const _eventBlock = document.getElementById(`event-block-${_row}-${_index}`)
+        //
+        const _rowEl = _eventBlock.parentElement
+        const parentWidth = _rowEl.offsetWidth
+        const arrowWidth = self.options.style.event.height
+        const pxWidth = parentWidth * _width - arrowWidth
+
+        //
+
         _eventBlock.style.left = `${_left}%`
         _eventBlock.setAttribute('startNum', _number)
-        _eventBlock.style.width = `${_width}%`
+        _eventBlock.style.width = `${pxWidth / parentWidth * 100}%`
         /// need check real date
 
         self.eventEnd(_row)
@@ -1332,7 +1338,7 @@ var OsomeGantt = {
                 return
             }
             self.focus.current.classList.remove('dragOver')
-            if(self.dragging.status !== 1){
+            if (self.dragging.status !== 1) {
                 self.dragging = {
                     event: undefined,
                     row: undefined,
@@ -1405,7 +1411,7 @@ var OsomeGantt = {
             self.focus.current = targetTag
         },
         onMouseUp: function (self, targetTag) {
-            if(self.focus.event === undefined){
+            if (self.focus.event === undefined) {
                 return
             }
             const row = self.focus.event.order
