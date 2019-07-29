@@ -716,14 +716,11 @@ var OsomeGantt = {
         const _width = _total * _size
         // move eventId
         const _eventBlock = document.getElementById(`event-block-${_row}-${_index}`)
-        //
         const _rowEl = _eventBlock.parentElement
         const parentWidth = _rowEl.offsetWidth
         const arrowWidth = self.options.style.event.height
-        const pxWidth = parentWidth * _width - arrowWidth
-
+        const pxWidth = parentWidth * _width / 100 - arrowWidth
         //
-
         _eventBlock.style.left = `${_left}%`
         _eventBlock.setAttribute('startNum', _number)
         _eventBlock.style.width = `${pxWidth / parentWidth * 100}%`
