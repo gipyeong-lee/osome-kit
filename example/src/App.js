@@ -12,7 +12,7 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 
 export default class App extends Component {
   state = {
-    calendarType: 'calender',
+    calendarType: 'calendar',
     options: {
       style: {
         cellHeader: {
@@ -34,7 +34,7 @@ export default class App extends Component {
   randomColor = () => {
     return '#' + (Math.random().toString(16) + "000000").substring(2, 8)
   }
-  
+
   onClickSchedule = (target, category, event) => {
     console.log(category, event)
   }
@@ -82,7 +82,7 @@ export default class App extends Component {
         const eDate = Math.round((Math.random() * 26)) + 1
 
         events.push({
-          "id":`${j}-${i}-schedule`,
+          "id": `${j}-${i}-schedule`,
           "index": i,
           "title": `${content.title}-Schedule-${i}`,
           "style": {
@@ -122,13 +122,13 @@ export default class App extends Component {
         }}>Calendar</div>
       </div>
       <div class={'no-scroll'} style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        width: '100%',
-                        height: '100%',
-                        position: 'absolute'
-                      }}>
-        {this.state.calendarType === 'gantt' ? <OSGantt style={{width: '100%', padding: '0'}} ref={this.osGantt} categories={this.state.categories} options={this.state.options}
+        paddingRight: 0,
+        paddingLeft: 0,
+        width: '100%',
+        height: '100%',
+        position: 'absolute'
+      }}>
+        {this.state.calendarType === 'gantt' ? <OSGantt style={{ width: '100%', padding: '0' }} ref={this.osGantt} categories={this.state.categories} options={this.state.options}
           onChangedSchedule={this.onChangedSchedule}
           onChangedCategory={this.onChangedCategory}
           onClickSchedule={this.onClickSchedule}
@@ -139,7 +139,7 @@ export default class App extends Component {
           }}
         /> :
           <OSCalendar ref={this.osCalendar}
-            style={{width: '100%', padding: '0'}}
+            style={{ width: '100%', padding: '0' }}
             options={this.state.options}
             categories={this.state.categories}
             onClickSchedule={this.onClickSchedule}

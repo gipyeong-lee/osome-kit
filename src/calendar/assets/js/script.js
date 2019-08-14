@@ -110,7 +110,7 @@ var OsomeCalendar = {
         self.setupMoreButton()
         self.globalEvent()
     },
-    saveOffset : function(){
+    saveOffset: function () {
         const self = this
         const container = document.getElementById('osome-cal-grid')
         self.options.offsetY = container.scrollTop
@@ -134,7 +134,7 @@ var OsomeCalendar = {
             self.offsetY = 0
         }
         element.innerHTML = ''
-        
+
     },
     clearFocus: function () {
         let self = this
@@ -1262,7 +1262,7 @@ var OsomeCalendar = {
             nextEvent.startDate = new Date(nextEvent.startDate)
             nextEvent.endDate = new Date(nextEvent.endDate)
             nextEvent.startNum = nextEvent.start
-            nextEvent.total = Math.floor((nextEvent.endDate.getTime() - nextEvent.startDate.getTime()) / 86400000) + 1
+            nextEvent.total = Math.floor((nextEvent.endDate.zeroTimeDate().getTime() - nextEvent.startDate.zeroTimeDate().getTime()) / 86400000) + 1
             self.saveOffset()
             self.onChangedSchedule(_order, self.focus.event, nextEvent)
             self.eventEnd()

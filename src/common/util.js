@@ -61,24 +61,31 @@ Date.prototype.endOfDay = function () {
     copyMonth.setDate(0)
     return copyMonth.getDay()
 }
-Date.prototype.addDays = function (n){
+Date.prototype.addDays = function (n) {
     var result = new Date();
     result.setFullYear(this.getFullYear())
     result.setMonth(this.getMonth())
     result.setHours(this.getHours())
     result.setMinutes(this.getMinutes())
-    result.setDate(this.getDate()+n)
+    result.setDate(this.getDate() + n)
     return result;
 }
 
+Date.prototype.zeroTimeDate = function () {
+    let copy = new Date(this)
+    copy.setHours(0)
+    copy.setMinutes(0)
+    copy.setSeconds(0)
+    return copy
+}
 
-Date.prototype.midasFormat = function (){
+Date.prototype.midasFormat = function () {
     let month = this.getMonth() + 1
     let date = this.getDate()
     let hours = this.getHours()
     let minutes = this.getMinutes()
-    month = month < 10 ? "0" + month : month; 
-    date  = date < 10 ? "0" + date : date;
+    month = month < 10 ? "0" + month : month;
+    date = date < 10 ? "0" + date : date;
     hours = hours < 10 ? "0" + hours : hours;
     minutes = minutes < 10 ? "0" + minutes : minutes;
     return `${month}/${date} ${hours}:${minutes}`
