@@ -113,9 +113,9 @@ var OsomeGantt = {
     self.renderEventBlocks(_options)
     self.attachGridEvent(_ganttGrid)
     self.globalEvent()
-    document.onmouseup = function (e) {
-      self.blur(e, self)
-    }
+    // document.onmouseup = function (e) {
+    //   self.blur(e, self)
+    // }
     // self.createEvents(_options)
   },
   saveOffset: function () {
@@ -957,6 +957,11 @@ var OsomeGantt = {
         }
         return
       }
+      if (self.focus.type !== undefined) {
+        calendarGrid.onmouseup(e)
+        return
+      }
+
       if (self.isHandler(targetTag)) {
         self.focus.type = 'resize'
         self.attachResizeEvent.onMouseDown(self, targetTag)
@@ -1002,7 +1007,6 @@ var OsomeGantt = {
       if (self.options.disabled === true) {
         return
       }
-
       const targetTag = document.elementFromPoint(e.clientX, e.clientY)
 
       if (self.focus.type === 'create') {

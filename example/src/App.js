@@ -13,7 +13,9 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 export default class App extends Component {
   state = {
     calendarType: 'calendar',
+
     options: {
+      maxEvent:5,
       style: {
         cellHeader: {
           textAlign: 'left'
@@ -121,11 +123,11 @@ export default class App extends Component {
           this.setState(update(this.state, { calendarType: { $set: 'calendar' } }))
         }}>Calendar</div>
       </div>
-      <div class={'no-scroll'} style={{
+      <div className={'no-scroll'} style={{
         paddingRight: 0,
         paddingLeft: 0,
         width: '100%',
-        height: '100%',
+        height: '800px',
         position: 'absolute'
       }}>
         {this.state.calendarType === 'gantt' ? <OSGantt style={{ width: '100%', padding: '0' }} ref={this.osGantt} categories={this.state.categories} options={this.state.options}
@@ -139,7 +141,7 @@ export default class App extends Component {
           }}
         /> :
           <OSCalendar ref={this.osCalendar}
-            style={{ width: '100%', padding: '0' }}
+            style={{ width: '100%', height: '800px', padding: '0' }}
             options={this.state.options}
             categories={this.state.categories}
             onClickSchedule={this.onClickSchedule}

@@ -24,8 +24,6 @@ class OSGantt extends Component {
   }
   onMouseRightClick = (element, event) => {
     console.log(`Mouse Right Button Clicked ${element.getAttribute('row')}`)
-    //sample
-
   }
   attachEvent(start, end, option) {
     OsomeGantt.attachEvent(start, end, option)
