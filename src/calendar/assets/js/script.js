@@ -185,6 +185,7 @@ var OsomeCalendar = {
       self.onBlockDragStart(event, this, self)
     }
     _eventBlock.ondragend = function (event) {
+      self.saveOffset()
       self.onBlockDragEnd(event, this, self)
     }
     _eventBlock.id = `event-block-${eventOption.order}-${eventOption.index}-${week}`
@@ -593,7 +594,6 @@ var OsomeCalendar = {
   createGrid: function (calendarGrid, options) {
     let self = this
     let width = 100 / 7
-    let _wrapper = document.createElement('div')
     let _grid = document.createElement('div')
     _grid.id = 'osome-cal-grid'
     _grid.className = 'osome-cal-grid'
@@ -604,7 +604,7 @@ var OsomeCalendar = {
 
     _header.id = 'osome-cal-days'
     _gridHeader.style.width = `100%`
-    _gridHeader.style.position = 'relative'
+    _gridHeader.style.position = 'absolute'
     _gridHeader.style.backgroundColor = 'white'
     _gridHeader.style.zIndex = 20
 
@@ -676,7 +676,7 @@ var OsomeCalendar = {
       row.className = 'osome-cal-grid-week'
       offsetX = 0
       row.setAttribute('startNumber', uniqueNum)
-      //creating individual cells, filing them up with data.
+
       if (date > endOfMonthDate) {
         break
       }
@@ -807,8 +807,6 @@ var OsomeCalendar = {
     self.endNum = uniqueNum - 1
     self.focus.last = uniqueNum - 1
     calendarGrid.append(_grid)
-    const height = calendarGrid.parentElement.offsetHeight - 34
-    _grid.style.height = `${height}px`
   },
   renderSelectedBlock() {
     let self = this
@@ -841,6 +839,7 @@ var OsomeCalendar = {
   },
   onBlockDragEnd(event, self, parent) {
     const dragImages = document.getElementsByClassName('dragImage')
+
     parent.changeAllEventBlockOpacity(1)
     for (let dragImg of dragImages) {
       document.body.removeChild(dragImg)
@@ -887,6 +886,7 @@ var OsomeCalendar = {
     if (e.target.getAttribute('number') === null) {
       return
     }
+    const self = this
 
     e.target.classList.remove('dragOver')
     const order = e.dataTransfer.getData('order').toNumber()
@@ -916,6 +916,7 @@ var OsomeCalendar = {
     nextEvent.endDate.setMinutes(beforeEvent.endDate.getMinutes())
     nextEvent.total = _total
     nextEvent.startNum = nextEvent.start
+    self.saveOffset()
     parent.onChangedSchedule(order, beforeEvent, nextEvent)
   },
   moveSchedule(week, order, index, startNum, endNum, parent) {
@@ -1059,7 +1060,7 @@ var OsomeCalendar = {
     let self = this
     calendarGrid.onmousedown = function (e) {
       const targetTag = document.elementFromPoint(e.clientX, e.clientY)
-      if (self.focus.type !== undefined) {
+      if (self.focus.type === 'resize' || self.focus.type === 'create' ) {
         calendarGrid.onmouseup(e)
         return
       }
@@ -1099,17 +1100,19 @@ var OsomeCalendar = {
     calendarGrid.onmouseup = function (e) {
       const targetTag = document.elementFromPoint(e.clientX, e.clientY)
       if (self.focus.type === 'create') {
+        self.saveOffset()
         self.attachEventCreate.onMouseUp(self, targetTag)
       } else if (self.focus.type === 'resize') {
+        self.saveOffset()
         self.attachResizeEvent.onMouseUp(self, targetTag)
       } else if (self.focus.type === 'move') {
+        self.saveOffset()
         const _index = targetTag.getAttribute('index').toNumber()
         if (self.focus.start !== undefined) {
           const _order = self.focus.start.getAttribute('order')
           self.onClickSchedule(targetTag, self.categories[_order], self.categories[_order].events[_index], e)
         }
       }
-      self.clearFocus()
     }
   },
   resizeEventBlock(eventBlock, toTile) {
@@ -1265,7 +1268,6 @@ var OsomeCalendar = {
       nextEvent.total = Math.floor(
         (nextEvent.endDate.zeroTimeDate().getTime() - nextEvent.startDate.zeroTimeDate().getTime()) /
         86400000) + 1
-      self.saveOffset()
       self.onChangedSchedule(_order, self.focus.event, nextEvent)
       self.eventEnd()
       self.clearFocus()
@@ -1316,7 +1318,6 @@ var OsomeCalendar = {
             startTileNumber: start.getAttribute('number'),
             endTileNumber: end.getAttribute('number')
           }
-          self.saveOffset()
           self.onDragEndTile(_start, _end, renderOption)
         }
       }

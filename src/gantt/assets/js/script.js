@@ -957,7 +957,7 @@ var OsomeGantt = {
         }
         return
       }
-      if (self.focus.type !== undefined) {
+      if (self.focus.type === 'resize' || self.focus.type === 'create' ) {
         calendarGrid.onmouseup(e)
         return
       }
