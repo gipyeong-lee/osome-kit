@@ -585,9 +585,11 @@ var OsomeCalendar = {
     cellMoreButton.className = 'more-btn'
     cellMoreButton.innerText = 'More Button'
     cellMoreButton.style.zIndex = '10'
+
     cellMoreButton.setAttribute('week', cell.getAttribute('week'))
     cellMoreButton.setAttribute('number', number)
     cellMoreButton.setAttribute('date', cell.getAttribute('date'))
+    cellMoreButton.setAttribute('year', cell.getAttribute('year'))
     cellMoreButton.setAttribute('month', cell.getAttribute('month'))
     cell.append(cellMoreButton)
   },
@@ -1060,7 +1062,7 @@ var OsomeCalendar = {
     let self = this
     calendarGrid.onmousedown = function (e) {
       const targetTag = document.elementFromPoint(e.clientX, e.clientY)
-      if (self.focus.type === 'resize' || self.focus.type === 'create' ) {
+      if (self.focus.type === 'resize' || self.focus.type === 'create') {
         calendarGrid.onmouseup(e)
         return
       }
