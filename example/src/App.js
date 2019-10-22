@@ -27,8 +27,8 @@ export default class App extends Component {
           textAlign: 'center'
         }
       },
-      year: new Date().getFullYear(),
-      month: 12//new Date().getMonth()
+      year: 2019,
+      month: 10//new Date().getMonth()
     },
     categories: [],
     events: []
@@ -91,8 +91,8 @@ export default class App extends Component {
             "color": "#fff",
             "backgroundColor": content.style.color
           },
-          "startDate": `2019-12-${Math.min(sDate, eDate).pad(2)}T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
-          "endDate": `2019-12-${Math.max(sDate, eDate).pad(2)}T00:00:00.000`,
+          "startDate": `2019-10-05T00:${Math.min(sDate, eDate).pad(2)}:00.000Z`,
+          "endDate": `2019-10-10T05:00:00.000`,
         })
       }
       categories[j].events = events

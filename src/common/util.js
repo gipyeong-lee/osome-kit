@@ -191,19 +191,17 @@ const utils = {
     if (startDateValue > firstTileValue && startDateValue < startMonthValue) {
       startNum = _startDate.getDay()
     }
-
     if (endDateValue >= firstTileValue && endDateValue < startMonthValue) {
       endNum = _endDate.getDay()
     }
 
     // nextMonth
-    if (startDateValue > endMonthValue && startDateValue < lastTileValue) {
+    if (startDateValue > endMonthValue && startDateValue <= lastTileValue) {
       startNum = startOfDay + endOfMonthDate + startDate - 1
     }
-    if (endDateValue > endMonthValue && endDateValue < lastTileValue) {
+    if (endDateValue > endMonthValue && endDateValue <= lastTileValue) {
       endNum = startOfDay + endOfMonthDate + endDate - 1
     }
-    console.log(startNum, endNum)
     return {startNum: startNum, endNum: endNum}
   }
 }
