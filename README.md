@@ -17,13 +17,13 @@
 *** for build-url, contributors-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![NPM](https://img.shields.io/npm/v/osome-kit.svg)](https://www.npmjs.com/package/osome-kit) 
+[![NPM](https://img.shields.io/npm/v/osome-kit.svg)](https://www.npmjs.com/package/osome-kit)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/madist/osome-kit">
+  <a href="https://github.com/gipyeong-lee/osome-kit">
     <img src="images/logo.png" alt="Logo" width="90" height="99">
   </a>
 
@@ -32,14 +32,14 @@
   <p align="center">
     An simple react calendar module. pure javascript. no jquery.
     <br />
-    <a href="https://github.com/madist/osome-kit"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/gipyeong-lee/osome-kit"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://madist.github.io/osome-kit/">View Demo</a>
+    <a href="https://gipyeong-lee.github.io/osome-kit/">View Demo</a>
     ·
-    <a href="https://github.com/madist/osome-kit/issues">Report Bug</a>
+    <a href="https://github.com/gipyeong-lee/osome-kit/issues">Report Bug</a>
     ·
-    <a href="https://github.com/madist/osome-kit/issues">Request Feature</a>
+    <a href="https://github.com/gipyeong-lee/osome-kit/issues">Request Feature</a>
   </p>
 </p>
 
@@ -118,7 +118,7 @@ import { OSCalendar, OSGantt } from 'osome-kit'
 ### 2. Implement below codes in the react render method.
 #### Calendar
 ```js
- <OSCalendar 
+ <OSCalendar
             options={this.state.options}
             categories={this.state.categories}
             onClickSchedule={this.onClickSchedule}
@@ -235,12 +235,12 @@ content: {
   "endDate": `2019-12-${Math.max(sDate, eDate).pad(2)}T00:00:00.000`,
 }
 </pre>
-___ 
+___
 
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/madist/osome-kit/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/gipyeong-lee/osome-kit/issues) for a list of proposed features (and known issues).
 
 
 <!-- CONTRIBUTING -->
@@ -266,7 +266,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 GiPyeong Lee - [@gipyeong](https://linkedin.com/in/gipyeong-lee-85734396) - ocsoon.jin@gmail.com
 
-Project Link: [https://github.com/madist/osome-kit](https://github.com/madist/osome-kit)
+Project Link: [https://github.com/gipyeong-lee/osome-kit](https://github.com/gipyeong-lee/osome-kit)
 
 ## Reference
 [Best Readme Template](https://github.com/othneildrew/Best-README-Template)

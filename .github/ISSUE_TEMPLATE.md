@@ -1,5 +1,5 @@
 👉 Please switch to **Preview** and select one of the following links:
-* [Template List](https://github.linecorp.com/madist/osome-kit/issues/new/choose)
+* [Template List](https://github.linecorp.com/gipyeong-lee/osome-kit/issues/new/choose)
     * [Bug Report](?template=bug_report.md)
     * [Improvement Features](?template=improvement.md)
 
