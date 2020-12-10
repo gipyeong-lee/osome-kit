@@ -264,7 +264,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-GiPyeong Lee - [@gipyeong](https://linkedin.com/in/gipyeong-lee-85734396) - ocsoon.jin@gmail.com
+GiPyeong Lee - [@gipyeong](https://linkedin.com/in/gipyeong-lee-85734396) - gipyeong.lee@gmail.com
 
 Project Link: [https://github.com/gipyeong-lee/osome-kit](https://github.com/gipyeong-lee/osome-kit)
 
