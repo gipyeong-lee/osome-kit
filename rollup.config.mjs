@@ -1,12 +1,14 @@
-import babel from 'rollup-plugin-babel'
-import commonjs from 'rollup-plugin-commonjs'
+import babel from '@rollup/plugin-babel'
+import commonjs from '@rollup/plugin-commonjs'
 import external from 'rollup-plugin-peer-deps-external'
 import postcss from 'rollup-plugin-postcss'
-import resolve from 'rollup-plugin-node-resolve'
-import url from 'rollup-plugin-url'
+import resolve from '@rollup/plugin-node-resolve'
+import url from '@rollup/plugin-url'
 import svgr from '@svgr/rollup'
-import postcssModulesValues from 'postcss-modules-values';
-import pkg from './package.json'
+import { createRequire } from 'module'
+
+const require = createRequire(import.meta.url)
+const pkg = require('./package.json')
 
 export default {
   input: 'src/index.js',
@@ -14,7 +16,8 @@ export default {
     {
       file: pkg.main,
       format: 'cjs',
-      sourcemap: true
+      sourcemap: true,
+      exports: 'named'
     },
     {
       file: pkg.module,
@@ -24,16 +27,12 @@ export default {
   ],
   plugins: [
     external(),
-    postcss([
-      require('postcss-modules')({
-        generateScopedName: '[name]__[local]',
-      })
-    ]),
+    postcss(),
     url(),
     svgr(),
     babel({
       exclude: 'node_modules/**',
-      plugins: [ 'external-helpers' ]
+      babelHelpers: 'bundled'
     }),
     resolve(),
     commonjs()

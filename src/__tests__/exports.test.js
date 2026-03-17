@@ -1,4 +1,4 @@
-import { OSCalendar, OSGantt } from './'
+import { OSCalendar, OSGantt } from '../'
 
 describe('OSCalendar', () => {
   it('is defined', () => {
