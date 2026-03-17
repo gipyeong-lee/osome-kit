@@ -1,7 +1,13 @@
-import ExampleComponent from './'
+import { OSCalendar, OSGantt } from './'
 
-describe('ExampleComponent', () => {
-  it('is truthy', () => {
-    expect(ExampleComponent).toBeTruthy()
+describe('OSCalendar', () => {
+  it('is defined', () => {
+    expect(OSCalendar).toBeDefined()
+  })
+})
+
+describe('OSGantt', () => {
+  it('is defined', () => {
+    expect(OSGantt).toBeDefined()
   })
 })

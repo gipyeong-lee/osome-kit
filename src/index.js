@@ -29,7 +29,7 @@ class OSGantt extends Component {
     OsomeGantt.attachEvent(start, end, option)
   }
   resetEvent() {
-    OsomeGantt.init('osome-gantt', options)
+    OsomeGantt.init('osome-gantt', this.props.options, this.props.categories)
   }
   createSchedule(start, end, eventOption) {
     OsomeGantt.attachEvent(start, end, eventOption)
@@ -98,14 +98,11 @@ class OSCalendar extends Component {
   onClickMoreButton = (element, events) => {
 
   }
-  constructor(props) {
-    super(props)
-  }
   attachEvent(start, end, option) {
     OsomeCalendar.attachEvent(start, end, option)
   }
   resetEvent() {
-    OsomeCalendar.init('osome-calendar', options)
+    OsomeCalendar.init('osome-calendar', this.props.options, this.props.categories)
   }
   createSchedule(start, end, eventOption) {
     OsomeCalendar.attachEvent(start, end, eventOption)

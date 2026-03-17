@@ -267,7 +267,7 @@ var OsomeGantt = {
     const _eventHandler = self.createHandler(row, _startNum, _endNum, _event)
 
     if (!self.options.disabled) {
-      _eventBlock.append(_eventHandler)
+      _eventBlock.appendChild(_eventHandler)
     }
 
     const left = startTile.style.left
@@ -302,9 +302,9 @@ var OsomeGantt = {
     _eventText.setAttribute('row', row)
     _eventText.setAttribute('order', eventOption.order)
     _eventText.setAttribute('index', eventOption.index)
-    _eventBlock.append(_eventText)
+    _eventBlock.appendChild(_eventText)
 
-    _rowEl.append(_eventBlock)
+    _rowEl.appendChild(_eventBlock)
   },
   createEventBlock(row, startTile, endTile, eventOption) {
     const self = this
@@ -328,7 +328,7 @@ var OsomeGantt = {
     const _eventHandler = self.createHandler(row, _startNum, _endNum, _event)
 
     if (!self.options.disabled) {
-      _eventBlock.append(_eventHandler)
+      _eventBlock.appendChild(_eventHandler)
     }
 
     const left = startTile.style.left
@@ -358,9 +358,9 @@ var OsomeGantt = {
     _eventText.style.color = 'white'
     _eventText.setAttribute('order', eventOption.order)
     _eventText.setAttribute('index', eventOption.index)
-    _eventBlock.append(_eventText)
+    _eventBlock.appendChild(_eventText)
 
-    _rowEl.append(_eventBlock)
+    _rowEl.appendChild(_eventBlock)
   },
   clearSelectedBlock: function (row) {
     const tileClass = `back-tile-${row}`
@@ -421,8 +421,8 @@ var OsomeGantt = {
       text.style.paddingLeft = '10px'
       text.style.paddingRight = '10px'
       text.innerHTML = content.title
-      rowContainer.append(bullet)
-      rowContainer.append(text)
+      rowContainer.appendChild(bullet)
+      rowContainer.appendChild(text)
     }
 
     return rowContainer
@@ -479,7 +479,7 @@ var OsomeGantt = {
       todayTile.style.display = 'inline-block'
       todayTile.style.backgroundColor = (options.style.todayHeader && options.style.todayHeader.backgroundColor) || 'green'
       todayTile.textContent = col + 1
-      tile.append(todayTile)
+      tile.appendChild(todayTile)
     } else {
       if (day === 0) {
         tile.className += ' text-red holiday'
@@ -525,7 +525,7 @@ var OsomeGantt = {
     headerContainer.style.height = `${rowHeight}px`
     headerContainer.style.zIndex = 20
     headerContainer.style.borderBottom = '1px solid lightGray'
-    calendarGrid.append(headerContainer)
+    calendarGrid.appendChild(headerContainer)
 
     let leftContainer = document.createElement('div')
     leftContainer.id = `osome-gantt-grid-left-container`
@@ -837,7 +837,7 @@ var OsomeGantt = {
     context.fillStyle = _eventData.color
     context.fillRect(0, 0, canvas.width, canvas.height)
 
-    document.body.append(canvas)
+    document.body.appendChild(canvas)
   },
   onCategoryDragStart(rowEl, self, e) {
     const _row = rowEl.getAttribute('row')

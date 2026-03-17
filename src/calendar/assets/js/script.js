@@ -214,7 +214,7 @@ var OsomeCalendar = {
     _eventText.style.paddingLeft = '5px'
     _eventText.setAttribute('order', eventOption.order)
     _eventText.setAttribute('index', eventOption.index)
-    _eventBlock.append(_eventText)
+    _eventBlock.appendChild(_eventText)
     return _eventBlock
   },
   countEvent(week, number) {
@@ -271,7 +271,7 @@ var OsomeCalendar = {
     for (var i = _startWeek; i <= _endWeek; i++) {
       const _eventBlock = self.createBlock(i, i * 7, (i + 1) * 7 - 1, _event)
       const _eventHandler = self.createHandler(i, _startNum, _endNum, _event)
-      _eventBlock.append(_eventHandler)
+      _eventBlock.appendChild(_eventHandler)
       const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
       const _weekEl = document.getElementById(`${weekPrefix}${i}`)
 
@@ -301,7 +301,7 @@ var OsomeCalendar = {
           _eventBlock.setAttribute('endNum', _endNum)
           _eventBlock.setAttribute('endDayNum', _endDayNum)
         }
-        _weekScheduleEl.append(_eventBlock)
+        _weekScheduleEl.appendChild(_eventBlock)
         _weekEl.style.height =
           `${(eventBlockHeight + eventBlockMargin) * (_weekScheduleEl.childNodes.length + 1) +
              self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
@@ -315,7 +315,7 @@ var OsomeCalendar = {
         _eventBlock.style.width = width
         _eventBlock.setAttribute('endNum', _endNum)
         _eventBlock.setAttribute('endDayNum', _endDayNum)
-        _weekScheduleEl.append(_eventBlock)
+        _weekScheduleEl.appendChild(_eventBlock)
         _weekEl.style.height =
           `${(eventBlockHeight + eventBlockMargin) * (_weekScheduleEl.childNodes.length + 1) +
              self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
@@ -328,7 +328,7 @@ var OsomeCalendar = {
         _eventBlock.style.left = left
         _eventBlock.style.width = width
         _eventBlock.className += ' block-right'
-        _weekScheduleEl.append(_eventBlock)
+        _weekScheduleEl.appendChild(_eventBlock)
         _weekEl.style.height =
           `${(eventBlockHeight + eventBlockMargin) * (_weekScheduleEl.childNodes.length + 1) +
              self.options.style.cellHeader.height + self.options.style.cellHeader.gap}px`
@@ -366,7 +366,7 @@ var OsomeCalendar = {
     for (var i = _startWeek; i <= _endWeek; i++) {
       const _eventBlock = self.createBlock(i, i * 7, (i + 1) * 7 - 1, _event)
       const _eventHandler = self.createHandler(i, _startNum, _endNum, _event)
-      _eventBlock.append(_eventHandler)
+      _eventBlock.appendChild(_eventHandler)
       const _weekScheduleEl = document.getElementById(`${weekSchedulePrefix}${i}`)
       const _weekEl = document.getElementById(`${weekPrefix}${i}`)
 
@@ -394,7 +394,7 @@ var OsomeCalendar = {
           _eventBlock.setAttribute('endNum', _endNum)
           _eventBlock.setAttribute('endDayNum', _endDayNum)
         }
-        _weekScheduleEl.append(_eventBlock)
+        _weekScheduleEl.appendChild(_eventBlock)
       } else if (i === _endWeek) {
         const left = 0
         let size = _endDayNum + 1
@@ -405,7 +405,7 @@ var OsomeCalendar = {
         _eventBlock.style.width = width
         _eventBlock.setAttribute('endNum', _endNum)
         _eventBlock.setAttribute('endDayNum', _endDayNum)
-        _weekScheduleEl.append(_eventBlock)
+        _weekScheduleEl.appendChild(_eventBlock)
       } else {
         const left = 0
         let size = 7
@@ -415,7 +415,7 @@ var OsomeCalendar = {
         _eventBlock.style.left = left
         _eventBlock.style.width = width
         _eventBlock.className += ' block-right'
-        _weekScheduleEl.append(_eventBlock)
+        _weekScheduleEl.appendChild(_eventBlock)
       }
     }
     // self.syncGridHeight()
@@ -558,8 +558,8 @@ var OsomeCalendar = {
     cellNumber.style.lineHeight = `${self.options.style.cellHeader.height}px`
     cellNumber.style.fontSize = options.fontSize || '0.9em'
     cellNumber.style.color = options.numberColor
-    cellNumber.append(textNode)
-    cellHeader.append(cellNumber)
+    cellNumber.appendChild(textNode)
+    cellHeader.appendChild(cellNumber)
   },
   setCellHeaderTitle(cellHeader, title, options) {
     const self = this
@@ -574,8 +574,8 @@ var OsomeCalendar = {
       self.options.style.cellHeader && self.options.style.cellHeader.textAlign || 'center'
     let subText = document.createTextNode('')
     subText.textContent = title
-    cellSubTitle.append(subText)
-    cellHeader.append(cellSubTitle)
+    cellSubTitle.appendChild(subText)
+    cellHeader.appendChild(cellSubTitle)
   },
   setCellMoreButton(cell) {
     const self = this
@@ -591,7 +591,7 @@ var OsomeCalendar = {
     cellMoreButton.setAttribute('date', cell.getAttribute('date'))
     cellMoreButton.setAttribute('year', cell.getAttribute('year'))
     cellMoreButton.setAttribute('month', cell.getAttribute('month'))
-    cell.append(cellMoreButton)
+    cell.appendChild(cellMoreButton)
   },
   createGrid: function (calendarGrid, options) {
     let self = this
@@ -635,13 +635,13 @@ var OsomeCalendar = {
         _dayDiv.className += ' text-blue'
       }
       _dayDiv.innerHTML = day
-      _header.append(_dayDiv)
+      _header.appendChild(_dayDiv)
       offsetX += width
     })
-    _gridHeader.append(_header)
+    _gridHeader.appendChild(_header)
     _gridHeader.style.height = '32px'
     _gridHeader.style.borderBottom = '1px solid lightGray'
-    calendarGrid.append(_gridHeader)
+    calendarGrid.appendChild(_gridHeader)
 
     const targetDate = new Date(options.year, options.month - 1, 1)
 
@@ -794,21 +794,21 @@ var OsomeCalendar = {
 
         offsetX += width
 
-        // cellHeader.append(cellText)
+        // cellHeader.appendChild(cellText)
         cell.appendChild(cellHeader)
 
         _rowGrid.appendChild(cell)
         self.setCellMoreButton(cell)
       }
       _rowSchedule.setAttribute('end', uniqueNum)
-      row.append(_rowGrid)
-      row.append(_rowSchedule)
+      row.appendChild(_rowGrid)
+      row.appendChild(_rowSchedule)
       _grid.appendChild(row) // appending each row into calendar body.
     }
 
     self.endNum = uniqueNum - 1
     self.focus.last = uniqueNum - 1
-    calendarGrid.append(_grid)
+    calendarGrid.appendChild(_grid)
   },
   renderSelectedBlock() {
     let self = this
@@ -866,7 +866,7 @@ var OsomeCalendar = {
     context.fillStyle = '#ffffff'
     context.font = 'bold 14px Arial'
     context.fillText(_eventData.title, 10, 14)
-    document.body.append(canvas)
+    document.body.appendChild(canvas)
     //
     parent.changeAllEventBlockOpacity(0.5)
     event.dataTransfer.setData('index', _index)
@@ -1142,8 +1142,8 @@ var OsomeCalendar = {
       _eventBlock.style.zIndex = 9
       _eventBlock.setAttribute('endNum', endNum)
       _eventBlock.setAttribute('endDayNum', endDayNum)
-      _eventBlock.append(_eventHandler)
-      _weekScheduleEl.append(_eventBlock)
+      _eventBlock.appendChild(_eventHandler)
+      _weekScheduleEl.appendChild(_eventBlock)
       self.reorderEventBox(_order)
     }
     if (_eventBlock.style.display === 'none') {
